@@ -53,4 +53,17 @@ APP-BLE/
 -   Expo Bare Workflow
 -   Apk para android
 
+-   eas build --platform android --profile local --clear-cache
+-   eas build --platform android --profile development
 -   npx expo start --dev-client
+
+
+- 1º Build inicial (uma vez)
+eas build --profile development --platform android
+
+- Desenvolvimento diário (múltiplas vezes ao dia)
+eas update --branch development
+
+- Quando adicionar novas dependências nativas
+npx expo install nova-dependencia
+eas build --profile development --platform android

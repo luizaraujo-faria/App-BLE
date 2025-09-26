@@ -1,11 +1,13 @@
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import Button from '../components/ui/Button';
 
 const SigninScreen = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [form, setForm] = useState('sign-in');
     const router = useRouter();
 
     const handleLogin = () => {
@@ -45,20 +47,17 @@ const SigninScreen = () => {
                     secureTextEntry
                 />
 
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Entrar</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* <View style={styles.actions}>
-
-
-
+                <Button 
+                  textButton='Entrar' 
+                  onPress={handleLogin}
+                  style={null}
+                  disabled={undefined}/>
+                  
                 <View style={styles.signupBox}>
                     <Text style={styles.signupText}>Não possui conta?</Text>
-                    <Text style={styles.signupLink}>Cadastrar-se</Text>
+                    <Text style={styles.signupLink} >Cadastrar-se</Text>
                 </View>
-            </View> */}
+            </View>
         </KeyboardAvoidingView>
 
         <View style={styles.footer}>
@@ -74,14 +73,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-    position: "relative",
+    padding: 20
   },
   mainBox: {
-    width: "80%",
-    height: "75%",
+    width: "100%",
+    height: "90%",
     alignItems: "center",
     justifyContent: "space-around",
-    gap: 12,
   },
   title: {
     fontSize: 56, // text-7xl ~ 56px
@@ -134,11 +132,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     width: "100%",
-    height: 85,
+    height: 64,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: '#fff',
-    position: "relative",
+    position: "relative"
   },
   footerText: {
     fontSize: 16,

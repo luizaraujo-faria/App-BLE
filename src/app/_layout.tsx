@@ -3,6 +3,7 @@ import { StatusBar } from 'react-native';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BleProvider } from '../contexts/BleContext';
+import Header from '../components/layout/Header';
 
 const RootLayout = () => {
 
@@ -21,9 +22,14 @@ const RootLayout = () => {
             
             <BleProvider>
                 <StatusBar backgroundColor="#838383ff" translucent={false} />
-                <Stack screenOptions={{ animation: "slide_from_right" }}>
+                <Stack screenOptions={{ 
+                        animation: "slide_from_right",
+                        header: () => (
+                            <Header title='IMREA App'/>
+                        )
+                    }}>
                     <Stack.Screen name="index" options={{ title: "Sign In" }} />
-                    <Stack.Screen name="home" options={{ title: "Home" }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false ,title: "Sign In" }} />
                 </Stack>
             </BleProvider>
         </View>

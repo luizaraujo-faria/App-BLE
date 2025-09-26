@@ -18,6 +18,10 @@
       "deploymentTarget": "13.0"
     },
     "android": {
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "buildToolsVersion": "34.0.0",
+      "enableProguardInReleaseBuilds": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -30,7 +34,11 @@
         "android.permission.BLUETOOTH_ADMIN",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.BLUETOOTH_SCAN",
-        "android.permission.BLUETOOTH_CONNECT"
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
+      "blockedPermissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION"
       ]
     },
     "web": {
@@ -48,8 +56,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "2b7688f7-50a2-4cc5-bbe7-764eb9a32043"
+        "projectId": "1e97dde6-7c7e-4d63-802e-b5536a1492e8"
       }
-    }
+    },
+    "owner": "lui308"
   }
 }
