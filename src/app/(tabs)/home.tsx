@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { useBle } from "../../hooks/useBle";
-import { bleService } from "../../ble/BleService";
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { useBle } from '../../hooks/useBle';
+import { bleService } from '../../ble/BleService';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { deviceConfig } from "../../ble/deviceConfig";
-import Button from "@/src/components/ui/Button";
+import { deviceConfig } from '../../ble/deviceConfig';
+import Button from '@/src/components/ui/Button';
 
 interface DeviceItem {
   label: string;
@@ -25,7 +25,7 @@ const HomeScreen = () => {
     disconnectDevice,
   } = useBle();
     
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>('');
   const [ledState, setLedState] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -35,7 +35,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const deviceItems: DeviceItem[] = devices.map(device => ({
       label: device.name || device.localName || 'Dispositivo Desconhecido',
-      value: device.id
+      value: device.id,
     }));
     setItems(deviceItems);
   }, [devices]);
@@ -43,7 +43,7 @@ const HomeScreen = () => {
   // Mostra erros do BLE
   useEffect(() => {
     if(error){
-      Alert.alert("Erro BLE", error);
+      Alert.alert('Erro BLE', error);
     }
   }, [error]);
 
@@ -54,16 +54,17 @@ const HomeScreen = () => {
       if (selectedDevice && !isConnected) {
         connectToDevice(value)
           .then(() => {
-            Alert.alert("Sucesso", `Conectado a ${selectedDevice.name || 'dispositivo'}`);
+            Alert.alert('Sucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
           })
           .catch(err => {
-            console.error("Falha na conexão:", err);
+            console.error('Falha na conexão:', err);
+            Alert.alert('Falha na conexão: ', err.message);
           });
       }
     }
   }, [value, devices, isConnected]);
 
-// ⚡ FUNÇÃO PARA LIGAR/DESLIGAR LED (específica deste dispositivo)
+  // ⚡ FUNÇÃO PARA LIGAR/DESLIGAR LED (específica deste dispositivo)
   const toggleLED = async (state: boolean) => {
     if (!currentDevice) return;
 
@@ -80,26 +81,27 @@ const HomeScreen = () => {
         currentDevice.id,
         deviceConfig.SERVICE_UUID,
         deviceConfig.CHARACTERISTIC_UUID,
-        base64Value
+        base64Value,
       );
       
       setLedState(state);
-      Alert.alert("Sucesso", `LED ${state ? "ligado" : "desligado"}`);
+      Alert.alert('Sucesso', `LED ${state ? 'ligado' : 'desligado'}`);
     } 
     catch(err: any){
-      console.error("❌ Erro:", err);
+      console.error('❌ Erro:', err);
+      Alert.alert('Erro', err.message);
     }
   };
 
   // ⚡ FUNÇÃO PARA ENVIAR MENSAGEM (específica deste dispositivo)
   const sendDisplayMessage = async (text: string) => {
     if (!currentDevice) {
-      Alert.alert("Erro", "Nenhum dispositivo conectado");
+      Alert.alert('Erro', 'Nenhum dispositivo conectado');
       return;
     }
 
     if (!text.trim()) {
-      Alert.alert("Erro", "Digite uma mensagem");
+      Alert.alert('Erro', 'Digite uma mensagem');
       return;
     }
 
@@ -116,22 +118,22 @@ const HomeScreen = () => {
         currentDevice.id,
         deviceConfig.SERVICE_UUID,
         deviceConfig.CHARACTERISTIC_UUID,
-        base64Value
+        base64Value,
       );
       
-      Alert.alert("Sucesso", "Mensagem enviada!");
-      setMessage(""); // Limpa o campo após envio
+      Alert.alert('Sucesso', 'Mensagem enviada!');
+      setMessage(''); // Limpa o campo após envio
     } 
     catch(err: any){
-      console.error("Erro ao enviar mensagem:", err);
-      Alert.alert("Erro", "Falha ao enviar mensagem");
+      console.error('Erro ao enviar mensagem:', err);
+      Alert.alert('Erro', 'Falha ao enviar mensagem');
     }
   };
 
   // ⚡ FUNÇÃO PARA LIMPAR DISPLAY (específica deste dispositivo)
   const clearDisplayMessage = async () => {
     if (!currentDevice) {
-      Alert.alert("Erro", "Nenhum dispositivo conectado");
+      Alert.alert('Erro', 'Nenhum dispositivo conectado');
       return;
     }
 
@@ -140,15 +142,15 @@ const HomeScreen = () => {
         currentDevice.id,
         deviceConfig.SERVICE_UUID,
         deviceConfig.CHARACTERISTIC_UUID,
-        deviceConfig.COMMANDS.CLEAR_DISPLAY
+        deviceConfig.COMMANDS.CLEAR_DISPLAY,
       );
       
-      Alert.alert("Sucesso", "Display limpo!");
-      setMessage(""); // Limpa o campo também
+      Alert.alert('Sucesso', 'Display limpo!');
+      setMessage(''); // Limpa o campo também
     } 
     catch(err: any){
-      console.error("Erro ao limpar display:", err);
-      Alert.alert("Erro", "Falha ao limpar display");
+      console.error('Erro ao limpar display:', err);
+      Alert.alert('Erro', 'Falha ao limpar display');
     }
   };
 
@@ -157,14 +159,16 @@ const HomeScreen = () => {
       try {
         await disconnectDevice(currentDevice.id);
         setValue(null);
-        Alert.alert("Desconectado", "Dispositivo desconectado com sucesso");
-      } catch (err) {
-        console.error("Erro ao desconectar:", err);
+        Alert.alert('Desconectado', 'Dispositivo desconectado com sucesso');
+      } 
+      catch (err: any){
+        console.error('Erro ao desconectar:', err);
+        Alert.alert('Erro ao desconectar:', err.message);
       }
     }
   };
 
-  const dropdownPlaceholder = isConnected 
+  const _dropdownPlaceholder = isConnected 
     ? `Conectado: ${currentDevice?.name || currentDevice?.localName || 'Dispositivo'}`
     : 'Selecione um dispositivo';
 
@@ -174,44 +178,44 @@ const HomeScreen = () => {
 
       <View style={{ width: '100%' }}>
 
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
-            <Text style={styles.title}>Controle Bluetooth</Text>
+          <Text style={styles.title}>Controle Bluetooth</Text>
 
-            <Text style={styles.connectedText}>
-              {isConnected 
-                ? `Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
-                : 'Desconectado'
-              }
-            </Text>
-            {isScanning && <Text style={styles.scanningText}>Escaneando...</Text>}
+          <Text style={styles.connectedText}>
+            {isConnected 
+              ? `Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
+              : 'Desconectado'
+            }
+          </Text>
+          {isScanning && <Text style={styles.scanningText}>Escaneando...</Text>}
 
-          </View>
+        </View>
 
-          <Button 
-            textButton={isScanning ? "Parar Busca" : "Buscar Dispositivos"} 
-            onPress={isScanning ? stopScan : scanDevices}
-            style={null}
-            disabled={undefined}/>
+        <Button 
+          textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
+          onPress={isScanning ? stopScan : scanDevices}
+          style={null}
+          disabled={undefined}/>
 
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            placeholder={'Teste'}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-            labelStyle={styles.dropdownLabel}
-            placeholderStyle={styles.dropdownPlaceholder}
-            selectedItemContainerStyle={styles.selectedItemContainer}
-            selectedItemLabelStyle={styles.selectedItemLabel}
-          />
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          placeholder={'Teste'}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+          labelStyle={styles.dropdownLabel}
+          placeholderStyle={styles.dropdownPlaceholder}
+          selectedItemContainerStyle={styles.selectedItemContainer}
+          selectedItemLabelStyle={styles.selectedItemLabel}
+        />
 
-          {isConnected && currentDevice && (
-          <View style={{ width: "100%", marginTop: 10 }}>
+        {isConnected && currentDevice && (
+          <View style={{ width: '100%', marginTop: 10 }}>
 
             <Button 
               textButton={`Desconectar-se de: ${currentDevice.name || currentDevice.localName}`} 
@@ -225,39 +229,39 @@ const HomeScreen = () => {
 
       <View style={{ width: '100%' }}>
 
-          <View style={styles.messageContainer}>
-            <Button 
-              textButton={isConnected && ledState ? 'Desligar LED' : 'Acionar LED'}
-              onPress={ledState ? () => toggleLED(false) : () => toggleLED(true)}
-              style={!isConnected && styles.buttonDisabled}
-              disabled={!isConnected}/>
-          </View>
+        <View style={styles.messageContainer}>
+          <Button 
+            textButton={isConnected && ledState ? 'Desligar LED' : 'Acionar LED'}
+            onPress={ledState ? () => toggleLED(false) : () => toggleLED(true)}
+            style={!isConnected && styles.buttonDisabled}
+            disabled={!isConnected}/>
+        </View>
 
-          <View style={styles.messageContainer}>
+        <View style={styles.messageContainer}>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Digite sua mensagem"
-              placeholderTextColor="#666"
-              value={message}
-              onChangeText={setMessage}
-              maxLength={80}
-              editable={isConnected}
-            />
+          <TextInput
+            style={styles.input}
+            placeholder='Digite sua mensagem'
+            placeholderTextColor='#666'
+            value={message}
+            onChangeText={setMessage}
+            maxLength={80}
+            editable={isConnected}
+          />
 
-            <Button 
-              textButton='Enviar Mensagem'
-              onPress={() => sendDisplayMessage(message)}
-              style={!isConnected && styles.buttonDisabled}
-              disabled={!isConnected}/>
+          <Button 
+            textButton='Enviar Mensagem'
+            onPress={() => sendDisplayMessage(message)}
+            style={!isConnected && styles.buttonDisabled}
+            disabled={!isConnected}/>
 
-            <Button 
-              textButton='Limpar Display'
-              onPress={clearDisplayMessage}
-              style={!isConnected && styles.buttonDisabled}
-              disabled={!isConnected}/>
+          <Button 
+            textButton='Limpar Display'
+            onPress={clearDisplayMessage}
+            style={!isConnected && styles.buttonDisabled}
+            disabled={!isConnected}/>
 
-          </View>
+        </View>
       </View>
 
     </View>
@@ -267,42 +271,37 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "space-around",
-    backgroundColor: "#ffffff",
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    backgroundColor: '#ffffff',
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
-    color: "#333",
-  },
-  status: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
+    color: '#333',
   },
   connectedText: {
     fontSize: 18,
-    color: "#008cffff",
-    fontWeight: "normal",
+    color: '#008cffff',
+    fontWeight: 'normal',
     marginBottom: 20,
   },
   messageContainer: {
     width: '100%',
-    alignItems: "center",
+    alignItems: 'center',
     gap: 16,
     marginBottom: 20,
   },
   input: {
-    width: "100%",
+    width: '100%',
     height: 56,
     borderBottomWidth: 1,
-    borderBottomColor: "#000",
+    borderBottomColor: '#000',
     padding: 8,
     fontSize: 20,
-    color: "#000",
+    color: '#000',
   },
   scanningText: {
     lineHeight: 45,
@@ -311,48 +310,48 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   disconnectButton: {
-    width: "100%",
+    width: '100%',
     height: 50,
     backgroundColor: '#FF3B30',
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 4,
     marginBottom: 10,
   },
   buttonDisabled: {
-    width: "100%",
+    width: '100%',
     height: 50,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 4,
     marginBottom: 10,
     backgroundColor: '#CCCCCC',
   },
   dropdown: {
-    backgroundColor: "#ffb54c",
+    backgroundColor: '#ffb54c',
     borderWidth: 0,
     borderRadius: 4,
     height: 50,
   },
   dropdownContainer: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     borderWidth: 0,
     borderRadius: 4,
   },
   dropdownLabel: {
     fontSize: 18,
-    color: "#ffffff",
+    color: '#ffffff',
   },
   dropdownPlaceholder: {
     fontSize: 18,
-    color: "#ffffff",
+    color: '#ffffff',
   },
   selectedItemContainer: {
-    backgroundColor: "#a7a7a7",
+    backgroundColor: '#a7a7a7',
   },
   selectedItemLabel: {
-    fontWeight: "bold",
-    color: "#ffffff",
+    fontWeight: 'bold',
+    color: '#ffffff',
   },
 });
 

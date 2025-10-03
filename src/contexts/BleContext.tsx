@@ -1,5 +1,5 @@
-import { createContext, useContext, ReactNode } from "react";
-import { useBle } from "../hooks/useBle";
+import { createContext, useContext, ReactNode } from 'react';
+import { useBle } from '../hooks/useBle';
 
 interface BleContextType {
     devices: any[];
@@ -9,19 +9,19 @@ interface BleContextType {
     error: string | null;
     scanDevices: () => void;
     stopScan: () => void;
-    connectToDevice: (deviceId: string) => Promise<any>;
-    disconnectDevice: (deviceId: string) => Promise<void>;
+    connectToDevice: (_deviceId: string) => Promise<any>;
+    disconnectDevice: (_deviceId: string) => Promise<void>;
 }
 
 const BleContext = createContext<BleContextType | undefined>(undefined);
 
 export const useBleContext = () => {
 
-    const context = useContext(BleContext);
-    if(!context){
-        throw new Error('useBleContext deve ser utilizado dentro de um BleProvider');
-    }
-    return context;
+  const context = useContext(BleContext);
+  if(!context){
+    throw new Error('useBleContext deve ser utilizado dentro de um BleProvider');
+  }
+  return context;
 };
 
 interface BleProviderProps {
@@ -30,11 +30,11 @@ interface BleProviderProps {
 
 export const BleProvider = ({ children }: BleProviderProps) => {
 
-    const ble = useBle();
+  const ble = useBle();
 
-    return (
-        <BleContext.Provider value={ble}>
-            {children}
-        </BleContext.Provider>
-    );
+  return (
+    <BleContext.Provider value={ble}>
+      {children}
+    </BleContext.Provider>
+  );
 };

@@ -14,7 +14,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
+        const { _options } = descriptors[route.key];
         const isFocused = state.index === index;
         const config = tabConfig[route.name as keyof typeof tabConfig];
 
@@ -43,7 +43,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             />
             <Text style={[
               styles.label,
-              isFocused && styles.labelActive
+              isFocused && styles.labelActive,
             ]}>
               {config.label}
             </Text>
@@ -52,7 +52,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       })}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
