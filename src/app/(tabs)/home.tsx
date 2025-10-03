@@ -5,6 +5,7 @@ import { bleService } from '../../ble/BleService';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { deviceConfig } from '../../ble/deviceConfig';
 import Button from '@/src/components/ui/Button';
+import { sheetsAPI } from '@/src/services/api.js';
 
 interface DeviceItem {
   label: string;
@@ -63,6 +64,32 @@ const HomeScreen = () => {
       }
     }
   }, [value, devices, isConnected]);
+
+  const handleSubmit = async (text: string) => {
+    
+    try{
+
+      const values = [
+        null,
+        text,
+        null,
+      ];
+
+      const result = await sheetsAPI.writeData({
+        values: values,
+        sheetName: 'Sheet1',
+      });
+
+      if(result){
+        console.log('Mensagem enviada para google sheets com sucesso!');
+      }
+
+    }
+    catch(err: any){
+      console.error('Erro:', err);
+      Alert.alert('Erro', 'Não foi possível conectar com o servidor');
+    }
+  };
 
   // ⚡ FUNÇÃO PARA LIGAR/DESLIGAR LED (específica deste dispositivo)
   const toggleLED = async (state: boolean) => {
@@ -251,7 +278,7 @@ const HomeScreen = () => {
 
           <Button 
             textButton='Enviar Mensagem'
-            onPress={() => sendDisplayMessage(message)}
+            onPress={() => { sendDisplayMessage(message); handleSubmit(message); }}
             style={!isConnected && styles.buttonDisabled}
             disabled={!isConnected}/>
 
