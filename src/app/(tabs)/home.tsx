@@ -57,9 +57,9 @@ const HomeScreen = () => {
           .then(() => {
             Alert.alert('Sucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
           })
-          .catch(err => {
-            console.error('Falha na conexão:', err);
-            Alert.alert('Falha na conexão: ', err.message);
+          .catch((err: any) => {
+            console.error('Falha na conexão:', `Erro: ${error}`, err.message);
+            Alert.alert('Falha na conexão: ', `Erro: ${error}`);
           });
       }
     }
@@ -184,7 +184,7 @@ const HomeScreen = () => {
   const handleDisconnect = async () => {
     if (currentDevice) {
       try {
-        await disconnectDevice(currentDevice.id);
+        await disconnectDevice(currentDevice);
         setValue(null);
         Alert.alert('Desconectado', 'Dispositivo desconectado com sucesso');
       } 

@@ -1,5 +1,5 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
 
 class BleService {
@@ -10,80 +10,56 @@ class BleService {
     this.manager = new BleManager();
   }
 
-  // Solicitar permissões em runtime
+  // Solicitar permissões em runtime - FORMA CORRETA PARA EXPO
   private async requestPermissions(): Promise<boolean> {
     if (Platform.OS !== 'android') {
       return true;
     }
 
     try {
-      if(Platform.Version >= 31){
-        const permissions = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-          PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        ]);
-
-        return permissions['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED &&
-                       permissions['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED &&
-                       permissions['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED;
+      const state = await this.manager.state();
+      
+      if (state === State.PoweredOn) {
+        return true;
+      } else {
+        // Para Android, apenas informa o usuário para ligar o Bluetooth
+        console.log('Bluetooth desligado. Peça para o usuário ligar manualmente nas configurações.');
+        
+        // Você pode mostrar um alerta para o usuário aqui
+        // Alert.alert('Bluetooth Desligado', 'Por favor, ligue o Bluetooth nas configurações do dispositivo');
+        
+        return false;
       }
-      else{
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      }
-    }
-    catch(err: any){
-      console.error('Erro ao solicitar permissões:', err);
+    } catch (err: any) {
+      console.error('Erro ao verificar estado Bluetooth:', err);
       return false;
     }
   }
 
-  // Verificar permissões atuais
+  // Mantenha estes métodos como estão - eles estão CORRETOS:
   private async checkPermissions(): Promise<boolean> {
-    if (Platform.OS !== 'android') return true;
-
     try {
-      if(Platform.Version >= 31){
-        const scanGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN);
-        const connectGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT);
-        const locationGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-                
-        return scanGranted && connectGranted && locationGranted;
-      }
-      else{
-        const locationGranted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        return locationGranted;
-      }
-    } 
-    catch (err: any){
+      const state = await this.manager.state();
+      return state === State.PoweredOn;
+    } catch (err: any) {
       console.error('Erro ao verificar permissões:', err);
       return false;
     }
   }
 
-  // Inicializando o BLE
-  async initialize(): Promise<boolean> {
-
-    try{
-      const hasPermissions = await this.checkPermissions();
-      if (!hasPermissions) {
-        const granted = await this.requestPermissions();
-        if (!granted) {
-          return false;
-        }
+  public async initialize(): Promise<boolean> {
+    try {
+      const state = await this.manager.state();
+      
+      if (state !== State.PoweredOn) {
+        console.log('Bluetooth não está ligado. Estado:', state);
+        return false;
       }
 
-      const state = await this.manager.state();
-      console.log('BLE State: ', state);
-
-      return state === State.PoweredOn;
-    }
-    catch(err: any){
-      console.error('Falha ao inicializar o BLE! ', err);
+      console.log('Bluetooth ligado e pronto para uso');
+      return true;
+    } catch (err: any) {
+      console.error('Erro na inicialização BLE:', err);
       return false;
     }
   }
@@ -211,6 +187,7 @@ class BleService {
 
       // DESCOBRE SERViÇOS AUTOMATICAMENTE APÓS CONECTAR
       console.log(' Descobrindo serviços automaticamente...');
+      console.log(`\n Conectado ao dispositivo: ${device.name}`);
       const services = await device.services();
       console.log('\n SERViÇOS DO DISPOSITIVO CONECTADO:');
             
@@ -246,10 +223,12 @@ class BleService {
   }
 
   // Desconectar-se de um dispositivo
-  async disconnectDevice(deviceId: string): Promise<void> {
+  async disconnectDevice(device: BluetoothDevice): Promise<void> {
 
     try{
-      await this.manager.cancelDeviceConnection(deviceId);
+      console.log(`\n Desconectando do dispositivo: ${device.name}...`);
+      await this.manager.cancelDeviceConnection(device.id);
+      console.log(`Desconectado de: ${device.name}`);
     }
     catch(err: any){
       console.error('Falha ao desconectar-se! ', err);

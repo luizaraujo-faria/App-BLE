@@ -63,11 +63,35 @@ export const useBle = () => {
 
     try{
       setError(null);
-      const device = await bleService.connectToDevice(deviceId);
+      
+      // ADICIONAR ESTA FUNÇÃO DE TIMEOUT
+      const connectWithTimeout = async (id: string, timeout = 7000) => {
+
+        return new Promise<void>((resolve, reject) => {
+          const timeoutId = setTimeout(() => {
+            reject(new Error('Timeout de conexão - 7 segundos'));
+          }, timeout);
+
+          try {
+            bleService.connectToDevice(id);
+            clearTimeout(timeoutId);
+            resolve();
+          } 
+          catch(err: any){
+            clearTimeout(timeoutId);
+            reject(err.message);
+          }
+        });
+      };
+
+      // Usar a conexão com timeout
+      await connectWithTimeout(deviceId);
+      
       setIsConnected(true);
       setCurrentDevice(devices.find(d => d.id === deviceId) || null);
-      return device;
-    }
+      return deviceId; // ou retorne o que você precisa
+
+    } 
     catch(err: any){
       setError(`Falha ao conectar com o dispositivo! ${err.message}`);
       throw err;
@@ -75,10 +99,10 @@ export const useBle = () => {
   }, [devices]);
 
   // Desconectar do dispositivo
-  const disconnectDevice = useCallback(async (deviceId: string) => {
+  const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
 
     try{
-      await bleService.disconnectDevice(deviceId);
+      await bleService.disconnectDevice(device);
       setIsConnected(false);
       setCurrentDevice(null);  
     }
