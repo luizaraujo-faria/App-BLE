@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const tabConfig = {
   home: { icon: 'home', label: 'Início' },
-  settings: { icon: 'settings', label: 'Configs' },
+  managment: { icon: 'bar-chart', label: 'Gestão' },
   person: { icon: 'person', label: 'Perfil' },
 } as const;
 
@@ -14,7 +14,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
-        const { _options } = descriptors[route.key];
+        const { options } = descriptors[route.key];
         const isFocused = state.index === index;
         const config = tabConfig[route.name as keyof typeof tabConfig];
 
@@ -58,8 +58,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#DDDDDD',
     paddingVertical: 8,
   },
   tabButton: {

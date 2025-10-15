@@ -12,7 +12,7 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Tabs.Screen name='home'/>
-      <Tabs.Screen name='settings'/>
+      <Tabs.Screen name='managment'/>
       <Tabs.Screen name='person'/>
     </Tabs>
   );

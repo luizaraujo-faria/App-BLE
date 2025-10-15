@@ -4,12 +4,12 @@
     "slug": "app-ble",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/LogoIMREA.png",
     "scheme": "appble",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/LogoIMREA.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,7 +23,7 @@
       "buildToolsVersion": "34.0.0",
       "enableProguardInReleaseBuilds": false,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/LogoIMREA.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,

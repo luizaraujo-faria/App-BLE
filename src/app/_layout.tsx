@@ -17,7 +17,7 @@ const RootLayout = () => {
         paddingBottom: insets.bottom,
         paddingLeft: insets.left,
         paddingRight: insets.right,
-        backgroundColor: '#c7c7c7ff',
+        backgroundColor: '#595959ff',
       }}>
             
       <BleProvider>
@@ -25,11 +25,11 @@ const RootLayout = () => {
         <Stack screenOptions={{ 
           animation: 'slide_from_right',
           header: () => (
-            <Header title='IMREA App'/>
+            <Header title='IMREA App' subtitle={null}/>
           ),
         }}>
           <Stack.Screen name='index' options={{ title: 'Sign In' }} />
-          <Stack.Screen name='(tabs)' options={{ headerShown: false, title: 'Sign In' }} />
+          <Stack.Screen name='(tabs)' options={{ headerShown: false, title: 'Fluxo' }} />
         </Stack>
       </BleProvider>
     </View>
