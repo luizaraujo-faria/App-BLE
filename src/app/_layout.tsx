@@ -7,33 +7,33 @@ import Header from '../components/layout/Header';
 
 const RootLayout = () => {
 
-  const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
 
-  return(
-    <View 
-      style={{
-        flex: 1,
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-        backgroundColor: '#595959ff',
-      }}>
+    return(
+        <View 
+            style={{
+                flex: 1,
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom,
+                paddingLeft: insets.left,
+                paddingRight: insets.right,
+                backgroundColor: '#595959ff',
+            }}>
             
-      <BleProvider>
-        <StatusBar backgroundColor='#838383ff' translucent={false} />
-        <Stack screenOptions={{ 
-          animation: 'slide_from_right',
-          header: () => (
-            <Header title='IMREA App' subtitle={null}/>
-          ),
-        }}>
-          <Stack.Screen name='index' options={{ title: 'Sign In' }} />
-          <Stack.Screen name='(tabs)' options={{ headerShown: false, title: 'Fluxo' }} />
-        </Stack>
-      </BleProvider>
-    </View>
-  );
+            <BleProvider>
+                <StatusBar backgroundColor='#838383ff' translucent={false} />
+                <Stack screenOptions={{ 
+                    animation: 'slide_from_right',
+                    header: () => (
+                        <Header title='IMREA App' subtitle={null}/>
+                    ),
+                }}>
+                    <Stack.Screen name='index' options={{ title: 'Sign In' }} />
+                    <Stack.Screen name='(tabs)' options={{ headerShown: false, title: 'Fluxo' }} />
+                </Stack>
+            </BleProvider>
+        </View>
+    );
 };
 
 export default RootLayout;

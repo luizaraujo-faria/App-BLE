@@ -92,12 +92,12 @@ export default [
       // React Native
       'react-native/no-unused-styles': 'error',
       'react-native/split-platform-components': 'error',
-      'react-native/no-inline-styles': 'warn',
-      'react-native/no-color-literals': 'warn',
+      'react-native/no-inline-styles': 'off',
+      'react-native/no-color-literals': 'off',
       'react-native/no-raw-text': 'warn',
       
       // Estilo de código
-      'indent': ['error', 2],
+      'indent': ['error', 4],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],

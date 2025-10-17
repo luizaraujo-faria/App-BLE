@@ -17,11 +17,11 @@ const BleContext = createContext<BleContextType | undefined>(undefined);
 
 export const useBleContext = () => {
 
-  const context = useContext(BleContext);
-  if(!context){
-    throw new Error('useBleContext deve ser utilizado dentro de um BleProvider');
-  }
-  return context;
+    const context = useContext(BleContext);
+    if(!context){
+        throw new Error('useBleContext deve ser utilizado dentro de um BleProvider');
+    }
+    return context;
 };
 
 interface BleProviderProps {
@@ -30,11 +30,11 @@ interface BleProviderProps {
 
 export const BleProvider = ({ children }: BleProviderProps) => {
 
-  const ble = useBle();
+    const ble = useBle();
 
-  return (
-    <BleContext.Provider value={ble}>
-      {children}
-    </BleContext.Provider>
-  );
+    return (
+        <BleContext.Provider value={ble}>
+            {children}
+        </BleContext.Provider>
+    );
 };

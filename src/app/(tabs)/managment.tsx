@@ -22,14 +22,19 @@ const ColaboratorCard = ({ colaborator }: ColaboratorProps) => (
 
 
 const ManagmentScreen = () => {
-    const [colaborators, setColaborators] = useState<ColaboratorType[]>([
+    const [colaborators, _setColaborators] = useState<ColaboratorType[]>([
         { id: '12355', name: 'Shaolin Matador de Porco' },
         { id: '22456', name: 'Luiz Henrique Araujo Farias' },
+        { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
+        { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
+        { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
+        { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
+        { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
         { id: '31256', name: 'Rayan Ferreira de Souza Lima' },
     ]);
 
     return(
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
             <Header title={'Gestão de fluxo'} subtitle={'IMREA'}/>
             
             <View style={style.container}>
@@ -37,7 +42,7 @@ const ManagmentScreen = () => {
                 <View style={style.userPanel}>
                     
                     <View style={style.listTitle}>
-                        <Text style={{fontSize: 22}}>Colaboradores</Text>
+                        <Text style={{ fontSize: 22 }}>Colaboradores</Text>
                     </View>
 
                     <FlatList 
@@ -91,7 +96,7 @@ const style = StyleSheet.create({
         borderRadius: 4,
         alignItems: 'center',
         gap: 24,
-        paddingBottom: 16
+        paddingBottom: 16,
     },
     listTitle: {
         width: '70%',
@@ -99,7 +104,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#95959569'
+        borderBottomColor: '#95959569',
     },
     list: {
         width: '95%',
@@ -110,20 +115,20 @@ const style = StyleSheet.create({
         height: 'auto',
         padding: 8,
         backgroundColor: '#eaeaea78',
-        borderRadius: 4
+        borderRadius: 4,
     },
     colId: {
-        fontSize: 16
+        fontSize: 16,
     },
     colName: {
-        fontSize: 18
+        fontSize: 18,
     },
     actionContainer: {
         width: '100%',
         height: 'auto',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
 });
 
 export default ManagmentScreen;

@@ -5,126 +5,126 @@ import Button from '../components/ui/Button';
 
 const SigninScreen = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const router = useRouter();
 
-  const handleLogin = () => {
+    const handleLogin = () => {
 
-    if(email.trim() === '' && password.trim() === ''){
-      return Alert.alert('Falha!', 'Todos os campos devem ser preenchidos.');
-    }
+        if(email.trim() === '' && password.trim() === ''){
+            return Alert.alert('Falha!', 'Todos os campos devem ser preenchidos.');
+        }
 
-    email === 'Admin' && password === 'Admin'
-      ? router.push('/home')
-      : Alert.alert('Erro!', 'Email e/ou senha incorretos!');
-  };
+        email === 'Admin' && password === 'Admin'
+            ? router.push('/home')
+            : Alert.alert('Erro!', 'Email e/ou senha incorretos!');
+    };
 
-  return <View style={styles.container}>
+    return <View style={styles.container}>
 
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.mainBox}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.mainBox}>
 
-      <View>
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.subtitle}>Conecte-se à sua conta em nosso aplicativo.</Text>
-      </View>
+            <View>
+                <Text style={styles.title}>Login</Text>
+                <Text style={styles.subtitle}>Conecte-se à sua conta em nosso aplicativo.</Text>
+            </View>
 
-      <View style={styles.inputBox}>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-          placeholder='Digite seu email'
-          placeholderTextColor='#666'
-        />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-          placeholder='Digite sua senha'
-          placeholderTextColor='#666'
-          secureTextEntry
-        />
+            <View style={styles.inputBox}>
+                <TextInput
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    placeholder='Digite seu email'
+                    placeholderTextColor='#666'
+                />
+                <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.input}
+                    placeholder='Digite sua senha'
+                    placeholderTextColor='#666'
+                    secureTextEntry
+                />
 
-        <Button 
-          textButton='Entrar' 
-          onPress={handleLogin}
-          style={null}
-          disabled={undefined}/>
+                <Button 
+                    textButton='Entrar' 
+                    onPress={handleLogin}
+                    style={null}
+                    disabled={undefined}/>
                   
-        <View style={styles.signupBox}>
-          <Text style={styles.signupText}>Não possui conta?</Text>
-          <Text style={styles.signupLink} >Cadastrar-se</Text>
+                <View style={styles.signupBox}>
+                    <Text style={styles.signupText}>Não possui conta?</Text>
+                    <Text style={styles.signupLink} >Cadastrar-se</Text>
+                </View>
+            </View>
+        </KeyboardAvoidingView>
+
+        <View style={styles.footer}>
+            <Text style={styles.footerText}>©2025 - Rede Lucy Montoro</Text>
         </View>
-      </View>
-    </KeyboardAvoidingView>
 
-    <View style={styles.footer}>
-      <Text style={styles.footerText}>©2025 - Rede Lucy Montoro</Text>
-    </View>
-
-  </View>;
+    </View>;
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  mainBox: {
-    width: '100%',
-    height: '90%',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  title: {
-    fontSize: 56, // text-7xl ~ 56px
-    height: 80, // h-[5rem]
-    fontWeight: '300',
-  },
-  subtitle: {
-    fontSize: 20, // text-xl
-  },
-  inputBox: {
-    width: '100%',
-    gap: 20,
-  },
-  input: {
-    width: '100%',
-    height: 56, // h-14
-    borderBottomWidth: 1,
-    borderBottomColor: '#000',
-    padding: 8,
-    fontSize: 20,
-    color: '#000',
-  },
-  signupBox: {
-    marginTop: 40,
-  },
-  signupText: {
-    fontSize: 20,
-    fontWeight: '300',
-  },
-  signupLink: {
-    fontSize: 20,
-    fontWeight: '300',
-    color: '#fbbf24',
-  },
-  footer: {
-    width: '100%',
-    height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    position: 'relative',
-  },
-  footerText: {
-    fontSize: 16,
-    fontWeight: '300',
-  },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        padding: 20,
+    },
+    mainBox: {
+        width: '100%',
+        height: '90%',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+    },
+    title: {
+        fontSize: 56, // text-7xl ~ 56px
+        height: 80, // h-[5rem]
+        fontWeight: '300',
+    },
+    subtitle: {
+        fontSize: 20, // text-xl
+    },
+    inputBox: {
+        width: '100%',
+        gap: 20,
+    },
+    input: {
+        width: '100%',
+        height: 56, // h-14
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        padding: 8,
+        fontSize: 20,
+        color: '#000',
+    },
+    signupBox: {
+        marginTop: 40,
+    },
+    signupText: {
+        fontSize: 20,
+        fontWeight: '300',
+    },
+    signupLink: {
+        fontSize: 20,
+        fontWeight: '300',
+        color: '#fbbf24',
+    },
+    footer: {
+        width: '100%',
+        height: 64,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        position: 'relative',
+    },
+    footerText: {
+        fontSize: 16,
+        fontWeight: '300',
+    },
 });
 
 export default SigninScreen;
