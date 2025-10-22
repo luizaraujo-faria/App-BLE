@@ -10,6 +10,10 @@ import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
 // import { deviceConfig } from '../../ble/deviceConfig';
 // import { bleService } from '../../ble/BleService';
 
+type DeviceItem = {
+    label: string;
+    value: string;
+}
 
 const SettingsScreen = () => {
 
@@ -41,7 +45,7 @@ const SettingsScreen = () => {
     // Atualiza a lista do Dropdown com os dispositivos escaneados
     useEffect(() => {
         const deviceItems: DeviceItem[] = devices.map(device => ({
-            label: device.name || device.localName || 'Dispositivo Desconhecido',
+            label: device.name || device.localName || 'Dispositivo desconhecido',
             value: device.id,
         }));
         setItems(deviceItems);
@@ -61,11 +65,11 @@ const SettingsScreen = () => {
             if (selectedDevice && !isConnected) {
                 connectToDevice(value)
                     .then(() => {
-                        Alert.alert('Sucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
+                        Alert.alert('\nSucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
                     })
-                    .catch((err: any) => {
-                        console.error('Falha na conexão:', `Erro: ${error}`, err.message);
-                        Alert.alert('Falha na conexão: ', `Erro: ${error}`);
+                    .catch((err) => {
+                        console.error('\nFalha na conexão:', `Erro: ${error}`, err.message);
+                        Alert.alert('\nFalha na conexão: ', `Erro: ${error}`);
                     });
             }
         }
@@ -79,8 +83,8 @@ const SettingsScreen = () => {
                 Alert.alert('Desconectado', 'Dispositivo desconectado com sucesso');
             } 
             catch (err: any){
-                console.error('Erro ao desconectar:', err);
-                Alert.alert('Erro ao desconectar:', err.message);
+                console.error('\nErro ao desconectar:', err);
+                Alert.alert('\nErro ao desconectar:', err.message);
             }
         }
     };
@@ -92,7 +96,7 @@ const SettingsScreen = () => {
     return (
 
         <View style={{ flex: 1 }}>
-            <Header title={'Gestão de fluxo'} subtitle={'Configurações'}/>
+            <Header subtitle={'Configurações'}/>
 
             <View style={ styles.container }>
 
@@ -126,11 +130,11 @@ const SettingsScreen = () => {
                             <Text style={{ width: '88%', fontSize: 16, textAlign: 'justify' }}>Para o uso desta funcionalidade é necessário que o Bluetooth e Localização do dispositivo estejam ativados!</Text>
                         </View>
                     
-                        <View style={{ width: '100%', gap: 7 }}>
+                        <View style={{ width: '100%', gap: 0 }}>
 
-                            <SwitchItem label='Permitir Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
+                            <SwitchItem label='Status Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
 
-                            <SwitchItem label='Permitir Localização' value={isLocationOn} onToggle={toggleLocation}/>
+                            <SwitchItem label='Status Localização' value={isLocationOn} onToggle={toggleLocation}/>
 
                         </View>
                     </View>
@@ -162,7 +166,7 @@ const SettingsScreen = () => {
                             <View style={{ width: '100%', marginTop: 10 }}>
 
                                 <Button 
-                                    textButton={`Desconectar-se de: ${currentDevice.name || currentDevice.localName}`} 
+                                    textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
                                     onPress={handleDisconnect}
                                     style={styles.disconnectButton}
                                     disabled={undefined}/>
@@ -229,17 +233,19 @@ const styles = StyleSheet.create({
         height: 50,
     },
     dropdownContainer: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#ebebebea',
         borderWidth: 0,
-        borderRadius: 4,
+        borderTopRightRadius: 4,
+        borderTopLeftRadius: 4,
+        boxShadow: '0px -1px 3px #0000007e',
     },
     dropdownLabel: {
         fontSize: 18,
-        color: '#ffffff',
+        color: '#ffffffff',
     },
     dropdownPlaceholder: {
         fontSize: 18,
-        color: '#ffffff',
+        color: '#ffffffff',
     },
     selectedItemContainer: {
         backgroundColor: '#a7a7a7',

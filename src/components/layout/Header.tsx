@@ -1,11 +1,10 @@
 import { View, StyleSheet, Text, Image } from 'react-native';
 
 interface HeaderProps {
-    title: string;
     subtitle: string | null;
 }
 
-const Header = ({ title, subtitle }: HeaderProps) => {
+const Header = ({ subtitle }: HeaderProps) => {
 
     return (
         <View style={styles.headerContainer}>
@@ -14,7 +13,7 @@ const Header = ({ title, subtitle }: HeaderProps) => {
                 style={styles.headerLogo}/>
 
             <View style={styles.texts}>
-                <Text style={styles.headerTitle}>{title}</Text>
+                <Text style={styles.headerTitle}>Gestão IMREA</Text>
                 <Text style={subtitle ? styles.headerSubtitle : { display: 'none' }}>{subtitle}</Text>
             </View>
 

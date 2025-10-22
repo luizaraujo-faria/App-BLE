@@ -1,5 +1,5 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
 
 class BleService {
@@ -12,35 +12,32 @@ class BleService {
 
     // Solicitar permissões em runtime - FORMA CORRETA PARA EXPO
     private async requestPermissions(): Promise<boolean> {
-        if (Platform.OS !== 'android') {
+        if(Platform.OS !== 'android') {
             return true;
         }
 
-        try {
+        try{
             const state = await this.manager.state();
       
-            if (state === State.PoweredOn) {
+            if(state === State.PoweredOn) {
                 return true;
-            } else {
-                // Para Android, apenas informa o usuário para ligar o Bluetooth
-                console.log('Bluetooth desligado. Peça para o usuário ligar manualmente nas configurações.');
-        
-                // Você pode mostrar um alerta para o usuário aqui
-                // Alert.alert('Bluetooth Desligado', 'Por favor, ligue o Bluetooth nas configurações do dispositivo');
-        
+            }
+            else{
                 return false;
             }
-        } catch (err: any) {
+        } 
+        catch (err: any) {
             console.error('Erro ao verificar estado Bluetooth:', err);
             return false;
         }
     }
 
     private async checkPermissions(): Promise<boolean> {
-        try {
+        try{
             const state = await this.manager.state();
             return state === State.PoweredOn;
-        } catch (err: any) {
+        } 
+        catch (err: any){
             console.error('Erro ao verificar permissões:', err);
             return false;
         }
@@ -75,6 +72,7 @@ class BleService {
         if(!hasPermissions){
             const granted = await this.requestPermissions();
             if(!granted){
+                Alert.alert('Erro Bluetooth', 'Permissões negadas para uso do bluetooth!');
                 console.error('Permissões negadas para escan BLE');
                 return;
             }
@@ -118,15 +116,15 @@ class BleService {
     // MÉTODO CORRIGIDO - Usando propriedades corretas 
     async discoverDeviceServices(deviceId: string): Promise<void> {
         try {
-            console.log('🔍 Iniciando descoberta de serviços para dispositivo:', deviceId);
+            console.log('Iniciando descoberta de serviços para dispositivo:', deviceId);
             
             // Conecta ao dispositivo (já deve estar conectado, mas garante)
             const device = await this.manager.connectToDevice(deviceId);
-            console.log(' Conectado para descobrir serviços');
+            console.log(' - Conectado para descobrir serviços');
             
             // Descobre todos os serviços e características
             await device.discoverAllServicesAndCharacteristics();
-            console.log(' Serviços descobertos');
+            console.log(' - Serviços descobertos');
             
             // Lista todos os serviços
             const services = await device.services();

@@ -1,8 +1,9 @@
 // src/hooks/useDeviceToggles.ts
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
-import * as Linking from 'expo-linking';
+// import * as Linking from 'expo-linking';
 import { BleManager, State } from 'react-native-ble-plx';
+import { Alert } from 'react-native';
 // import { Platform, PermissionsAndroid } from 'react-native';
 
 export function useDeviceToggles() {
@@ -18,39 +19,59 @@ export function useDeviceToggles() {
         return () => subscription.remove();
     }, [bleManager]);
 
+    useEffect(() => {
+
+        let intervalId: number;
+
+        const checkLocationStatus = async () => {
+
+            const enabled = await Location.hasServicesEnabledAsync();
+            setLocationOn(enabled);
+        };
+
+        checkLocationStatus();
+
+        intervalId = setInterval(checkLocationStatus, 100);
+
+        return () => {
+            if(intervalId){
+                clearInterval(intervalId);
+            }
+        };
+
+    }, []);
+
     // Alternar Bluetooth
     async function toggleBluetooth() {
-        if (isBluetoothOn) {
-            alert('O Bluetooth só pode ser desativado manualmente nas configurações do sistema.');
-            await Linking.openSettings();
-        } else {
-            // No Expo não dá pra ativar o Bluetooth via código.
-            // Então avisamos o usuário e pedimos pra ativar.
-            alert('Ative o Bluetooth nas configurações do sistema.');
-            await Linking.openSettings();
+
+        if(isBluetoothOn){
+            Alert.alert('Aviso!', 'Desative o serviço de bluetooth nas configurações!');
+        } 
+        else{
+            Alert.alert('Aviso!', 'Ative o serviço de bluetooth nas configurações!');
         }
     }
 
     // Alternar Localização
     async function toggleLocation() {
-        if (isLocationOn) {
-            alert('Para desativar, vá até as configurações do sistema.');
-            await Linking.openSettings();
+
+        if(isLocationOn){
+            Alert.alert('Aviso!', 'Desative o serviço de localização nas configurações!');
             return;
         }
 
         // Solicita permissão
         let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === 'granted') {
-            const enabled = await Location.hasServicesEnabledAsync();
-            if (enabled) {
-                setLocationOn(true);
-            } else {
-                alert('Ative a localização manualmente nas configurações.');
-                await Linking.openSettings();
-            }
-        } else {
-            alert('Permissão de localização negada.');
+        if(status !== 'granted'){
+            Alert.alert('Aviso!', 'Permissão de localização não fornecida.');
+        } 
+
+        const enabled = await Location.hasServicesEnabledAsync();
+        if(enabled){
+            setLocationOn(enabled);
+        } 
+        else{
+            Alert.alert('Aviso!', 'Ative o serviço de localização nas configurações!');
         }
     }
 

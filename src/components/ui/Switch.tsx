@@ -23,7 +23,10 @@ export function SwitchItem({ label, value, onToggle }: Props) {
                 circleInActiveColor='#fff'
                 renderActiveText={false}
                 renderInActiveText={false}
-                switchBorderRadius={16}
+                switchBorderRadius={18}
+                circleBorderWidth={0}
+                switchLeftPx={2.5}
+                switchRightPx={2.5}
             />
         </View>
     );
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 12,
+        paddingVertical: 10,
         paddingHorizontal: 16,
     },
     label: {
