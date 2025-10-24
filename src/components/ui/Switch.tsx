@@ -9,6 +9,7 @@ type Props = {
 };
 
 export function SwitchItem({ label, value, onToggle }: Props) {
+
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{label}</Text>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useBle } from '../../hooks/useBle';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -7,6 +7,8 @@ import Button from '@/src/components/ui/Button';
 import Header from '@/src/components/layout/Header';
 import { SwitchItem } from '@/src/components/ui/Switch';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
+import Popup from '@/src/components/ui/Popup';
+import BLEIcon from '../../../assets/images/bluetooth.png';
 // import { deviceConfig } from '../../ble/deviceConfig';
 // import { bleService } from '../../ble/BleService';
 
@@ -17,11 +19,15 @@ type DeviceItem = {
 
 const SettingsScreen = () => {
 
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
+
     const {
-        isBluetoothOn,
-        isLocationOn,
+        uiBluetoothOn,
+        uiLocationOn,
         toggleBluetooth,
         toggleLocation,
+        popupProps,
     } = useDeviceToggles();
 
     const {
@@ -54,22 +60,28 @@ const SettingsScreen = () => {
     // Mostra erros do BLE
     useEffect(() => {
         if(error){
-            Alert.alert('Erro BLE', error);
+            setPopupVisible(true);
+            setPopupMessage(`Falha do Bluetooth! Erro: ${error}`);
         }
     }, [error]);
     
     // Quando o usuário seleciona um dispositivo no dropdown
     useEffect(() => {
-        if (value) {
+
+        if(value){
+
             const selectedDevice = devices.find(device => device.id === value);
             if (selectedDevice && !isConnected) {
-                connectToDevice(value)
+                connectToDevice(value, selectedDevice)
                     .then(() => {
-                        Alert.alert('\nSucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
+                        setPopupVisible(true);
+                        setPopupMessage(`Conectado a ${selectedDevice.name || 'dispositivo'}!`);
+                        // Alert.alert('\nSucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
                     })
                     .catch((err) => {
                         console.error('\nFalha na conexão:', `Erro: ${error}`, err.message);
-                        Alert.alert('\nFalha na conexão: ', `Erro: ${error}`);
+                        setPopupVisible(true);
+                        setPopupMessage(`Falha na conexão! Erro: ${err.message}.`);
                     });
             }
         }
@@ -80,11 +92,13 @@ const SettingsScreen = () => {
             try {
                 await disconnectDevice(currentDevice);
                 setValue(null);
-                Alert.alert('Desconectado', 'Dispositivo desconectado com sucesso');
+                setPopupVisible(true);
+                setPopupMessage(`Desconectado do dispositivo: ${currentDevice.name} com sucesso!`);
             } 
             catch (err: any){
                 console.error('\nErro ao desconectar:', err);
-                Alert.alert('\nErro ao desconectar:', err.message);
+                setPopupVisible(true);
+                setPopupMessage(`Erro ao desconectar-se de: ${currentDevice.name}!`);
             }
         }
     };
@@ -96,6 +110,10 @@ const SettingsScreen = () => {
     return (
 
         <View style={{ flex: 1 }}>
+
+            <Popup title='Aviso' message={popupProps.popupMessage} visible={popupProps.popupVisible} onClose={() => popupProps.setPopupVisible(false)}/>
+            <Popup title='Aviso' message={popupMessage} visible={popupVisible} onClose={() => setPopupVisible(false)}/>
+            
             <Header subtitle={'Configurações'}/>
 
             <View style={ styles.container }>
@@ -107,7 +125,7 @@ const SettingsScreen = () => {
 
                         <View style={{ width: '75%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Text style={styles.title}>Controle Bluetooth</Text>
-                            <Image source={require('@/assets/images/bluetooth.png')} style={{ width: 30, height: 30 }} />
+                            <Image source={BLEIcon} style={{ width: 30, height: 30 }} />
                         </View>
 
                         <Text style={{ fontSize: 20, marginBottom: 28 }}>Status: 
@@ -132,9 +150,9 @@ const SettingsScreen = () => {
                     
                         <View style={{ width: '100%', gap: 0 }}>
 
-                            <SwitchItem label='Status Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
+                            <SwitchItem label='Status Bluetooth' value={uiBluetoothOn} onToggle={toggleBluetooth}/>
 
-                            <SwitchItem label='Status Localização' value={isLocationOn} onToggle={toggleLocation}/>
+                            <SwitchItem label='Status Localização' value={uiLocationOn} onToggle={toggleLocation}/>
 
                         </View>
                     </View>
@@ -144,9 +162,10 @@ const SettingsScreen = () => {
                             textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
                             onPress={isScanning ? stopScan : scanDevices}
                             style={null}
-                            disabled={undefined}/>
+                            disabled={!uiBluetoothOn || !uiLocationOn}/>
 
                         <DropDownPicker
+                            disabled={!uiBluetoothOn || !uiLocationOn}
                             open={open}
                             value={value}
                             items={items}
@@ -154,7 +173,7 @@ const SettingsScreen = () => {
                             setValue={setValue}
                             setItems={setItems}
                             placeholder={'Dispositivos encontrados'}
-                            style={styles.dropdown}
+                            style={(uiBluetoothOn && uiLocationOn) ? styles.dropdown : styles.dropdownDisabled}
                             dropDownContainerStyle={styles.dropdownContainer}
                             labelStyle={styles.dropdownLabel}
                             placeholderStyle={styles.dropdownPlaceholder}
@@ -169,7 +188,7 @@ const SettingsScreen = () => {
                                     textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
                                     onPress={handleDisconnect}
                                     style={styles.disconnectButton}
-                                    disabled={undefined}/>
+                                    disabled={false}/>
                             </View>
                         )}
                     </View>
@@ -228,6 +247,12 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         backgroundColor: '#ffb54c',
+        borderWidth: 0,
+        borderRadius: 4,
+        height: 50,
+    },
+    dropdownDisabled: {
+        backgroundColor: '#cea163ff',
         borderWidth: 0,
         borderRadius: 4,
         height: 50,

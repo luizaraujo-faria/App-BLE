@@ -1,6 +1,7 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
 import { Alert, Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
+import * as Location from 'expo-location';
 
 class BleService {
     private manager: BleManager;
@@ -35,7 +36,8 @@ class BleService {
     private async checkPermissions(): Promise<boolean> {
         try{
             const state = await this.manager.state();
-            return state === State.PoweredOn;
+            const locationState = await Location.PermissionStatus.GRANTED;
+            return (state === State.PoweredOn, locationState === 'granted');
         } 
         catch (err: any){
             console.error('Erro ao verificar permissões:', err);
@@ -46,24 +48,34 @@ class BleService {
     public async initialize(): Promise<boolean> {
         try {
             const state = await this.manager.state();
+            const locationState = await Location.hasServicesEnabledAsync();
       
             if (state !== State.PoweredOn) {
                 console.log('Bluetooth não está ligado. Estado:', state);
                 return false;
             }
 
-            console.log('Bluetooth ligado e pronto para uso');
+            if(locationState !== true){
+                console.log(`Localização não esta ligada, Estado: ${locationState}`);
+                return false;
+            }
+
+            console.log('Bluetooth ligado e pronto para uso!');
+            console.log('Localização ligada e pronta para uso!');
             return true;
-        } catch (err: any) {
-            console.error('Erro na inicialização BLE:', err);
+        } 
+        catch(err: any) {
+            console.error('Falha ao incializar BLE:', err);
             return false;
         }
     }
 
     // Escanear dispositivos
     async scanForDevices(
+
         onDeviceFound: (device: BluetoothDevice) => void,
         options: ScanOptions = {},
+
     ): Promise<void> {
 
         if(this.isScanning){ console.log('Scan efetuado.'); return; }
@@ -89,6 +101,7 @@ class BleService {
                     scanMode: options.scanMode || ScanMode.LowLatency,
                 },
                 (err, device) => {
+                    
                     if(err){ 
                         console.error('Erro no scan! ', err);
                         this.stopScan();

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Button from '@/src/components/ui/Button';
 import Header from '@/src/components/layout/Header';
 import { FlatList } from 'react-native';
+// import Popup from '@/src/components/ui/Popup';
 
 type ColaboratorType = {
     id: string;
