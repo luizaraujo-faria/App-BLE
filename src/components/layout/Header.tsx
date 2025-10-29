@@ -1,4 +1,5 @@
 import { View, StyleSheet, Text, Image } from 'react-native';
+import LogoIMREA from '@/assets/images/LogoIMREA.png';
 
 interface HeaderProps {
     subtitle: string | null;
@@ -9,7 +10,7 @@ const Header = ({ subtitle }: HeaderProps) => {
     return (
         <View style={styles.headerContainer}>
 
-            <Image source={require('../../../assets/images/LogoIMREA.png')} 
+            <Image source={LogoIMREA} 
                 style={styles.headerLogo}/>
 
             <View style={styles.texts}>

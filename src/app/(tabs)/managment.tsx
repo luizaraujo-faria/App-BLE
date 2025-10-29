@@ -11,7 +11,7 @@ const ManagmentScreen = () => {
             </View>
         </View>
     );
-}
+};
 
 const style = StyleSheet.create({
     container: {

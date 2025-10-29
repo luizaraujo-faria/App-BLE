@@ -25,7 +25,7 @@ const RootLayout = () => {
                 <Stack screenOptions={{ 
                     animation: 'slide_from_right',
                     header: () => (
-                        <Header title='IMREA App' subtitle={null}/>
+                        <Header subtitle={null}/>
                     ),
                 }}>
                     <Stack.Screen name='index' options={{ title: 'Sign In' }} />
