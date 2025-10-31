@@ -1,191 +1,292 @@
-import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import Button from '@/src/components/ui/Button';
+import { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Header from '@/src/components/layout/Header';
-import Panel from '@/src/components/ui/Panel';
-import DropDownPicker from 'react-native-dropdown-picker';
-// import Popup from '@/src/components/ui/Popup';
+import Button from '@/src/components/ui/Button';
 
-type ColaboratorType = {
-    id: string;
-    name: string;
-    datetime: string;
+type EntryItemType = {
+    id?: string;
+    name?: string;
+    sector?: string;
+    entry?: string;
+    exit?: string;
 }
 
-type DropDownType = {
-    option: string;
+interface EntryItemProps {
+    entryItem: EntryItemType;
+    selectItem: (item: EntryItemType) => void;
+}
+interface EntryCardProps {
+    selectedItem: EntryItemType | null;
+    visible: boolean;
+    onClose: () => void;
 }
 
+// Item de listagem de funcionários
+const EntryItem = ({ entryItem, selectItem }: EntryItemProps) => {
+    return (
+        <TouchableOpacity onPress={() => selectItem(entryItem)}>
+            <View style={homeStyles.entryItemCard}>
+                <View style={{ width: '50%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
+                    <Text>ID: {entryItem.id}</Text>
+                    <Text>Nome: {entryItem.name?.split(' ', 2).join(' ')}</Text>
+                </View>
+                <View style={{ width: '50%', height: '90%', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                    <Text>{entryItem.entry}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+};
 
-interface ActiveState {
-    [key: string]: boolean;
-}
+// Cards de informações de funcionários
+const EntryCard = ({ selectedItem, visible, onClose }: EntryCardProps ) => {
+    return (
+        <Modal 
+            visible={visible}
+            transparent={true}
+            animationType='fade'
+        >
+
+            <View style={homeStyles.entryCardOverlay}>
+                <View style={homeStyles.entryCard}>
+
+                    {/* Cabeçalho do card */}
+                    <View style={homeStyles.cardHeader}>
+                        <View style={{ width: '80%', flexDirection: 'row', gap: 10 }}>
+            
+                            <View style={homeStyles.texts}>
+                                <Text style={homeStyles.title}>Informações de {selectedItem?.name?.split(' ', 2).join(' ')}</Text>
+                            </View>
+                        </View>
+
+                        <TouchableOpacity 
+                            onPress={onClose} 
+                            style={{ width: '20%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+
+                            <Ionicons name={'close'} size={24} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={homeStyles.cardInformations}>
+                        
+                        {/* Tópico 1 */}
+                        <View style={{ width: '100%', height: 'auto', gap: 0 }}>
+                            <Text style={{ fontSize: 18 }}>Dados Pessoais</Text>
+                            
+                            <View style={{ padding: 5 }}>
+
+                                <Text>ID: 
+                                    <Text style={ selectedItem?.id ? { color: '#106b0dff' } : { color: '#da0700ff' }}>{` ${selectedItem?.id}`}</Text>
+                                </Text>
+
+                                <Text>Nome: 
+                                    <Text style={ selectedItem?.name ? { color: '#106b0dff' } : { color: '#da0700ff' }}>{` ${selectedItem?.name}`}</Text>
+                                </Text>
+
+                                <Text>Setor: 
+                                    <Text style={ selectedItem?.sector ? { color: '#106b0dff' } : { color: '#da0700ff' }}>{` ${selectedItem?.sector}`}</Text>
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{ width: '100%', height: 2, backgroundColor: '#e7e7e7' }}></View>
+
+                        {/* Tópico 2 */}
+                        <View style={{ width: '100%', height: 'auto', gap: 0 }}>
+                            <Text style={{ fontSize: 18 }}>Datas e Horários</Text>
+                            
+                            <View style={{ padding: 5 }}>
+
+                                <Text>Entrada:
+                                    <Text style={ selectedItem?.entry ? { color: '#daa700ff' } : { color: '#da0700ff' } }>
+                                        {selectedItem?.entry ? ` ${selectedItem.entry}` : ' N/A'}
+                                    </Text>
+                                </Text>
+                                
+                                <Text>Saída:  
+                                    <Text style={ selectedItem?.exit ? { color: '#daa700ff' } : { color: '#da0700ff' } }>
+                                        {selectedItem?.exit ? ` ${selectedItem.exit}` : ' N/A'}
+                                    </Text>
+                                </Text>
+                            </View>
+
+                        </View>
+
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+};
 
 const HomeScreen = () => {
 
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState<DropDownType[]>([
-        { option: 'Bio Engenharia' },
-        { option: 'TI' },
-        { option: 'Fisio' },
+    const [entryItems, _setEntryItems] = useState<EntryItemType[]>([
+        { id: '12355', name: 'Shaolin Matador de Porco', sector: 'Bio Engenharia', entry: '20/10/25 - 11:30', exit: undefined },
+        { id: '22456', name: 'Luiz Henrique Araujo Farias', sector: 'TI', entry: '20/10/25 - 13:50', exit: undefined },
+        { id: '31257', name: 'Rayan Ferreira de Souza Lima', sector: 'Fisioterapia', entry: '20/10/25 - 12:20', exit: undefined },
+        { id: '31258', name: 'Rodolfo Mendes Sena de assunção', sector: 'Recepção', entry: '20/10/25 - 12:20', exit: '20/11/2025 - 15:00' },
     ]);
+
+    const [showEntryCard, setShowEntryCard] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<EntryItemType | null>(null);
 
     useEffect(() => {
-        const setorItems: DropDownType[] = items.map(setor => ({
-            option: setor.option,
-        }));
-        setItems(setorItems);
-    }, [items]);
+        
+        if(selectedItem){
+            setShowEntryCard(true);
+        }
 
-    const [colaborators, _setColaborators] = useState<ColaboratorType[]>([
-        { id: '12355', name: 'Shaolin Matador de Porco', datetime: '20/10/25 - 11:30' },
-        { id: '22456', name: 'Luiz Henrique Araujo Farias', datetime: '20/10/25 - 13:50' },
-        { id: '31257', name: 'Rayan Ferreira de Souza Lima', datetime: '20/10/25 - 12:20' },
-        { id: '31258', name: 'Rayan Ferreira de Souza Lima', datetime: '20/10/25 - 12:20' },
-        { id: '31259', name: 'Rayan Ferreira de Souza Lima', datetime: '20/10/25 - 12:20' },
-        { id: '31250', name: 'Rayan Ferreira de Souza Lima', datetime: '20/10/25 - 12:20' },
-        { id: '31211', name: 'Rayan Ferreira de Souza Lima', datetime: '20/10/25 - 12:20' },
-    ]);
+    }, [selectedItem]);
 
-    const [activePanel, setActivePanel] = useState<ActiveState>({});
+    const clearList = () => {
 
-    const togglePanel = (id: string) => {
-        setActivePanel((prev) => ({
-            ...prev, [id]: !prev[id],
-        }));
+        if(entryItems.length > 0){
+            _setEntryItems([]);
+        }
     };
 
     return(
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, position: 'relative' }}>
             <Header subtitle={'IMREA'}/>
             
-            <View style={style.container}>
-                        
-                <View>
-                    <ScrollView 
-                        contentContainerStyle={{ flexGrow: 1, gap: 16 }}
-                        nestedScrollEnabled
-                        showsVerticalScrollIndicator={false}
-                        style={style.panelContainer}
-                    >
-                        <Panel title='Entrada' id='1' contentList={colaborators} isActive={!!activePanel['1']} onToggle={togglePanel} />
-                        <Panel title='Saída' id='2' contentList={colaborators} isActive={!!activePanel['2']} onToggle={togglePanel} />
-                    </ScrollView>
-                </View>
+            <EntryCard 
+                selectedItem={selectedItem} 
+                visible={showEntryCard} 
+                onClose={() => {
+                    setShowEntryCard(false);
+                    setSelectedItem(null);}}
+            />
 
-                <View style={style.actionContainer}>
+            <View style={homeStyles.container}>
 
-                    <View style={style.searchContainer}>
+                <View style={homeStyles.entryPanel}>
 
-                        <View style={style.searchBar}>
+                    <View style={homeStyles.panelHeader}>
+                        <Text style={{ fontSize: 18 }}>Usuários recebidos:</Text>
 
-                            <DropDownPicker
-                                open={open}
-                                value={value}
-                                items={items}
-                                setOpen={setOpen}
-                                setValue={setValue}
-                                setItems={setItems}
-                                placeholder={'Setor'}
-                                style={style.dropdown}
-                                dropDownContainerStyle={style.dropdownContainer}
-                                labelStyle={style.dropdownLabel}
-                                placeholderStyle={style.dropdownPlaceholder}
-                                selectedItemContainerStyle={style.selectedItemContainer}
-                                selectedItemLabelStyle={style.selectedItemLabel}
-                            />
-                        </View>
-
-                        <Button style={null} textButton='Buscar' disabled={false} onPress={() => null} />
+                        <Button 
+                            textButton={'Limpar'} 
+                            style={homeStyles.clearButton} 
+                            disabled={entryItems.length === 0}
+                            onPress={clearList} 
+                        />
                     </View>
 
-                    <View style={style.searchListContainer}>
-                        <Panel title='Dados buscados' id='3' contentList={colaborators} isActive={!!activePanel['3']} onToggle={togglePanel} />
-                    </View>
-
-                    {/* <Button 
-                        textButton={'Buscar dados'} 
-                        onPress={() => null} 
-                        style={null} 
-                        disabled={false}/> */}
+                    <FlatList
+                        scrollEnabled={true}
+                        nestedScrollEnabled={true}
+                        data={entryItems}
+                        keyExtractor={(item) => item.id!}
+                        renderItem={({ item }) => <EntryItem selectItem={() => setSelectedItem(item)} entryItem={item}/>}
+                        contentContainerStyle={{ gap: 12 }}
+                        style={ homeStyles.list} 
+                    />
                 </View>
             </View>
         </View>
     );
 };
 
-const style = StyleSheet.create({
+const homeStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4ff',
         padding: 24,
         gap: 16,
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    panelContainer: {
+    entryPanel: {
         width: '100%',
-        minHeight: 'auto',
-        height: 'auto',
-        maxHeight: 375,
-        padding: 1,
-    },
-    actionContainer: {
-        width: '100%',
-        height: '40%',
+        height: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 4,
+        boxShadow: '0px 0px 3px #8a8a8a69',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        backgroundColor: '#fff',
-        boxShadow: '0px 0px 8px #8a8a8a69',
         padding: 10,
-        gap: 18,
-    },
-    searchContainer: {
-        width: '100%',
-        height: '70%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 20,
-
-    },
-    searchBar: {
-        width: '100%',
-        height: 70,
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        flexDirection: 'row',
         gap: 16,
     },
-    searchListContainer: {
+    panelHeader: {
+        width: '100%',
+        height: '8%',
+        borderBottomColor: '#888888ff',
+        borderBottomWidth: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    clearButton: {
+        width: '35%',
+        height: 30,
+        backgroundColor: '#ffb54cff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 4,
+    },
+    list: {
         width: '100%',
         height: 'auto',
     },
-    dropdown: {
-        backgroundColor: '#ffb54c',
-        borderWidth: 0,
+    entryItemCard: {
+        width: '100%',
+        height: 60,
         borderRadius: 4,
-        height: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f8f8f8ff',
+        boxShadow: '0px 0px 3px #7a7a7a81',
+        padding: 5,
     },
-    dropdownContainer: {
-        backgroundColor: '#ebebebea',
-        borderWidth: 0,
-        borderTopRightRadius: 4,
-        borderTopLeftRadius: 4,
-        boxShadow: '0px -1px 3px #0000007e',
+    entryCardOverlay: {
+        flex: 1,
+        backgroundColor: '#0000003b',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    dropdownLabel: {
+    entryCard: {
+        width: '90%',
+        height: '30%',
+        backgroundColor: '#fff',
+        boxShadow: '0px 0px 3px #7a7a7a81',
+        borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    cardHeader: {
+        width: '100%',
+        height: '20%',
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 20,
+        paddingLeft: 10,
+        paddingRight: 20,
+        position: 'relative',
+        zIndex: 2,
+        boxShadow: '0px 0px 8px #8a8a8a69',
+        overflow: 'hidden',
+    },
+    texts: {
+        alignItems: 'flex-start',
+        justifyContent: 'center', 
+    },
+    title: {
         fontSize: 18,
-        color: '#ffffffff',
     },
-    dropdownPlaceholder: {
-        fontSize: 18,
-        color: '#ffffffff',
-    },
-    selectedItemContainer: {
-        backgroundColor: '#a7a7a7',
-    },
-    selectedItemLabel: {
-        fontWeight: 'bold',
-        color: '#ffffff',
+    cardInformations: {
+        width: '100%',
+        height: '80%',
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
     },
 });
 

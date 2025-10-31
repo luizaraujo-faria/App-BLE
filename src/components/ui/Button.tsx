@@ -10,7 +10,10 @@ interface ButtonProps {
 const Button = ({ textButton, onPress, style, disabled }: ButtonProps) => {
 
     return (
-        <TouchableOpacity style={(style ? style : buttonStyles.buttonContainer && disabled ? buttonStyles.buttonDisabled : buttonStyles.buttonContainer)} onPress={onPress} disabled={disabled}>
+        <TouchableOpacity 
+            style={[buttonStyles.buttonContainer, style && style, disabled && buttonStyles.buttonDisabled]}
+            onPress={onPress} 
+            disabled={disabled}>
             <Text style={buttonStyles.buttonText}>{textButton}</Text>
         </TouchableOpacity>
     );
@@ -27,13 +30,7 @@ const buttonStyles = StyleSheet.create({
         marginBottom: 10,
     },
     buttonDisabled: {
-        width: '100%',
-        height: 50,
         backgroundColor: '#cea163ff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 4,
-        marginBottom: 10,
     },
     buttonText: {
         fontSize: 18,
