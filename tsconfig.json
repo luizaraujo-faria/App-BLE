@@ -14,5 +14,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "declarations.d.ts"
-  ]
+, "src/services/api.ts"  ]
 }

@@ -85,7 +85,7 @@ const SettingsScreen = () => {
                     });
             }
         }
-    }, [value, devices, isConnected]);
+    }, [value, devices, isConnected, connectToDevice, error]);
     
     const handleDisconnect = async () => {
         if (currentDevice) {
