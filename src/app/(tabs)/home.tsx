@@ -1,8 +1,10 @@
+import React from 'react';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Text, FlatList, ActivityIndicator } from 'react-native';
 import Header from '@/src/components/layout/Header';
 import EntryItem from '@/src/components/ui/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
+import { useBleContext } from '@/src/contexts/BleContext';
 
 type EntryItemType = {
     id: string;
@@ -14,37 +16,11 @@ type EntryItemType = {
 
 const HomeScreen = () => {
 
+    const { receivedData } = useBleContext();
+
     const [loading, setLoading] = useState(false);
-
-    const [entryItems, _setEntryItems] = useState<EntryItemType[]>([
-        // { id: '12345' },
-        // { id: '23334' },
-        // { id: '44455' },
-        // { id: '11111' },
-        // { id: '22222' },
-        // { id: '33334' },
-        // { id: '55667' },
-    ]);
-
-    // const [showEntryCard, setShowEntryCard] = useState(false);
-    // const [selectedItem, setSelectedItem] = useState<EntryItemType | null>(null);
-
-    // useEffect(() => {
-        
-    //     if(selectedItem){
-    //         setShowEntryCard(true);
-    //     }
-
-    // }, [selectedItem]);
-
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const clearList = () => {
-
-        if(entryItems.length > 0){
-            _setEntryItems([]);
-        }
-    };
+    const [entryItems, setEntryItems] = useState<EntryItemType[]>([]);
 
 
     const sendAllIDsToBackend = useCallback(async () => {
@@ -61,21 +37,25 @@ const HomeScreen = () => {
             console.log('▶ Enviando IDs para o backend:', ids);
 
             await createRecord(ids);
-
             clearList();
-
             console.log('✔ IDs enviados com sucesso');
         }
-        catch(err){
-            console.log('❌ Erro ao enviar IDs:', err);
+        catch(err: any){
+            console.log('❌ Erro ao enviar IDs:', err.message);
         }
         finally{
             setLoading(false);
         }
     }, [entryItems]);
 
+    const clearList = () => {
+        if(entryItems.length > 0){
+            setEntryItems([]);
+        }
+    };
+
     useEffect(() => {
-    // Se a lista estiver vazia, não faz nada
+        // Se a lista estiver vazia, não faz nada
         if (entryItems.length === 0) return;
 
         // Limpa debounce anterior
@@ -86,21 +66,30 @@ const HomeScreen = () => {
         // Debounce de 500ms para evitar flood
         pendingSendRef.current = setTimeout(() => {
             sendAllIDsToBackend();
-        }, 500);
+        }, 5000);
 
     }, [entryItems, sendAllIDsToBackend]);
+
+    useEffect(() => {
+
+        if(!receivedData) return;
+
+        if(receivedData.trim() === '') return;
+
+        // Impedir duplicados
+        const exists = entryItems.some(item => item.id === receivedData);
+        if(exists) return;
+
+        // Adicionar novo item
+        setEntryItems(prev => [
+            ...prev,
+            { id: receivedData },
+        ]);
+    }, [receivedData]);
 
     return(
         <View style={{ flex: 1, position: 'relative' }}>
             <Header subtitle={'IMREA'}/>
-            
-            {/* <EntryCard 
-                selectedItem={selectedItem} 
-                visible={showEntryCard} 
-                onClose={() => {
-                    setShowEntryCard(false);
-                    setSelectedItem(null);}}
-            /> */}
 
             <View style={homeStyles.container}>
 

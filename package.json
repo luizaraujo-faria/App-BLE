@@ -16,6 +16,7 @@
     "@expo/vector-icons": "^15.0.2",
     "@react-navigation/native": "^7.1.8",
     "axios": "^1.12.2",
+    "buffer": "^6.0.3",
     "expo": "~54.0.10",
     "expo-bluetooth": "^0.0.0",
     "expo-build-properties": "~1.0.9",

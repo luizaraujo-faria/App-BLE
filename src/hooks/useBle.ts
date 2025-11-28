@@ -1,169 +1,192 @@
+// src/hooks/useBle.ts
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Alert } from 'react-native';
 import { BluetoothDevice } from '../ble/bleTypes';
 import { bleService } from '../ble/BleService';
-import { Alert } from 'react-native';
 
 export const useBle = () => {
-    
+
     const [devices, setDevices] = useState<BluetoothDevice[]>([]);
     const [isScanning, setIsScanning] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [currentDevice, setCurrentDevice] = useState<BluetoothDevice | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [receivedData, setReceivedData] = useState<string | null>(null);
 
-    let isConnectingRef = useRef(false);
+    const isConnectingRef = useRef(false);
+    const DEFAULT_DEVICE = 'ESP32_FRID';
 
-    const DEFAULT_DEVICE = 'ESP32_BLE_Display';
-
-    // Inicializar o BLE
+    // Inicialização
     useEffect(() => {
 
-        const initBle = async () => {
-            try{
-                const isInitialized = await bleService.initialize();
-                if(!isInitialized){ setError('\nBluetooth indisponível!'); }
-            }
-            catch(err: any){
-                Alert.alert('Erro Bluetooth', 'Falha ao inicializar Bluetooth BLE!');
-                setError(`Falha ao incializar Bluetooth BLE! ${err.message}`);
-            }
-        };
+        let mounted = true;
 
-        initBle();
+        (async () => {
+
+            try{
+                const ok = await bleService.initialize();
+                if (!ok && mounted) {
+                    setError('Bluetooth indisponível!');
+                    console.log('❌ Bluetooth indisponível!');
+                } 
+                else{
+                    console.log('🟢 Bluetooth inicializado e pronto');
+                }
+            } 
+            catch(err: any){
+                console.log('❌ Erro ao inicializar BLE:', err);
+                Alert.alert('Erro Bluetooth', 'Falha ao inicializar Bluetooth BLE!');
+                if(mounted) setError(`Falha ao inicializar BLE: ${err?.message ?? err}`);
+            }
+        })();
 
         return () => {
+            mounted = false;
             bleService.stopScan();
         };
     }, []);
 
-    // Função de filtro para nomes válidos
+    // Filtro de nomes
     const filterDeviceByName = useCallback((deviceName: string | null): boolean => {
-        if (!deviceName) return false;
-        
+
+        if(!deviceName) return false;
         const name = deviceName.trim();
-        
-        const invalidNames: string[] = [
-            'unknown',
-            'dispositivo desconhecido',
-            'null',
-            'undefined',
-            'dispositivo',
-            'device',
-            '',
-            ' ',
-            'unknown device',
+        const invalidNames = [
+            'unknown', 'dispositivo desconhecido', 'null', 'undefined',
+            'dispositivo', 'device', '', ' ', 'unknown device',
         ];
 
         return !invalidNames.includes(name.toLowerCase()) && name.length > 0;
     }, []);
 
-    // Escanear dispositivos
-    const scanDevices = useCallback(async () => {
-        
-        setError(null);
-        setDevices([]);
-
-        bleService.scanForDevices((device) => {
-            setIsScanning(true);
-
-            if(filterDeviceByName(device.name)){
-
-                setDevices(prev => {
-                    // Evita duplicatas
-                    if(!prev.find(d => d.id === device.id)){
-                        const newDevices = [...prev, device];
-
-                        checkAndAutoConnect(device);
-
-                        return newDevices;
-                    }
-                    return prev;
-                });
-            }
-        }, {
-            allowDuplicates: false,
-        });
-    }, [filterDeviceByName]);
-
     // Parar scan
     const stopScan = useCallback(() => {
-
         bleService.stopScan();
         setIsScanning(false);
     }, []);
 
-    // Conectar a um dispositivo
+    // conectar com timeout (Promise.race) - evita usar async no executor
+    const connectWithTimeout = useCallback((id: string, timeout = 7000) => {
+
+        const connectPromise = bleService.connectToDevice(id);
+        const timeoutPromise = new Promise<never>((_, reject) => {
+
+            const t = setTimeout(() => {
+                clearTimeout(t);
+                reject(new Error('Timeout de conexão - 7 segundos'));
+            }, timeout);
+        });
+
+        return Promise.race([connectPromise, timeoutPromise]);
+    }, []);
+
+    // Conectar a um dispositivo (corrigido)
     const connectToDevice = useCallback(async (deviceId: string, device: BluetoothDevice) => {
 
         if(isConnectingRef.current) return;
+        isConnectingRef.current = true;
+        setError(null);
 
         try{
-            isConnectingRef.current = true;
-
-            setError(null);
-      
-            const connectWithTimeout = async (id: string, timeout = 7000) => {
-
-                return new Promise<void>((resolve, reject) => {
-                    const timeoutId = setTimeout(() => {
-                        reject(new Error('Timeout de conexão - 7 segundos'));
-                    }, timeout);
-
-                    try {
-                        bleService.connectToDevice(id);
-                        setIsScanning(false);
-                        clearTimeout(timeoutId);
-                        resolve();
-                    } 
-                    catch(err: any){
-                        clearTimeout(timeoutId);
-                        reject(err.message);
-                    }
-                });
-            };
-
-            // Usar a conexão com timeout
-            await connectWithTimeout(deviceId);
-      
+            console.log(`🔵 connectToDevice: iniciando conexão com ${deviceId}`);
+            await connectWithTimeout(deviceId, 7000); // vai esperar a conexão real ou timeout
+            // Se chegou aqui, bleService.connectToDevice já terminou com sucesso
+            console.log('🟢 connectToDevice: conexão estabelecida com sucesso');
             setIsConnected(true);
-            setCurrentDevice(devices.find(d => d.id === deviceId) || device);
-            isConnectingRef.current = false;
-            return deviceId; // ou retorne o que você precisa
-
+            setCurrentDevice(prev => prev ?? (devices.find(d => d.id === deviceId) || device));
         } 
         catch(err: any){
-            setError(`Falha ao conectar com o dispositivo! ${err.message}`);
+            console.log('❌ connectToDevice: erro ao conectar:', err);
+            setError(`Falha ao conectar com o dispositivo! ${err?.message ?? err}`);
             throw err;
+        } 
+        finally{
+            isConnectingRef.current = false;
+            stopScan();
         }
-    }, [devices]);
+    }, [connectWithTimeout, devices, stopScan]);
 
-    // Verificar se é o ESP32_BLE e conectar automaticamente
+    // Auto connect quando detectar dispositivo alvo
     const checkAndAutoConnect = useCallback((device: BluetoothDevice) => {
-        // Se já está conectado ou tentando conectar, não faz nada
+
         if(isConnected || isConnectingRef.current) return;
-        
-        // Verifica se é o ESP32_BLE (comparação case insensitive)
         const isTargetDevice = device.name?.includes(DEFAULT_DEVICE);
-        
         if(isTargetDevice){
-
-            console.log(`Dispositivo alvo encontrado: ${device.name}. Conectando automaticamente...`);
-            connectToDevice(device.id, device);
+            console.log(`🎯 Dispositivo alvo encontrado: ${device.name}. Conectando automaticamente...`);
+            // não await aqui porque é chamado dentro do scan callback
+            connectToDevice(device.id, device).catch(err => {
+                console.log('❌ Erro na auto conexão:', err);
+            });
+            stopScan();
         }
-    }, [isConnected, connectToDevice]);
+    }, [isConnected, connectToDevice, stopScan]);
 
-    // Desconectar do dispositivo
-    const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
+    // Scan para dispositivos
+    const scanDevices = useCallback(async () => {
+        setError(null);
+        setDevices([]);
+        setIsScanning(true);
 
         try{
+            bleService.scanForDevices((device) => {
+                setIsScanning(true);
+                if (!filterDeviceByName(device.name)) return;
+
+                setDevices(prev => {
+                    if (prev.find(d => d.id === device.id)) return prev;
+                    const next = [...prev, device];
+                    // tenta auto conectar
+                    checkAndAutoConnect(device);
+                    return next;
+                });
+            }, { allowDuplicates: false });
+            console.log('🔍 scanDevices: scan iniciado');
+        } 
+        catch(err: any){
+            console.log('❌ scanDevices erro:', err);
+            setError(`Erro no scan: ${err?.message ?? err}`);
+            setIsScanning(false);
+        }
+    }, [checkAndAutoConnect, filterDeviceByName]);
+
+    // Desconectar
+    const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
+        try{
+            console.log('🔌 disconnectDevice: tentando desconectar', device.name);
+            bleService.stopNotification();
             await bleService.disconnectDevice(device);
             setIsConnected(false);
-            setCurrentDevice(null);  
-        }
+            setCurrentDevice(null);
+            console.log('🟢 disconnectDevice: desconectado');
+        } 
         catch(err: any){
-            setError(`\nFalha ao desconectar do dispositivo! ${err.message}`);
+            console.log('❌ disconnectDevice erro:', err);  
+            setError(`Falha ao desconectar do dispositivo! ${err?.message ?? err}`);
         }
     }, []);
+
+    // Start reading (notify)
+    const startReading = useCallback((serviceUUID: string, characteristicUUID: string) => {
+        console.log('▶️ [CTX] startReading chamada');
+        console.log('   Serviço:', serviceUUID);
+        console.log('   Característica:', characteristicUUID);
+        console.log('   currentDevice:', currentDevice?.id ?? 'null');
+
+        if(!currentDevice){
+            console.log('❌ [CTX] startReading: Nenhum dispositivo conectado!');
+            return;
+        }
+
+        bleService.startNotification(
+            currentDevice.id,
+            serviceUUID,
+            characteristicUUID,
+            (data: string) => {
+                console.log('📨 [CTX] Valor recebido do bleService:', data);
+                setReceivedData(data);
+            },
+        );
+    }, [currentDevice]);
 
     return {
         devices,
@@ -171,9 +194,11 @@ export const useBle = () => {
         isConnected,
         currentDevice,
         error,
+        receivedData,
         scanDevices,
         stopScan,
         connectToDevice,
         disconnectDevice,
+        startReading,
     };
 };
