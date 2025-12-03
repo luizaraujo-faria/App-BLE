@@ -11,7 +11,7 @@ export const useBle = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [currentDevice, setCurrentDevice] = useState<BluetoothDevice | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [receivedData, setReceivedData] = useState<string | null>(null);
+    const [receivedData, setReceivedData] = useState<{ value: string, ts: number } | null>(null);
 
     const isConnectingRef = useRef(false);
     const DEFAULT_DEVICE = 'ESP32_FRID';
@@ -183,10 +183,15 @@ export const useBle = () => {
             characteristicUUID,
             (data: string) => {
                 console.log('📨 [CTX] Valor recebido do bleService:', data);
-                setReceivedData(data);
+                setReceivedData({ value: data, ts: Date.now() });
             },
         );
     }, [currentDevice]);
+
+    const clearReceivedData = useCallback(() => {
+
+        setReceivedData(null);
+    }, []);
 
     return {
         devices,
@@ -200,5 +205,6 @@ export const useBle = () => {
         connectToDevice,
         disconnectDevice,
         startReading,
+        clearReceivedData,
     };
 };
