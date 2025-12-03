@@ -9,12 +9,13 @@ interface BleContextType {
     isConnected: boolean;
     currentDevice: any;
     error: string | null;
-    receivedData: string | null;
+    receivedData: { value: string, ts: number } | null;
     scanDevices: () => void;
     stopScan: () => void;
     connectToDevice: (deviceId: string, device: BluetoothDevice) => Promise<any>;
     disconnectDevice: (device: BluetoothDevice) => Promise<void>;
     startReading: (serviceUUID: string, characteristicUUID: string) => void;
+    clearReceivedData: () => void;
 }
 
 const BleContext = createContext<BleContextType | undefined>(undefined);

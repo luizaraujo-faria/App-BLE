@@ -5,6 +5,7 @@ import Header from '@/src/components/layout/Header';
 import EntryItem from '@/src/components/ui/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
 import { useBleContext } from '@/src/contexts/BleContext';
+import { useFocusEffect } from 'expo-router';
 
 type EntryItemType = {
     id: string;
@@ -16,12 +17,41 @@ type EntryItemType = {
 
 const HomeScreen = () => {
 
-    const { receivedData } = useBleContext();
+    const { receivedData, clearReceivedData } = useBleContext();
 
     const [loading, setLoading] = useState(false);
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    // const lastReceivedRef = useRef<string | null>(null);
     const [entryItems, setEntryItems] = useState<EntryItemType[]>([]);
 
+    const clearScreenState = useCallback(() => {
+
+        setEntryItems([]);
+        clearReceivedData();
+        
+        if(pendingSendRef.current) clearTimeout(pendingSendRef.current);
+        if(retryRef.current) clearTimeout(retryRef.current);
+
+        console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
+        console.log(`Dados recebidos: ${receivedData?.value}`);
+
+        return () => {
+            if(pendingSendRef.current) clearTimeout(pendingSendRef.current);
+            if(retryRef.current) clearTimeout(retryRef.current);
+            setEntryItems([]);
+            clearReceivedData();
+        };
+
+    }, []);
+
+    useFocusEffect(clearScreenState);
+
+    const clearList = useCallback(() => {
+        if(entryItems.length > 0){
+            setEntryItems([]);
+        }
+    }, [entryItems.length]);
 
     const sendAllIDsToBackend = useCallback(async () => {
 
@@ -34,25 +64,28 @@ const HomeScreen = () => {
 
             if (ids.length === 0) return;
 
+            console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
             console.log('▶ Enviando IDs para o backend:', ids);
 
             await createRecord(ids);
             clearList();
             console.log('✔ IDs enviados com sucesso');
+
+            if(retryRef.current) clearTimeout(retryRef.current);
         }
         catch(err: any){
             console.log('❌ Erro ao enviar IDs:', err.message);
+
+            if(retryRef.current) clearTimeout(retryRef.current);
+
+            retryRef.current = setTimeout(() => {
+                sendAllIDsToBackend();
+            }, 5000);
         }
         finally{
             setLoading(false);
         }
-    }, [entryItems]);
-
-    const clearList = () => {
-        if(entryItems.length > 0){
-            setEntryItems([]);
-        }
-    };
+    }, [clearList, entryItems]);
 
     useEffect(() => {
         // Se a lista estiver vazia, não faz nada
@@ -63,6 +96,8 @@ const HomeScreen = () => {
             clearTimeout(pendingSendRef.current);
         }
 
+        console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
+
         // Debounce de 500ms para evitar flood
         pendingSendRef.current = setTimeout(() => {
             sendAllIDsToBackend();
@@ -72,19 +107,14 @@ const HomeScreen = () => {
 
     useEffect(() => {
 
-        if(!receivedData) return;
+        if(!receivedData?.value) return;
 
-        if(receivedData.trim() === '') return;
-
-        // Impedir duplicados
-        const exists = entryItems.some(item => item.id === receivedData);
-        if(exists) return;
-
-        // Adicionar novo item
-        setEntryItems(prev => [
-            ...prev,
-            { id: receivedData },
-        ]);
+        // impede duplicado simultâneo
+        setEntryItems(prev => {
+            const exists = prev.some(item => item.id === receivedData.value);
+            if (exists) return prev;
+            return [...prev, { id: receivedData.value }];
+        });
     }, [receivedData]);
 
     return(
