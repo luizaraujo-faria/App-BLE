@@ -4,7 +4,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 const tabConfig = {
-    home: { icon: 'home', label: 'Início' },
+    home: { icon: 'list', label: 'Início' },
     managment: { icon: 'bar-chart', label: 'Gestão' },
     settings: { icon: 'settings', label: 'Configurações' },
 } as const;
@@ -13,7 +13,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
     return (
         <View style={styles.container}>
-            {state.routes.map((route, index) => {
+            {state.routes.map((route: any, index: number) => {
                 const { _options } = descriptors[route.key];
                 const isFocused = state.index === index;
                 const config = tabConfig[route.name as keyof typeof tabConfig];
@@ -36,7 +36,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                         onPress={onPress}
                         style={styles.tabButton}
                     >
-                        <Ionicons 
+                        <Ionicons
                             name={config.icon} 
                             size={24} 
                             color={isFocused ? '#ff9500ff' : '#666666'} 

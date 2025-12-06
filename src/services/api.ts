@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://192.168.0.110:3000/api';
+// http://192.168.0.110:3000/api
+export const API_BASE_URL = 'https://apiimrea-production.up.railway.app/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,

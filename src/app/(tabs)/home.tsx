@@ -17,9 +17,9 @@ const HomeScreen = () => {
     const [loading, setLoading] = useState(false);
 
     const [entryItems, _setEntryItems] = useState<EntryItemType[]>([
-        // { id: '12345' },
-        // { id: '23334' },
-        // { id: '44455' },
+        { id: '12345' },
+        { id: '23334' },
+        { id: '44455' },
         // { id: '11111' },
         // { id: '22222' },
         // { id: '33334' },
