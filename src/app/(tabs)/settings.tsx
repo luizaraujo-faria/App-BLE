@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useBle } from '../../hooks/useBle';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Button from '@/src/components/ui/Button';
 import Header from '@/src/components/layout/Header';
@@ -9,6 +8,7 @@ import { SwitchItem } from '@/src/components/ui/Switch';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
 import Popup from '@/src/components/ui/Popup';
 import BLEIcon from '../../../assets/images/bluetooth.png';
+import { useBleContext } from '@/src/contexts/BleContext';
 // import { deviceConfig } from '../../ble/deviceConfig';
 // import { bleService } from '../../ble/BleService';
 
@@ -40,13 +40,36 @@ const SettingsScreen = () => {
         stopScan,
         connectToDevice,
         disconnectDevice,
-    } = useBle();
+        receivedData,
+        startReading,
+    } = useBleContext();
         
     // const [message, setMessage] = useState<string>('');
     // const [ledState, setLedState] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState<DeviceItem[]>([]);
+
+    useEffect(() => {
+        if(isConnected) {
+            startReading(
+                '12345678-1234-1234-1234-1234567890ab',
+                'abcd1234-5678-1234-5678-1234567890ab',
+            );
+        }
+    }, [isConnected]);
+
+    useEffect(() => {
+        console.log('\n🟧 [SETTINGS] isConnected mudou:', isConnected);
+    }, [isConnected]);
+
+    useEffect(() => {
+        console.log('🟥 [SETTINGS] startReading é função?', typeof startReading);
+    }, [startReading]);
+
+    useEffect(() => {
+        console.log('🟦 [SETTINGS] receivedData mudou:', receivedData);
+    }, [receivedData]);
     
     // Atualiza a lista do Dropdown com os dispositivos escaneados
     useEffect(() => {

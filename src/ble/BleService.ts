@@ -2,10 +2,12 @@ import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
 import { Alert, Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
 import * as Location from 'expo-location';
+import { Buffer } from 'buffer';
 
 class BleService {
     private manager: BleManager;
     private isScanning: boolean = false;
+    private notifySubscription: any = null;
 
     constructor(){
         this.manager = new BleManager();
@@ -126,7 +128,7 @@ class BleService {
         }
     }
 
-    // MÉTODO CORRIGIDO - Usando propriedades corretas 
+    // Descobrir serviços do dispositivo
     async discoverDeviceServices(deviceId: string): Promise<void> {
         try {
             console.log('Iniciando descoberta de serviços para dispositivo:', deviceId);
@@ -170,7 +172,6 @@ class BleService {
                 }
             }
             
-            // NÃO desconecta - mantém a conexão para usar o dispositivo
             console.log(' Serviços descobertos e dispositivo permanece conectado');
             
         }
@@ -334,6 +335,49 @@ class BleService {
             rssi: device.rssi,
             mtu: device.mtu,
         };
+    }
+
+    // Ativar notificação
+    startNotification(
+        deviceId: string,
+        serviceUUID: string,
+        characteristicUUID: string,
+        onData: (data: string) => void,
+    ) {
+
+        console.log('📡 [BLE] startNotification chamada');
+        console.log('📡 [BLE] Service:', serviceUUID);
+        console.log('📡 [BLE] Characteristic:', characteristicUUID);
+        
+        this.notifySubscription = this.manager.monitorCharacteristicForDevice(
+            deviceId,
+            serviceUUID,
+            characteristicUUID,
+            (err, characteristic) => {
+                if(err){
+                    console.error('Erro no notify:', err);
+                    return;
+                }
+
+                if(!characteristic?.value) return;
+
+                console.log('📩 [BLE] Notificação recebida RAW:', characteristic?.value);
+
+                // BASE64 → UTF8 texto
+                const decoded = Buffer.from(characteristic.value, 'base64').toString('utf8');
+
+                onData(decoded);
+            },
+        );
+    }
+
+    // Parar notificação
+    stopNotification() {
+        
+        if(this.notifySubscription) {
+            this.notifySubscription.remove();
+            this.notifySubscription = null;
+        }
     }
 
     // Limpar rescursos 

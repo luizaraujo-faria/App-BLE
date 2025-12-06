@@ -28,13 +28,22 @@ APP-BLE/
         ├── app/ - Código principal das telas pelo modelo Expo-Router
 
             ├── _layout.tsx - Layout e navegação do Expo-Router
-            ├── home.tsx - Tela de interação via bluetooth
             ├── index.tsx - Tela inicial de Login
+            ├── (tabs)/
+
+                ├── home.tsx - Página de listagem e recebimento de dados.
+                ├── management.tsx - Página de dashboard dos dados.
+                ├── settings.tsx - Página de configuração e conexão com bluetooth.
 
         ├── ble/ - Configurações do React-Native-Ble-Plx
 
             ├── BleService.ts - Instância única da classe BleManager e seus serviços
             ├── bleTypes.ts - Definição dos tipos dos objetos e propriedades da biblioteca
+
+        ├── components/
+
+            ├── layout/
+            ├── ui/
 
         ├── contexts/ - Contextos criados para o app
 
@@ -43,6 +52,11 @@ APP-BLE/
         ├── hooks/ - Hooks personalizados
 
             ├── useBle.ts - Hook para a utilização do bleService (Objeto Central da lib)
+
+        ├── services/ - Consumo de serviços da API.
+
+            ├── api.ts - Configuração da API base.
+            ├── recordsService.ts - Rotas e endpoints do registros.
     
     ├── app.json - Configurações do app
     ├── eas.json - Configurações de build
