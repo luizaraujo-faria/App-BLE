@@ -168,7 +168,7 @@ const SettingsScreen = () => {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                             <Ionicons name='warning' size={30} color={'#da0700ff'} />
-                            <Text style={{ width: '88%', fontSize: 16, textAlign: 'justify' }}>Para o uso desta funcionalidade é necessário que o Bluetooth e Localização do dispositivo estejam ativados!</Text>
+                            <Text style={{ width: '88%', fontSize: 20, textAlign: 'justify', fontFamily: 'AfacadFlux' }}>Para o uso desta funcionalidade é necessário que o Bluetooth e Localização do dispositivo estejam ativados!</Text>
                         </View>
                     
                         <View style={{ width: '100%', gap: 0 }}>
@@ -185,6 +185,7 @@ const SettingsScreen = () => {
                             textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
                             onPress={isScanning ? stopScan : scanDevices}
                             style={null}
+                            textStyle={null}
                             disabled={!uiBluetoothOn || !uiLocationOn}/>
 
                         <DropDownPicker
@@ -211,6 +212,7 @@ const SettingsScreen = () => {
                                     textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
                                     onPress={handleDisconnect}
                                     style={styles.disconnectButton}
+                                    textStyle={null}
                                     disabled={false}/>
                             </View>
                         )}
@@ -245,19 +247,19 @@ const styles = StyleSheet.create({
         gap: 25,
     },
     title: {
-        fontSize: 26,
-        fontWeight: 'bold',
+        fontSize: 32,
         color: '#333',
+        fontFamily: 'AfacadFlux',
     },
     connectedText: {
-        fontSize: 18,
+        fontSize: 20,
         color: '#ff9500ff',
-        fontWeight: 'normal',
+        fontFamily: 'AfacadFlux',
     },
     scanningText: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#ff9500ff',
-        fontStyle: 'italic',
+        fontFamily: 'AfacadFlux',
     },
     disconnectButton: {
         width: '100%',
@@ -288,12 +290,14 @@ const styles = StyleSheet.create({
         boxShadow: '0px -1px 3px #0000007e',
     },
     dropdownLabel: {
-        fontSize: 18,
+        fontSize: 22,
         color: '#ffffffff',
+        fontFamily: 'AfacadFlux',
     },
     dropdownPlaceholder: {
-        fontSize: 18,
-        color: '#ffffffff',
+        fontSize: 22,
+        color: '#000',
+        fontFamily: 'AfacadFlux',
     },
     selectedItemContainer: {
         backgroundColor: '#a7a7a7',

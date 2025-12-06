@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import Header from '@/src/components/layout/Header';

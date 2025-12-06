@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import { Modal, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 
 type EntryItemType = {
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
+        fontFamily: 'AfacadFlux',
     },
     cardInformations: {
         width: '100%',
@@ -142,6 +144,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 10,
+        fontFamily: 'AfacadFlux',
     },
 });
 

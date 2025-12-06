@@ -67,9 +67,10 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
     },
     label: {
-        fontSize: 12,
+        fontSize: 16,
         marginTop: 4,
         color: '#666666',
+        fontFamily: 'AfacadFlux',
     },
     labelActive: {
         color: '#000',

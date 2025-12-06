@@ -1,3 +1,4 @@
+import React from 'react';
 import { CartesianChart, Bar } from 'victory-native';
 
 interface BarChartProps {

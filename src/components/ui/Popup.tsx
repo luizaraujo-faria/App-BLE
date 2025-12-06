@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import LogoIMREA from '../../../assets/images/LogoIMREA.png';
+import React from 'react';
 // import Button from './Button';
 
 interface PopupProps {
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
+        fontFamily: 'AfacadFlux',
     },
     messageContainer: {
         width: '100%',
@@ -99,10 +101,11 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     message: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 400,
-        textAlign: 'justify',
-        letterSpacing: -1.5,
+        textAlign: 'left',
+        letterSpacing: -1.25,
+        fontFamily: 'AfacadFlux',
     },
     // actionContainer: {
     //     width: '100%',

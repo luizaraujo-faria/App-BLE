@@ -20,7 +20,6 @@ const HomeScreen = () => {
     const { receivedData, clearReceivedData } = useBleContext();
 
     const [loading, setLoading] = useState(false);
-    const [entryItems, _setEntryItems] = useState<EntryItemType[]>([]);
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     // const lastReceivedRef = useRef<string | null>(null);

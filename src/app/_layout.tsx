@@ -1,14 +1,23 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'react-native';
-import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Header from '../components/layout/Header';
 import React from 'react';
+import { Stack } from 'expo-router';
+import { StatusBar, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import Header from '../components/layout/Header';
 import { BleProvider } from '@/src/contexts/BleContext';
+import { useFonts } from 'expo-font';
 
 const RootLayout = () => {
 
     const insets = useSafeAreaInsets();
+
+    const [loaded] = useFonts({
+        // eslint-disable-next-line no-undef
+        AfacadFlux: require('@/assets/fonts/AfacadFlux-Regular.ttf'),
+    });
+
+    if (!loaded) {
+        return null; // ou uma tela de loading
+    }
 
     return(
         <BleProvider>
@@ -25,11 +34,11 @@ const RootLayout = () => {
                 <StatusBar backgroundColor='#838383ff' translucent={false} />
                 <Stack screenOptions={{ 
                     animation: 'slide_from_right',
-                    header: () => (
-                        <Header subtitle={null}/>
-                    ),
+                    // header: () => (
+                    //     <Header subtitle={null}/>
+                    // ),
                 }}>
-                    <Stack.Screen name='index' options={{ title: 'Sign In' }} />
+                    <Stack.Screen name='index' options={{ headerShown: false }} />
                     <Stack.Screen name='(tabs)' options={{ headerShown: false, title: 'Fluxo' }} />
                 </Stack>
 

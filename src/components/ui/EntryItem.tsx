@@ -1,3 +1,4 @@
+import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 
 type EntryItemType = {
@@ -43,6 +44,7 @@ const styles = StyleSheet.create({
     },
     id: {
         fontSize: 18,
+        fontFamily: 'AfacadFlux',
     },
 });
 

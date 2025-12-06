@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text, Image } from 'react-native';
 import LogoIMREA from '@/assets/images/LogoIMREA.png';
+import React from 'react';
 
 interface HeaderProps {
     subtitle: string | null;
@@ -46,10 +47,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 26,
+        fontFamily: 'AfacadFlux',
     },
     headerSubtitle: {
-        fontSize: 14,
+        fontSize: 16,
+        fontFamily: 'AfacadFlux',
     },
 });
 

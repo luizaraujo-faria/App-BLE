@@ -1,20 +1,22 @@
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 interface ButtonProps {
     textButton: string;
     onPress: () => void;
     style: Object | null;
+    textStyle: Object | null;
     disabled: boolean | undefined
 }
 
-const Button = ({ textButton, onPress, style, disabled }: ButtonProps) => {
+const Button = ({ textButton, onPress, style, textStyle, disabled }: ButtonProps) => {
 
     return (
         <TouchableOpacity 
             style={[buttonStyles.buttonContainer, style && style, disabled && buttonStyles.buttonDisabled]}
             onPress={onPress} 
             disabled={disabled}>
-            <Text style={buttonStyles.buttonText}>{textButton}</Text>
+            <Text style={[buttonStyles.buttonText, textStyle]}>{textButton}</Text>
         </TouchableOpacity>
     );
 };
@@ -36,6 +38,7 @@ const buttonStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 400,
         color: 'white',
+        fontFamily: 'AfacadFlux',
     },
 });
 
