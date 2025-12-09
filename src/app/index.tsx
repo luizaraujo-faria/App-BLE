@@ -51,6 +51,10 @@ const SigninScreen = () => {
                         style={styles.input}
                         placeholder='Digite seu email'
                         placeholderTextColor='#000'
+                        importantForAutofill='yes'
+                        disableFullscreenUI={true}
+                        // autoComplete='off'
+                        underlineColorAndroid='#fbbe244b'
                     />
                     <TextInput
                         value={password}
@@ -59,6 +63,10 @@ const SigninScreen = () => {
                         placeholder='Digite sua senha'
                         placeholderTextColor='#000'
                         secureTextEntry
+                        importantForAutofill='yes'
+                        disableFullscreenUI={true}
+                        // autoComplete='off'
+                        underlineColorAndroid='#fbbe244b'
                     />
 
                     <Button 
@@ -147,6 +155,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         backgroundColor: '#fbbe244b',
         fontFamily: 'AfacadFlux',
+        overflow: 'hidden',
     },
     signupBox: {
         paddingLeft: 10,

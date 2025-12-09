@@ -295,8 +295,9 @@ const styles = StyleSheet.create({
         fontFamily: 'AfacadFlux',
     },
     dropdownPlaceholder: {
-        fontSize: 22,
-        color: '#000',
+        textAlign: 'center',
+        fontSize: 20,
+        color: '#fff',
         fontFamily: 'AfacadFlux',
     },
     selectedItemContainer: {

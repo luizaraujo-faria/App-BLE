@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "app-ble",
+    "name": "app-imrea",
     "slug": "app-ble",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,14 +14,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "deploymentTarget": "13.0"
+      "supportsTablet": true
     },
     "android": {
-      "compileSdkVersion": 34,
-      "targetSdkVersion": 34,
-      "buildToolsVersion": "34.0.0",
-      "enableProguardInReleaseBuilds": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/LogoIMREA.png",
         "backgroundColor": "#ffffff"
@@ -48,7 +43,9 @@
     },
     "plugins": [
       "expo-router",
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
