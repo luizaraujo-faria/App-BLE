@@ -6,11 +6,9 @@ import Button from '@/src/components/ui/Button';
 import Header from '@/src/components/layout/Header';
 import { SwitchItem } from '@/src/components/ui/Switch';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
-import Popup from '@/src/components/ui/Popup';
 import BLEIcon from '../../../assets/images/bluetooth.png';
 import { useBleContext } from '@/src/contexts/BleContext';
-// import { deviceConfig } from '../../ble/deviceConfig';
-// import { bleService } from '../../ble/BleService';
+import { usePopup } from '@/src/contexts/PopupContext';
 
 type DeviceItem = {
     label: string;
@@ -19,15 +17,13 @@ type DeviceItem = {
 
 const SettingsScreen = () => {
 
-    const [popupVisible, setPopupVisible] = useState(false);
-    const [popupMessage, setPopupMessage] = useState('');
+    const { showPopup } = usePopup();
 
     const {
         uiBluetoothOn,
         uiLocationOn,
         toggleBluetooth,
         toggleLocation,
-        popupProps,
     } = useDeviceToggles();
 
     const {
@@ -60,15 +56,15 @@ const SettingsScreen = () => {
     }, [isConnected]);
 
     useEffect(() => {
-        console.log('\n🟧 [SETTINGS] isConnected mudou:', isConnected);
+        console.log('\n[SETTINGS] isConnected mudou:', isConnected);
     }, [isConnected]);
 
     useEffect(() => {
-        console.log('🟥 [SETTINGS] startReading é função?', typeof startReading);
+        console.log('[SETTINGS] startReading é função?', typeof startReading);
     }, [startReading]);
 
     useEffect(() => {
-        console.log('🟦 [SETTINGS] receivedData mudou:', receivedData);
+        console.log('[SETTINGS] receivedData mudou:', receivedData);
     }, [receivedData]);
     
     // Atualiza a lista do Dropdown com os dispositivos escaneados
@@ -83,8 +79,7 @@ const SettingsScreen = () => {
     // Mostra erros do BLE
     useEffect(() => {
         if(error){
-            setPopupVisible(true);
-            setPopupMessage(`Falha do Bluetooth! Erro: ${error}`);
+            showPopup('Erro no Bluetooth', `Causa: ${error}`);
         }
     }, [error]);
     
@@ -97,14 +92,12 @@ const SettingsScreen = () => {
             if (selectedDevice && !isConnected) {
                 connectToDevice(value, selectedDevice)
                     .then(() => {
-                        setPopupVisible(true);
-                        setPopupMessage(`Conectado a ${selectedDevice.name || 'dispositivo'}!`);
+                        showPopup('Aviso', `Conectado a ${selectedDevice.name || 'dispositivo'}!`);
                         // Alert.alert('\nSucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
                     })
                     .catch((err) => {
                         console.error('\nFalha na conexão:', `Erro: ${error}`, err.message);
-                        setPopupVisible(true);
-                        setPopupMessage(`Falha na conexão! Erro: ${err.message}.`);
+                        showPopup('Erro', `Falha na conexão! Erro: ${err.message}.`);
                     });
             }
         }
@@ -115,13 +108,11 @@ const SettingsScreen = () => {
             try {
                 await disconnectDevice(currentDevice);
                 setValue(null);
-                setPopupVisible(true);
-                setPopupMessage(`Desconectado do dispositivo: ${currentDevice.name} com sucesso!`);
+                showPopup('Aviso', `Desconectado do dispositivo: ${currentDevice.name} com sucesso!`);
             } 
             catch (err: any){
                 console.error('\nErro ao desconectar:', err);
-                setPopupVisible(true);
-                setPopupMessage(`Erro ao desconectar-se de: ${currentDevice.name}!`);
+                showPopup('Erro', `Erro ao desconectar-se de: ${currentDevice.name}!`);
             }
         }
     };
@@ -133,9 +124,6 @@ const SettingsScreen = () => {
     return (
 
         <View style={{ flex: 1 }}>
-
-            <Popup title='Aviso' message={popupProps.popupMessage} visible={popupProps.popupVisible} onClose={() => popupProps.setPopupVisible(false)}/>
-            <Popup title='Aviso' message={popupMessage} visible={popupVisible} onClose={() => setPopupVisible(false)}/>
             
             <Header subtitle={'Configurações'}/>
 

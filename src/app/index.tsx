@@ -1,11 +1,14 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from '../components/ui/Button';
 // import { LinearGradient } from 'expo-linear-gradient';
+import { usePopup } from '../contexts/PopupContext';
 
 const SigninScreen = () => {
+
+    const { showPopup } = usePopup();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,12 +17,12 @@ const SigninScreen = () => {
     const handleLogin = () => {
 
         if(email.trim() === '' && password.trim() === ''){
-            return Alert.alert('Falha!', 'Todos os campos devem ser preenchidos.');
+            return showPopup('Falha!', 'Todos os campos devem ser preenchidos.');
         }
 
         email === 'Admin' && password === 'Admin'
             ? router.push('/home')
-            : Alert.alert('Erro!', 'Email e/ou senha incorretos!');
+            : showPopup('Erro!', 'Email e/ou senha incorretos!');
     };
 
     return <View 
@@ -54,7 +57,7 @@ const SigninScreen = () => {
                         importantForAutofill='yes'
                         disableFullscreenUI={true}
                         // autoComplete='off'
-                        underlineColorAndroid='#fbbe244b'
+                        underlineColorAndroid='transparent'
                     />
                     <TextInput
                         value={password}
@@ -66,7 +69,7 @@ const SigninScreen = () => {
                         importantForAutofill='yes'
                         disableFullscreenUI={true}
                         // autoComplete='off'
-                        underlineColorAndroid='#fbbe244b'
+                        underlineColorAndroid='transparent'
                     />
 
                     <Button 

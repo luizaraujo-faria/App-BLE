@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, FlatList, ActivityIndicator, Alert } from 'react-native';
 import Header from '@/src/components/layout/Header';
 import EntryItem from '@/src/components/ui/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
@@ -68,13 +68,16 @@ const HomeScreen = () => {
             console.log('▶ Enviando IDs para o backend:', ids);
 
             await createRecord(ids);
+
             clearList();
+            Alert.alert('Teste', 'Usuários enviados com sucesso!');
             console.log('✔ IDs enviados com sucesso');
 
             if(retryRef.current) clearTimeout(retryRef.current);
         }
         catch(err: any){
             console.log('❌ Erro ao enviar IDs:', err.message);
+            Alert.alert('Aviso', err.message);
 
             if(retryRef.current) clearTimeout(retryRef.current);
 

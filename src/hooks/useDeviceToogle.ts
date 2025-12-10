@@ -1,17 +1,18 @@
 // src/hooks/useDeviceToggles.ts
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
-// import * as Linking from 'expo-linking';
 import { BleManager, State } from 'react-native-ble-plx';
+import { usePopup } from '../contexts/PopupContext';
+// import * as Linking from 'expo-linking';
 // import { Alert } from 'react-native';
 // import { Platform, PermissionsAndroid } from 'react-native';
 
 export function useDeviceToggles() {
+
+    const { showPopup } = usePopup();
+
     const [isBluetoothOn, setBluetoothOn] = useState(false);
     const [isLocationOn, setLocationOn] = useState(false);
-    const [popupVisible, setPopupVisible] = useState(false);
-    const [popupMessage, setPopupMessage] = useState('');
-
     const [uiBluetoothOn, setUiBluetoothOn] = useState(false);
     const [uiLocationOn, setUiLocationOn] = useState(false);
     
@@ -59,22 +60,17 @@ export function useDeviceToggles() {
 
     }, []);
 
-    const showPopup = async (message: string) => {
-        setPopupMessage(message);
-        setPopupVisible(true);
-    };
-
     // Alternar Bluetooth
     async function toggleBluetooth() {
 
         if(isBluetoothOn){
-            showPopup('Desative o serviço de bluetooth nas configurações!');
+            showPopup('Aviso!', 'Desative o serviço de bluetooth nas configurações!');
             setUiBluetoothOn(true);
             return;
             // Alert.alert('Aviso de sistemas!', 'Desative o serviço de bluetooth nas configurações!');
         } 
         else{
-            showPopup('Ative o serviço de bluetooth nas configurações!');
+            showPopup('Aviso!', 'Ative o serviço de bluetooth nas configurações!');
             setUiBluetoothOn(false);
             return;
         }
@@ -85,7 +81,7 @@ export function useDeviceToggles() {
 
         if(isLocationOn){
             console.log('Desative o serviço de localização nas configurações!');
-            showPopup('Desative o serviço de localização nas configurações!');
+            showPopup('Aviso!', 'Desative o serviço de localização nas configurações!');
             setUiLocationOn(true);
             return;
         }
@@ -93,7 +89,7 @@ export function useDeviceToggles() {
         // Solicita permissão
         let { status } = await Location.requestForegroundPermissionsAsync();
         if(status !== 'granted'){
-            showPopup('Permissão de localização não fornecida.');
+            showPopup('Aviso!', 'Permissão de localização não fornecida.');
             setUiLocationOn(false);
             return;
         } 
@@ -103,7 +99,7 @@ export function useDeviceToggles() {
             setLocationOn(enabled);
         } 
         else{
-            showPopup('Ative o serviço de localização nas configurações!');
+            showPopup('Aviso!', 'Ative o serviço de localização nas configurações!');
             setUiLocationOn(false);
             return;
         }
@@ -116,10 +112,5 @@ export function useDeviceToggles() {
         uiLocationOn,
         toggleBluetooth,
         toggleLocation,
-        popupProps: {
-            popupVisible,
-            popupMessage,
-            setPopupVisible,
-        },
     };
 }
