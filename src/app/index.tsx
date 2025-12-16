@@ -54,7 +54,7 @@ const SigninScreen = () => {
                         importantForAutofill='yes'
                         disableFullscreenUI={true}
                         // autoComplete='off'
-                        underlineColorAndroid='#fbbe244b'
+                        underlineColorAndroid={'transparent'}
                     />
                     <TextInput
                         value={password}
@@ -66,7 +66,7 @@ const SigninScreen = () => {
                         importantForAutofill='yes'
                         disableFullscreenUI={true}
                         // autoComplete='off'
-                        underlineColorAndroid='#fbbe244b'
+                        underlineColorAndroid={'transparent'}
                     />
 
                     <Button 
