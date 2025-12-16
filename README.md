@@ -81,4 +81,3 @@ eas update --branch development
 - Quando adicionar novas dependências nativas
 npx expo install nova-dependencia
 eas build --profile development --platform android
-eas build -p android --profile production

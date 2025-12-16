@@ -8,6 +8,7 @@ class BleService {
     private manager: BleManager;
     private isScanning: boolean = false;
     private notifySubscription: any = null;
+    private notifyTransactionId: string | null = null;
 
     constructor(){
         this.manager = new BleManager();
@@ -39,7 +40,7 @@ class BleService {
         try{
             const state = await this.manager.state();
             const locationState = await Location.PermissionStatus.GRANTED;
-            return (state === State.PoweredOn, locationState === 'granted');
+            return (state === State.PoweredOn && locationState === 'granted');
         } 
         catch (err: any){
             console.error('Erro ao verificar permissões:', err);
@@ -194,7 +195,7 @@ class BleService {
             }
 
             const device = await this.manager.connectToDevice(deviceId);
-            await device.discoverAllServicesAndCharacteristics();
+            await device.discoverAllServicesAndCharacteristics().catch(() => {});
 
             // DESCOBRE SERViÇOS AUTOMATICAMENTE APÓS CONECTAR
             console.log(' Descobrindo serviços automaticamente...');
@@ -344,40 +345,76 @@ class BleService {
         characteristicUUID: string,
         onData: (data: string) => void,
     ) {
-
         console.log('📡 [BLE] startNotification chamada');
         console.log('📡 [BLE] Service:', serviceUUID);
         console.log('📡 [BLE] Characteristic:', characteristicUUID);
-        
-        this.notifySubscription = this.manager.monitorCharacteristicForDevice(
-            deviceId,
-            serviceUUID,
-            characteristicUUID,
-            (err, characteristic) => {
-                if(err){
-                    console.error('Erro no notify:', err);
-                    return;
-                }
 
-                if(!characteristic?.value) return;
+        // se já houver notificação ativa para esse dispositivo, ignore
+        if (this.notifySubscription) {
+            console.log('📡 [BLE] notify já ativa — ignorando novo startNotification');
+            return;
+        }
 
-                console.log('📩 [BLE] Notificação recebida RAW:', characteristic?.value);
+        // criar transactionId único
+        const transactionId = `monitor_${deviceId}_${serviceUUID}_${characteristicUUID}_${Date.now()}`;
+        this.notifyTransactionId = transactionId;
 
-                // BASE64 → UTF8 texto
-                const decoded = Buffer.from(characteristic.value, 'base64').toString('utf8');
+        try {
+            this.notifySubscription = this.manager.monitorCharacteristicForDevice(
+                deviceId,
+                serviceUUID,
+                characteristicUUID,
+                (err, characteristic) => {
+                    if (err) {
+                        console.log('⚠ Notify callback recebeu erro:', err?.message ?? err);
+                        // limpar refs para evitar tentativas de cancelamento duplo
+                        try { this.notifySubscription = null; } catch { /* empty */ }
+                        this.notifyTransactionId = null;
+                        return;
+                    }
 
-                onData(decoded);
-            },
-        );
+                    if (!characteristic?.value) return;
+
+                    const decoded = Buffer.from(characteristic.value, 'base64').toString('utf8');
+                    onData(decoded);
+                },
+                transactionId,
+            );
+        } catch (e) {
+            console.error('Falha ao iniciar monitor/notification:', e);
+            // limpar caso tenha falhado
+            this.notifySubscription = null;
+            this.notifyTransactionId = null;
+        }
     }
 
-    // Parar notificação
+    // stopNotification
     stopNotification() {
-        
-        if(this.notifySubscription) {
-            this.notifySubscription.remove();
-            this.notifySubscription = null;
+        console.log('🛑 stopNotification chamado (safe)');
+
+        // 1) Remove subscription JS-side (se existir)
+        if (this.notifySubscription) {
+            try {
+                if (typeof this.notifySubscription.remove === 'function') {
+                    this.notifySubscription.remove();
+                    console.log('🛑 Subscription.remove() chamada');
+                } else if (typeof this.notifySubscription.cancel === 'function') {
+                    this.notifySubscription.cancel();
+                    console.log('🛑 Subscription.cancel() chamada (fallback)');
+                } else {
+                    console.log('🛑 Subscription sem método remove/cancel conhecido');
+                }
+            } catch (err) {
+                console.warn('Aviso: erro ao remover notifySubscription:', err);
+            } finally {
+                this.notifySubscription = null;
+            }
+        } else {
+            console.log('🛑 Nenhuma subscription ativa');
         }
+
+        // 2) NÃO chamar this.manager.cancelTransaction(...) — evita crash nativo
+        this.notifyTransactionId = null;
     }
 
     // Limpar rescursos 
