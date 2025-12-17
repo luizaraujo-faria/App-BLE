@@ -5,16 +5,17 @@ import * as Location from 'expo-location';
 import { Buffer } from 'buffer';
 
 class BleService {
-    private manager: BleManager;
+    public manager: BleManager;
     private isScanning: boolean = false;
-    private notifySubscription: any = null;
+    // private notifySubscription: any = null;
+    private isMonitoring: boolean = false;
     private notifyTransactionId: string | null = null;
 
     constructor(){
         this.manager = new BleManager();
     }
 
-    // Solicitar permissões em runtime - FORMA CORRETA PARA EXPO
+    // Solicitar permissões em runtime
     private async requestPermissions(): Promise<boolean> {
         if(Platform.OS !== 'android') {
             return true;
@@ -345,76 +346,62 @@ class BleService {
         characteristicUUID: string,
         onData: (data: string) => void,
     ) {
-        console.log('📡 [BLE] startNotification chamada');
-        console.log('📡 [BLE] Service:', serviceUUID);
-        console.log('📡 [BLE] Characteristic:', characteristicUUID);
-
-        // se já houver notificação ativa para esse dispositivo, ignore
-        if (this.notifySubscription) {
-            console.log('📡 [BLE] notify já ativa — ignorando novo startNotification');
+        if(this.isMonitoring){
+            console.log('📡 [BLE] monitor já ativo — ignorando');
             return;
         }
 
-        // criar transactionId único
-        const transactionId = `monitor_${deviceId}_${serviceUUID}_${characteristicUUID}_${Date.now()}`;
+        const transactionId = 'BLE_MONITOR';
         this.notifyTransactionId = transactionId;
+        this.isMonitoring = true;
 
-        try {
-            this.notifySubscription = this.manager.monitorCharacteristicForDevice(
-                deviceId,
-                serviceUUID,
-                characteristicUUID,
-                (err, characteristic) => {
-                    if (err) {
-                        console.log('⚠ Notify callback recebeu erro:', err?.message ?? err);
-                        // limpar refs para evitar tentativas de cancelamento duplo
-                        try { this.notifySubscription = null; } catch { /* empty */ }
-                        this.notifyTransactionId = null;
-                        return;
-                    }
+        this.manager.monitorCharacteristicForDevice(
+            deviceId,
+            serviceUUID,
+            characteristicUUID,
+            (err, characteristic) => {
+                if(err){
+                    console.log('⚠ BLE monitor error:', err.message);
+                    this.stopNotification();
+                    return;
+                }
 
-                    if (!characteristic?.value) return;
+                if(!characteristic?.value) return;
 
-                    const decoded = Buffer.from(characteristic.value, 'base64').toString('utf8');
-                    onData(decoded);
-                },
-                transactionId,
-            );
-        } catch (e) {
-            console.error('Falha ao iniciar monitor/notification:', e);
-            // limpar caso tenha falhado
-            this.notifySubscription = null;
-            this.notifyTransactionId = null;
-        }
+                const decoded = Buffer
+                    .from(characteristic.value, 'base64')
+                    .toString('utf8');
+
+                onData(decoded);
+            },
+            transactionId,
+        );
     }
 
     // stopNotification
     stopNotification() {
         console.log('🛑 stopNotification chamado (safe)');
 
-        // 1) Remove subscription JS-side (se existir)
-        if (this.notifySubscription) {
-            try {
-                if (typeof this.notifySubscription.remove === 'function') {
-                    this.notifySubscription.remove();
-                    console.log('🛑 Subscription.remove() chamada');
-                } else if (typeof this.notifySubscription.cancel === 'function') {
-                    this.notifySubscription.cancel();
-                    console.log('🛑 Subscription.cancel() chamada (fallback)');
-                } else {
-                    console.log('🛑 Subscription sem método remove/cancel conhecido');
-                }
-            } catch (err) {
-                console.warn('Aviso: erro ao remover notifySubscription:', err);
-            } finally {
-                this.notifySubscription = null;
-            }
-        } else {
-            console.log('🛑 Nenhuma subscription ativa');
-        }
+        if(this.isMonitoring){
 
-        // 2) NÃO chamar this.manager.cancelTransaction(...) — evita crash nativo
-        this.notifyTransactionId = null;
+            if(!this.isMonitoring || !this.notifyTransactionId){
+                console.log('🟢 monitor já parado');
+                return;
+            }
+
+            console.log('🛑 stopNotification chamado (safe)');
+
+            this.isMonitoring = false;
+
+            try{
+                this.manager.cancelTransaction(this.notifyTransactionId);
+            } 
+            catch(err: any) {
+                console.log('cancelTransaction ignorado', err.message);
+            }
+
+            this.notifyTransactionId = null;
+        }
     }
 
     // Limpar rescursos 

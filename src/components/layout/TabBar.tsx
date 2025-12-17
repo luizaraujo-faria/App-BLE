@@ -4,7 +4,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 const tabConfig = {
-    home: { icon: 'list', label: 'Início' },
+    list: { icon: 'list', label: 'Registros' },
     managment: { icon: 'bar-chart', label: 'Gestão' },
     settings: { icon: 'settings', label: 'Configurações' },
 } as const;

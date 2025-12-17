@@ -1,116 +1,58 @@
 // src/hooks/useDeviceToggles.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import { BleManager, State } from 'react-native-ble-plx';
-import { usePopup } from '../contexts/PopupContext';
-// import * as Linking from 'expo-linking';
-// import { Alert } from 'react-native';
-// import { Platform, PermissionsAndroid } from 'react-native';
+import { State } from 'react-native-ble-plx';
+import { bleService } from '../ble/BleService';
 
 export function useDeviceToggles() {
-
-    const { showPopup } = usePopup();
-
-    const [isBluetoothOn, setBluetoothOn] = useState(false);
-    const [isLocationOn, setLocationOn] = useState(false);
-    const [uiBluetoothOn, setUiBluetoothOn] = useState(false);
-    const [uiLocationOn, setUiLocationOn] = useState(false);
     
-    const bleManager = new BleManager();
+    const [isBluetoothOn, setBluetoothOn] = useState<boolean | null>(null);
+    const [isLocationOn, setLocationOn] = useState<boolean | null>(null);
+    const [ready, setReady] = useState(false);
 
-    // Sincroniza estados reais com a UI - IMPLEMENTAÇÃO NOVA
+    const initialized = useRef(false);
+
+    // Bluetooth
     useEffect(() => {
-        setUiBluetoothOn(isBluetoothOn);
-    }, [isBluetoothOn]);
-
-    useEffect(() => {
-        setUiLocationOn(isLocationOn);
-    }, [isLocationOn]);
-
-
-    // Checa o estado atual do Bluetooth
-    useEffect(() => {
-        const subscription = bleManager.onStateChange((state) => {
+        const sub = bleService.manager.onStateChange((state) => {
             setBluetoothOn(state === State.PoweredOn);
-            setUiBluetoothOn(state === State.PoweredOn);
         }, true);
-        return () => subscription.remove();
-    }, [bleManager]);
 
-    useEffect(() => {
-
-        let intervalId: number;
-
-        const checkLocationStatus = async () => {
-
-            const enabled = await Location.hasServicesEnabledAsync();
-            setLocationOn(enabled);
-            setUiLocationOn(enabled);
-        };
-
-        checkLocationStatus();
-
-        intervalId = setInterval(checkLocationStatus, 100);
-
-        return () => {
-            if(intervalId){
-                clearInterval(intervalId);
-            }
-        };
-
+        return () => sub.remove();
     }, []);
 
-    // Alternar Bluetooth
-    async function toggleBluetooth() {
+    // Localização
+    useEffect(() => {
 
-        if(isBluetoothOn){
-            showPopup('Aviso!', 'Desative o serviço de bluetooth nas configurações!');
-            setUiBluetoothOn(true);
-            return;
-            // Alert.alert('Aviso de sistemas!', 'Desative o serviço de bluetooth nas configurações!');
-        } 
-        else{
-            showPopup('Aviso!', 'Ative o serviço de bluetooth nas configurações!');
-            setUiBluetoothOn(false);
-            return;
-        }
-    }
+        let interval: ReturnType<typeof setInterval>;
 
-    // Alternar Localização
-    async function toggleLocation() {
-
-        if(isLocationOn){
-            console.log('Desative o serviço de localização nas configurações!');
-            showPopup('Aviso!', 'Desative o serviço de localização nas configurações!');
-            setUiLocationOn(true);
-            return;
-        }
-
-        // Solicita permissão
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if(status !== 'granted'){
-            showPopup('Aviso!', 'Permissão de localização não fornecida.');
-            setUiLocationOn(false);
-            return;
-        } 
-
-        const enabled = await Location.hasServicesEnabledAsync();
-        if(enabled){
+        const checkLocation = async () => {
+            const enabled = await Location.hasServicesEnabledAsync();
             setLocationOn(enabled);
-        } 
-        else{
-            showPopup('Aviso!', 'Ative o serviço de localização nas configurações!');
-            setUiLocationOn(false);
-            return;
+        };
+
+        checkLocation();
+
+        interval = setInterval(checkLocation, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // Marca como pronto quando ambos forem conhecidos
+    useEffect(() => {
+        if (
+            !initialized.current &&
+            isBluetoothOn !== null &&
+            isLocationOn !== null
+        ) {
+            setReady(true);
+            initialized.current = true;
         }
-    }
+    }, [isBluetoothOn, isLocationOn]);
 
     return {
-        isBluetoothOn,
-        isLocationOn,
-        uiBluetoothOn,
-        uiLocationOn,
-        toggleBluetooth,
-        toggleLocation,
+        isBluetoothOn: !!isBluetoothOn,
+        isLocationOn: !!isLocationOn,
+        ready,
     };
 }

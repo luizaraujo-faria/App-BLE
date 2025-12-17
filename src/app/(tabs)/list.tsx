@@ -1,11 +1,11 @@
 import React from 'react';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Text, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { View, StyleSheet, Text, FlatList, ActivityIndicator } from 'react-native';
 import Header from '@/src/components/layout/Header';
 import EntryItem from '@/src/components/ui/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
 import { useBleContext } from '@/src/contexts/BleContext';
-import { useFocusEffect } from 'expo-router';
+import { usePopup } from '@/src/contexts/PopupContext';
 
 type EntryItemType = {
     id: string;
@@ -15,17 +15,17 @@ type EntryItemType = {
     exit?: string;
 }
 
-const HomeScreen = () => {
-
+const ListScreen = () => {
+    
     const { receivedData, clearReceivedData } = useBleContext();
+    const { showPopup } = usePopup();
 
     const [loading, setLoading] = useState(false);
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    // const lastReceivedRef = useRef<string | null>(null);
     const [entryItems, setEntryItems] = useState<EntryItemType[]>([]);
 
-    const clearScreenState = useCallback(() => {
+    const clearRecivedState = useCallback(() => {
 
         setEntryItems([]);
         clearReceivedData();
@@ -43,15 +43,16 @@ const HomeScreen = () => {
             clearReceivedData();
         };
 
-    }, []);
-
-    useFocusEffect(clearScreenState);
+    }, [clearReceivedData, entryItems, receivedData?.value]);
 
     const clearList = useCallback(() => {
+
+        clearRecivedState();
+
         if(entryItems.length > 0){
             setEntryItems([]);
         }
-    }, [entryItems.length]);
+    }, [clearRecivedState, entryItems.length]);
 
     const sendAllIDsToBackend = useCallback(async () => {
 
@@ -64,20 +65,15 @@ const HomeScreen = () => {
 
             if (ids.length === 0) return;
 
-            console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
-            console.log('▶ Enviando IDs para o backend:', ids);
-
             await createRecord(ids);
 
             clearList();
-            Alert.alert('Teste', 'Usuários enviados com sucesso!');
-            console.log('✔ IDs enviados com sucesso');
+            showPopup('Notificação!', 'Usuários enviados com sucesso!');
 
             if(retryRef.current) clearTimeout(retryRef.current);
         }
         catch(err: any){
-            console.log('❌ Erro ao enviar IDs:', err.message);
-            Alert.alert('Aviso', err.message);
+            showPopup('Erro!', `Ocorreu um erro ao enviar registros! Erro: ${err.message}`);
 
             if(retryRef.current) clearTimeout(retryRef.current);
 
@@ -88,20 +84,16 @@ const HomeScreen = () => {
         finally{
             setLoading(false);
         }
-    }, [clearList, entryItems]);
+    }, [clearList, entryItems, showPopup]);
 
     useEffect(() => {
-        // Se a lista estiver vazia, não faz nada
+
         if (entryItems.length === 0) return;
 
-        // Limpa debounce anterior
         if (pendingSendRef.current) {
             clearTimeout(pendingSendRef.current);
         }
 
-        console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
-
-        // Debounce de 500ms para evitar flood
         pendingSendRef.current = setTimeout(() => {
             sendAllIDsToBackend();
         }, 5000);
@@ -122,7 +114,7 @@ const HomeScreen = () => {
 
     return(
         <View style={{ flex: 1, position: 'relative' }}>
-            <Header subtitle={'IMREA'}/>
+            <Header subtitle={'Registros'}/>
 
             <View style={homeStyles.container}>
 
@@ -204,4 +196,4 @@ const homeStyles = StyleSheet.create({
     },
 });
 
-export default HomeScreen;
+export default ListScreen;

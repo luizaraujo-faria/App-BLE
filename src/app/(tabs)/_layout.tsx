@@ -2,7 +2,6 @@ import { Tabs } from 'expo-router';
 import TabBar from '@/src/components/layout/TabBar';
 import React from 'react';
 
-
 export default function TabLayout() {
     return (
         <Tabs
@@ -13,7 +12,7 @@ export default function TabLayout() {
                 tabBarInactiveTintColor: '#8E8E93',
                 headerShown: false,
             }}>
-            <Tabs.Screen name='home'/>
+            <Tabs.Screen name='list'/>
             <Tabs.Screen name='managment'/>
             <Tabs.Screen name='settings'/>
         </Tabs>

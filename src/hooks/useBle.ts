@@ -46,7 +46,7 @@ export const useBle = () => {
             mounted = false;
             bleService.stopScan();
         };
-    }, []);
+    }, [showPopup]);
 
     // Filtro de nomes
     const filterDeviceByName = useCallback((deviceName: string | null): boolean => {
@@ -67,7 +67,7 @@ export const useBle = () => {
         setIsScanning(false);
     }, []);
 
-    // conectar com timeout (Promise.race) - evita usar async no executor
+    // conectar com timeout
     const connectWithTimeout = useCallback((id: string, timeout = 7000) => {
 
         const connectPromise = bleService.connectToDevice(id);
@@ -82,7 +82,7 @@ export const useBle = () => {
         return Promise.race([connectPromise, timeoutPromise]);
     }, []);
 
-    // Conectar a um dispositivo (corrigido)
+    // Conectar a um dispositivo
     const connectToDevice = useCallback(async (deviceId: string, device: BluetoothDevice) => {
 
         if(isConnectingRef.current) return;
@@ -91,8 +91,7 @@ export const useBle = () => {
 
         try{
             console.log(`  connectToDevice: iniciando conexão com ${deviceId}`);
-            await connectWithTimeout(deviceId, 7000); // vai esperar a conexão real ou timeout
-            // Se chegou aqui, bleService.connectToDevice já terminou com sucesso
+            await connectWithTimeout(deviceId, 7000);
             showPopup('Aviso!', 'Conexão estabelecida com sucesso!');
             console.log('  connectToDevice: conexão estabelecida com sucesso');
             setIsConnected(true);
@@ -107,7 +106,7 @@ export const useBle = () => {
             isConnectingRef.current = false;
             stopScan();
         }
-    }, [connectWithTimeout, devices, stopScan]);
+    }, [connectWithTimeout, devices, showPopup, stopScan]);
 
     // Auto connect quando detectar dispositivo alvo
     const checkAndAutoConnect = useCallback((device: BluetoothDevice) => {
@@ -116,7 +115,6 @@ export const useBle = () => {
         const isTargetDevice = device.name?.includes(DEFAULT_DEVICE);
         if(isTargetDevice){
             console.log(`  Dispositivo alvo encontrado: ${device.name}. Conectando automaticamente...`);
-            // não await aqui porque é chamado dentro do scan callback
             connectToDevice(device.id, device).catch(err => {
                 console.log('  Erro na auto conexão:', err);
             });
@@ -155,13 +153,10 @@ export const useBle = () => {
     // Desconectar
     const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
         try{
-            // **1. SEMPRE parar notificações ANTES de pedir desconexão**
             bleService.stopNotification();
 
-            // **2. Espera 150ms para o android limpar o monitor nativo**
             await new Promise(r => setTimeout(r, 150));
 
-            // **3. Agora desconecta**
             await bleService.disconnectDevice(device);
             setIsConnected(false);
             setCurrentDevice(null);
@@ -173,15 +168,15 @@ export const useBle = () => {
         }
     }, []);
 
-    // Start reading (notify)
+    // Inicia leitura (notify)
     const startReading = useCallback((serviceUUID: string, characteristicUUID: string) => {
-        console.log('   [CTX] startReading chamada');
+        console.log('   startReading chamada');
         console.log('   Serviço:', serviceUUID);
         console.log('   Característica:', characteristicUUID);
         console.log('   currentDevice:', currentDevice?.id ?? 'null');
 
         if(!currentDevice){
-            console.log('[CTX] startReading: Nenhum dispositivo conectado!');
+            console.log('  startReading: Nenhum dispositivo conectado!');
             return;
         }
 
@@ -190,16 +185,25 @@ export const useBle = () => {
             serviceUUID,
             characteristicUUID,
             (data: string) => {
-                console.log('📨 [CTX] Valor recebido do bleService:', data);
+                console.log('  Valor recebido do bleService:', data);
                 setReceivedData({ value: data, ts: Date.now() });
             },
         );
     }, [currentDevice]);
 
+    // Limpa o estado dos itens recebidos
     const clearReceivedData = useCallback(() => {
 
         setReceivedData(null);
     }, []);
+
+    // Para todas as funcionalidades possivelmente ativas
+    const stopAll = useCallback(async () => {
+
+        if(isScanning) stopScan();
+        if(isConnected) await disconnectDevice(currentDevice!);
+
+    }, [currentDevice, disconnectDevice, isConnected, isScanning, stopScan]);
 
     return {
         devices,
@@ -214,5 +218,6 @@ export const useBle = () => {
         disconnectDevice,
         startReading,
         clearReceivedData,
+        stopAll,
     };
 };

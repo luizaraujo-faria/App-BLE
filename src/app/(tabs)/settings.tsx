@@ -20,10 +20,12 @@ const SettingsScreen = () => {
     const { showPopup } = usePopup();
 
     const {
-        uiBluetoothOn,
-        uiLocationOn,
-        toggleBluetooth,
-        toggleLocation,
+        // uiBluetoothOn,
+        // uiLocationOn,
+        // toggleBluetooth,
+        // toggleLocation,
+        isBluetoothOn,
+        isLocationOn,
     } = useDeviceToggles();
 
     const {
@@ -40,8 +42,6 @@ const SettingsScreen = () => {
         startReading,
     } = useBleContext();
         
-    // const [message, setMessage] = useState<string>('');
-    // const [ledState, setLedState] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState<DeviceItem[]>([]);
@@ -53,7 +53,7 @@ const SettingsScreen = () => {
                 'abcd1234-5678-1234-5678-1234567890ab',
             );
         }
-    }, [isConnected]);
+    }, [isConnected, startReading]);
 
     useEffect(() => {
         console.log('\n[SETTINGS] isConnected mudou:', isConnected);
@@ -101,7 +101,34 @@ const SettingsScreen = () => {
                     });
             }
         }
-    }, [value, devices, isConnected, connectToDevice, error]);
+    }, [value, devices, isConnected, connectToDevice, error, showPopup]);
+
+    // Alternar Bluetooth
+    const toggleBluetooth = async () => {
+
+        if(isBluetoothOn){
+            showPopup('Aviso!', 'Desative o serviço de bluetooth nas configurações!');
+            return;
+        } 
+        else{
+            showPopup('Aviso!', 'Ative o serviço de bluetooth nas configurações!');
+            return;
+        }
+    };
+
+    // Alternar Localização
+    const toggleLocation = async () => {
+
+        if(isLocationOn){
+            console.log('Desative o serviço de localização nas configurações!');
+            showPopup('Aviso!', 'Desative o serviço de localização nas configurações!');
+            return;
+        }
+        else{
+            showPopup('Aviso!', 'Ative o serviço de localização nas configurações!');
+            return;
+        }
+    };
     
     const handleDisconnect = async () => {
         if (currentDevice) {
@@ -161,9 +188,9 @@ const SettingsScreen = () => {
                     
                         <View style={{ width: '100%', gap: 0 }}>
 
-                            <SwitchItem label='Status Bluetooth' value={uiBluetoothOn} onToggle={toggleBluetooth}/>
+                            <SwitchItem label='Status Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
 
-                            <SwitchItem label='Status Localização' value={uiLocationOn} onToggle={toggleLocation}/>
+                            <SwitchItem label='Status Localização' value={isLocationOn} onToggle={toggleLocation}/>
 
                         </View>
                     </View>
@@ -174,10 +201,10 @@ const SettingsScreen = () => {
                             onPress={isScanning ? stopScan : scanDevices}
                             style={null}
                             textStyle={null}
-                            disabled={!uiBluetoothOn || !uiLocationOn}/>
+                            disabled={!isBluetoothOn || !isLocationOn}/>
 
                         <DropDownPicker
-                            disabled={!uiBluetoothOn || !uiLocationOn}
+                            disabled={!isBluetoothOn || !isLocationOn}
                             open={open}
                             value={value}
                             items={items}
@@ -185,7 +212,7 @@ const SettingsScreen = () => {
                             setValue={setValue}
                             setItems={setItems}
                             placeholder={'Dispositivos encontrados'}
-                            style={(uiBluetoothOn && uiLocationOn) ? styles.dropdown : styles.dropdownDisabled}
+                            style={(isBluetoothOn && isLocationOn) ? styles.dropdown : styles.dropdownDisabled}
                             dropDownContainerStyle={styles.dropdownContainer}
                             labelStyle={styles.dropdownLabel}
                             placeholderStyle={styles.dropdownPlaceholder}
@@ -295,30 +322,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
     },
-    // messageContainer: {
-    //     width: '100%',
-    //     alignItems: 'center',
-    //     gap: 16,
-    //     marginBottom: 20,
-    // },
-    // input: {
-    //     width: '100%',
-    //     height: 56,
-    //     borderBottomWidth: 1,
-    //     borderBottomColor: '#000',
-    //     padding: 8,
-    //     fontSize: 20,
-    //     color: '#000',
-    // },
-    // buttonDisabled: {
-    //     width: '100%',
-    //     height: 50,
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     borderRadius: 4,
-    //     marginBottom: 10,
-    //     backgroundColor: '#CCCCCC',
-    // },
 });
 
 export default SettingsScreen;

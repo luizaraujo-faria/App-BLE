@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createContext, useContext, ReactNode } from 'react';
 import { useBle } from '../hooks/useBle';
 import { BluetoothDevice } from '../ble/bleTypes';
+import { useDeviceToggles } from '../hooks/useDeviceToogle';
+import { usePopup } from './PopupContext';
 
 interface BleContextType {
     devices: any[];
@@ -35,7 +37,26 @@ interface BleProviderProps {
 
 export const BleProvider = ({ children }: BleProviderProps) => {
 
+    const { isBluetoothOn, isLocationOn, ready } = useDeviceToggles();
+    const { showPopup } = usePopup();
     const ble = useBle();
+    const prevBleState = useRef<boolean | null>(null);
+    
+    // Monitora estado dos serviços para parar o BLE
+    useEffect(() => {
+
+        if(!ready) return;
+
+        const bleEnabled = isBluetoothOn && isLocationOn;
+
+        if(prevBleState.current === true && !bleEnabled){
+            showPopup('Aviso', 'Bluetooth ou Localização desativados! Serviços de bluetooth parados.');
+            ble.stopAll();
+        }
+
+        prevBleState.current = bleEnabled;
+
+    }, [ble, isBluetoothOn, isLocationOn, ready, showPopup]);
 
     return (
         <BleContext.Provider value={ble}>

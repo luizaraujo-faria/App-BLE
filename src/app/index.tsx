@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from '../components/ui/Button';
-// import { LinearGradient } from 'expo-linear-gradient';
 import { usePopup } from '../contexts/PopupContext';
 
 const SigninScreen = () => {
@@ -17,11 +16,11 @@ const SigninScreen = () => {
     const handleLogin = () => {
 
         if(email.trim() === '' && password.trim() === ''){
-            return showPopup('Falha!', 'Todos os campos devem ser preenchidos.');
+            return showPopup('Aviso!', 'Todos os campos devem ser preenchidos.');
         }
 
         email === 'Admin' && password === 'Admin'
-            ? router.push('/home')
+            ? router.replace('/(tabs)/list')
             : showPopup('Erro!', 'Email e/ou senha incorretos!');
     };
 

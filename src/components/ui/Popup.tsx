@@ -34,7 +34,7 @@ const Popup = ({ title, message, visible, onClose }: PopupProps) => {
                             </View>
                         </View>
 
-                        <TouchableOpacity onPress={onClose}>
+                        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                             <Ionicons name={'close'} size={24}/>
                         </TouchableOpacity>
                     </View>
@@ -114,14 +114,14 @@ const styles = StyleSheet.create({
     //     alignItems: 'center',
     //     padding: 10,
     // },
-    // closeButton: {
-    //     width: '45%',
-    //     height: 35,
-    //     backgroundColor: '#ffb54cff',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     borderRadius: 4,
-    // },
+    closeButton: {
+        width: '15%',
+        height: 35,
+        backgroundColor: '#ffb44ce7',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 4,
+    },
 });
 
 export default Popup;
