@@ -153,7 +153,7 @@ export const useBle = () => {
     // Desconectar
     const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
         try{
-            bleService.stopNotification();
+            // bleService.stopNotification();
 
             await new Promise(r => setTimeout(r, 150));
 

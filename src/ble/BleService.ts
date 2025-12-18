@@ -351,7 +351,7 @@ class BleService {
             return;
         }
 
-        const transactionId = 'BLE_MONITOR';
+        const transactionId = `BLE_MONITOR_${Date.now()}`;
         this.notifyTransactionId = transactionId;
         this.isMonitoring = true;
 
@@ -362,7 +362,11 @@ class BleService {
             (err, characteristic) => {
                 if(err){
                     console.log('⚠ BLE monitor error:', err.message);
-                    this.stopNotification();
+
+                    // this.stopNotification();
+                    this.isMonitoring = false;
+                    this.notifyTransactionId = null;
+
                     return;
                 }
 
@@ -379,28 +383,26 @@ class BleService {
     }
 
     // stopNotification
-    stopNotification() {
+    stopNotification(){
+
         console.log('🛑 stopNotification chamado (safe)');
 
-        if(this.isMonitoring){
+        if(!this.isMonitoring || !this.notifyTransactionId){
+            console.log('🟢 monitor já parado');
+            return;
+        }
 
-            if(!this.isMonitoring || !this.notifyTransactionId){
-                console.log('🟢 monitor já parado');
-                return;
-            }
+        console.log('🛑 stopNotification chamado (safe)');
+        const tx = this.notifyTransactionId;
 
-            console.log('🛑 stopNotification chamado (safe)');
+        this.isMonitoring = false;
+        this.notifyTransactionId = null;
 
-            this.isMonitoring = false;
-
-            try{
-                this.manager.cancelTransaction(this.notifyTransactionId);
-            } 
-            catch(err: any) {
-                console.log('cancelTransaction ignorado', err.message);
-            }
-
-            this.notifyTransactionId = null;
+        try{
+            this.manager.cancelTransaction(tx);
+        } 
+        catch(err: any) {
+            console.log('cancelTransaction ignorado', err.message);
         }
     }
 
