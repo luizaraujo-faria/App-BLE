@@ -1,5 +1,5 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
 import * as Location from 'expo-location';
 import { Buffer } from 'buffer';
@@ -7,7 +7,6 @@ import { Buffer } from 'buffer';
 class BleService {
     public manager: BleManager;
     private isScanning: boolean = false;
-    // private notifySubscription: any = null;
     private isMonitoring: boolean = false;
     private notifyTransactionId: string | null = null;
 
@@ -32,7 +31,7 @@ class BleService {
             }
         } 
         catch (err: any) {
-            console.error('Erro ao verificar estado Bluetooth:', err);
+            console.error('[ERRO] Erro ao verificar estado Bluetooth:', err.message);
             return false;
         }
     }
@@ -44,7 +43,7 @@ class BleService {
             return (state === State.PoweredOn && locationState === 'granted');
         } 
         catch (err: any){
-            console.error('Erro ao verificar permissões:', err);
+            console.error('[ERRO] Erro ao verificar permissões:', err.message);
             return false;
         }
     }
@@ -64,12 +63,10 @@ class BleService {
                 return false;
             }
 
-            console.log('Bluetooth ligado e pronto para uso!');
-            console.log('Localização ligada e pronta para uso!');
             return true;
         } 
         catch(err: any) {
-            console.error('Falha ao incializar BLE:', err);
+            console.error('[ERRO] Falha ao Incializar BLE:', err.message);
             return false;
         }
     }
@@ -82,13 +79,12 @@ class BleService {
 
     ): Promise<void> {
 
-        if(this.isScanning){ console.log('Scan efetuado.'); return; }
+        if(this.isScanning){ console.log('[BLE] Scan efetuado.\n'); return; }
 
         const hasPermissions = await this.checkPermissions();
         if(!hasPermissions){
             const granted = await this.requestPermissions();
             if(!granted){
-                Alert.alert('Erro Bluetooth', 'Permissões negadas para uso do bluetooth!');
                 console.error('Permissões negadas para escan BLE');
                 return;
             }
@@ -107,7 +103,7 @@ class BleService {
                 (err, device) => {
                     
                     if(err){ 
-                        console.error('Erro no scan! ', err);
+                        console.error('[ERRO] Erro No Scan! ', err.message);
                         this.stopScan();
                         return;
                     }
@@ -117,7 +113,7 @@ class BleService {
             );
         }
         catch(err: any){
-            console.error('Falha ao iniciar scan! ', err);
+            console.error('[ERRO] Falha ao Iniciar Scan! ', err.message);
             this.isScanning = false;
         }
     }
@@ -131,23 +127,18 @@ class BleService {
     }
 
     // Descobrir serviços do dispositivo
-    async discoverDeviceServices(deviceId: string): Promise<void> {
+    async discoverDeviceServices(device: Device): Promise<Device> {
+
         try {
-            console.log('Iniciando descoberta de serviços para dispositivo:', deviceId);
+            console.log('\nIniciando descoberta de serviços para dispositivo:', device.name);
             
-            // Conecta ao dispositivo (já deve estar conectado, mas garante)
-            const device = await this.manager.connectToDevice(deviceId);
-            console.log(' - Conectado para descobrir serviços');
-            
-            // Descobre todos os serviços e características
             await device.discoverAllServicesAndCharacteristics();
-            console.log(' - Serviços descobertos');
             
             // Lista todos os serviços
             const services = await device.services();
-            console.log('\n SERVIÇOS ENCONTRADOS:');
+            console.log('\n[BLE] SERVIÇOS ENCONTRADOS:');
             
-            for (const service of services) {
+            for(const service of services){
                 console.log(`\n Serviço UUID: ${service.uuid}`);
                 console.log(`   Tipo: ${service.isPrimary ? 'Primário' : 'Secundário'}`);
                 
@@ -158,7 +149,6 @@ class BleService {
                 for (const char of characteristics) {
                     console.log(`   └─ UUID: ${char.uuid}`);
                     
-                    //  PROPRIEDADES CORRETAS DO react-native-ble-plx 
                     const properties = [
                         char.isReadable ? 'Leitura' : '',
                         char.isWritableWithResponse ? 'Escrita com resposta' : '',
@@ -167,18 +157,17 @@ class BleService {
                         char.isIndicatable ? 'Indicável' : '',
                     ].filter(Boolean).join(', ') || 'Nenhuma';
                     
-                    console.log(`      Propriedades: ${properties}`);
-                    console.log(`      Valor: ${char.value || 'N/A'}`);
-                    console.log(`      É legível: ${char.isReadable}`);
-                    console.log(`      É gravável: ${char.isWritableWithResponse || char.isWritableWithoutResponse}`);
+                    console.log(`      - Propriedades: ${properties}`);
+                    console.log(`      - Valor: ${char.value || 'N/A'}`);
+                    console.log(`      * É legível: ${char.isReadable}`);
+                    console.log(`      * É gravável: ${char.isWritableWithResponse || char.isWritableWithoutResponse}\n`);
                 }
             }
             
-            console.log(' Serviços descobertos e dispositivo permanece conectado');
-            
+            return device;
         }
         catch(err: any){
-            console.error(' Erro ao descobrir serviços:', err);
+            console.error('[ERRO] Erro ao Descobrir Serviços:', err.message);
             throw err;
         }
     }
@@ -196,41 +185,12 @@ class BleService {
             }
 
             const device = await this.manager.connectToDevice(deviceId);
-            await device.discoverAllServicesAndCharacteristics().catch(() => {});
+            await this.discoverDeviceServices(device);
 
-            // DESCOBRE SERViÇOS AUTOMATICAMENTE APÓS CONECTAR
-            console.log(' Descobrindo serviços automaticamente...');
-            console.log(`\n Conectado ao dispositivo: ${device.name}`);
-            const services = await device.services();
-            console.log('\n SERViÇOS DO DISPOSITIVO CONECTADO:');
-            
-            for (const service of services) {
-                console.log(`\n Serviço UUID: ${service.uuid}`);
-                const characteristics = await service.characteristics();
-                console.log(`   Características (${characteristics.length}):`);
-                
-                for (const char of characteristics) {
-                    console.log(`   └─ UUID: ${char.uuid}`);
-                    
-                    // Propriedades corretas
-                    const properties = [
-                        char.isReadable ? 'Leitura' : '',
-                        char.isWritableWithResponse ? 'Escrita com resposta' : '',
-                        char.isWritableWithoutResponse ? 'Escrita sem resposta' : '',
-                        char.isNotifiable ? 'Notificável' : '',
-                        char.isIndicatable ? 'Indicável' : '',
-                    ].filter(Boolean).join(', ') || 'Nenhuma';
-                    
-                    console.log(`      Propriedades: ${properties}`);
-                    console.log(`      Valor: ${char.value || 'N/A'}`);
-                }
-            }
-            
-            console.log(' Conexão e descoberta de serviços concluídas!');
             return device; 
         }
         catch(err: any){
-            console.error('Falha ao conectar-se a um dispositivo! ', err);
+            console.error('[ERRO] Falha ao Conectar-se A Um Dispositivo! ', err.message);
             throw err;
         }
     }
@@ -241,10 +201,10 @@ class BleService {
         try{
             console.log(`\n Desconectando do dispositivo: ${device.name}...`);
             await this.manager.cancelDeviceConnection(device.id);
-            console.log(`Desconectado de: ${device.name}`);
+            console.log(`[BLE] Desconectado de: ${device.name}\n`);
         }
         catch(err: any){
-            console.error('Falha ao desconectar-se! ', err);
+            console.error('[ERRO] Falha Ao Desconectar-se! ', err.message);
         }
     }
 
@@ -273,7 +233,7 @@ class BleService {
             return characteristic.value;
         }
         catch(err: any){
-            console.error('Falha na leitura de caracteristicas! ', err);
+            console.error('[ERRO] Falha na Leitura de Caracteristicas! ', err);
             throw err;
         }
     }
@@ -286,16 +246,13 @@ class BleService {
         value: string | Uint8Array,
     ): Promise<void> {
         try {
-            console.log(' Debug - Value recebido:', value);
-            console.log(' Debug - Tipo:', typeof value);
-
             let valueToSend: string;
 
             // Se for string com \n, converter para base64
             if (typeof value === 'string' && value.includes('\n')) {
                 valueToSend = btoa(unescape(encodeURIComponent(value)));
-                console.log(' Convertido para base64:', valueToSend);
-            } else {
+            } 
+            else{
                 valueToSend = value as string;
             }
 
@@ -316,7 +273,7 @@ class BleService {
 
         } 
         catch(err: any){
-            console.error(' Falha detalhada:', {
+            console.error('[ERRO] Falha Ao Escrever característica:', {
                 error: err,
                 message: err.message,
                 errorCode: err.errorCode,
@@ -347,7 +304,7 @@ class BleService {
         onData: (data: string) => void,
     ) {
         if(this.isMonitoring){
-            console.log('📡 [BLE] monitor já ativo — ignorando');
+            console.log('[BLE] Monitor de Notificações Ativo - Ignorando...\n');
             return;
         }
 
@@ -361,7 +318,7 @@ class BleService {
             characteristicUUID,
             (err, characteristic) => {
                 if(err){
-                    console.log('⚠ BLE monitor error:', err.message);
+                    console.log('[ERRO] Falha no Monitor de Notificações:', err.message);
 
                     // this.stopNotification();
                     this.isMonitoring = false;
@@ -385,14 +342,13 @@ class BleService {
     // stopNotification
     stopNotification(){
 
-        console.log('🛑 stopNotification chamado (safe)');
+        console.log('[BLE] Parando Monitoramento De Notificações BLE');
 
         if(!this.isMonitoring || !this.notifyTransactionId){
-            console.log('🟢 monitor já parado');
+            console.log('[BLE] Monitor já parado');
             return;
         }
 
-        console.log('🛑 stopNotification chamado (safe)');
         const tx = this.notifyTransactionId;
 
         this.isMonitoring = false;
@@ -402,7 +358,7 @@ class BleService {
             this.manager.cancelTransaction(tx);
         } 
         catch(err: any) {
-            console.log('cancelTransaction ignorado', err.message);
+            console.log(`[ERRO] Cancelamento de Notificações Ignorado! ${err.message}`);
         }
     }
 

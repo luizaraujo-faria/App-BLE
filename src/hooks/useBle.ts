@@ -2,17 +2,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { BluetoothDevice } from '../ble/bleTypes';
 import { bleService } from '../ble/BleService';
-import { usePopup } from '../contexts/PopupContext';
+// import { usePopup } from '../contexts/PopupContext';
 
 export const useBle = () => {
 
-    const { showPopup } = usePopup();
+    // const { showPopup } = usePopup();
 
     const [devices, setDevices] = useState<BluetoothDevice[]>([]);
     const [isScanning, setIsScanning] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [currentDevice, setCurrentDevice] = useState<BluetoothDevice | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [bleMessage, setBleMessage] = useState<string | null>(null);
     const [receivedData, setReceivedData] = useState<{ value: string, ts: number } | null>(null);
 
     const isConnectingRef = useRef(false);
@@ -28,17 +28,13 @@ export const useBle = () => {
             try{
                 const ok = await bleService.initialize();
                 if (!ok && mounted) {
-                    setError('Bluetooth indisponível!');
-                    console.log('  Bluetooth indisponível!');
-                } 
-                else{
-                    console.log('  Bluetooth inicializado e pronto');
+                    setBleMessage('Bluetooth indisponível!');
                 }
             } 
             catch(err: any){
-                console.log('  Erro ao inicializar BLE:', err);
-                showPopup('Erro Bluetooth', 'Falha ao inicializar Bluetooth BLE!');
-                if(mounted) setError(`Falha ao inicializar BLE: ${err?.message ?? err}`);
+                console.log('[ERRO] Erro ao inicializar BLE:', err.message);
+                // showPopup('Erro no BLE', 'Falha ao inicializar Bluetooth BLE!');
+                if(mounted) setBleMessage(`Falha ao inicializar BLE: ${err?.message ?? err}`);
             }
         })();
 
@@ -46,7 +42,7 @@ export const useBle = () => {
             mounted = false;
             bleService.stopScan();
         };
-    }, [showPopup]);
+    }, []);
 
     // Filtro de nomes
     const filterDeviceByName = useCallback((deviceName: string | null): boolean => {
@@ -75,7 +71,7 @@ export const useBle = () => {
 
             const t = setTimeout(() => {
                 clearTimeout(t);
-                reject(new Error('Timeout de conexão - 7 segundos'));
+                reject(new Error('Tempo limite de conexão excedido!'));
             }, timeout);
         });
 
@@ -87,26 +83,26 @@ export const useBle = () => {
 
         if(isConnectingRef.current) return;
         isConnectingRef.current = true;
-        setError(null);
+        setBleMessage(null);
 
         try{
-            console.log(`  connectToDevice: iniciando conexão com ${deviceId}`);
             await connectWithTimeout(deviceId, 7000);
-            showPopup('Aviso!', 'Conexão estabelecida com sucesso!');
-            console.log('  connectToDevice: conexão estabelecida com sucesso');
+            // showPopup('Aviso!', 'Conexão estabelecida com sucesso!');
+            setBleMessage(`Conexão com ${device.name} estabelecida com sucesso!`);
+            console.log('\n[BLE] Conexão Estabelecida Com sucesso!\n');
             setIsConnected(true);
             setCurrentDevice(prev => prev ?? (devices.find(d => d.id === deviceId) || device));
         } 
         catch(err: any){
-            console.log('  connectToDevice: erro ao conectar:', err);
-            setError(`Falha ao conectar com o dispositivo! ${err?.message ?? err}`);
+            // showPopup('Erro no BLE', `Erro ao conectar-se com o dispositivo! ${err.message}`);
+            setBleMessage(`Falha ao conectar com o dispositivo ${device.name}! ${err?.message}`);
             throw err;
         } 
         finally{
             isConnectingRef.current = false;
             stopScan();
         }
-    }, [connectWithTimeout, devices, showPopup, stopScan]);
+    }, [connectWithTimeout, devices, stopScan]);
 
     // Auto connect quando detectar dispositivo alvo
     const checkAndAutoConnect = useCallback((device: BluetoothDevice) => {
@@ -114,9 +110,10 @@ export const useBle = () => {
         if(isConnected || isConnectingRef.current) return;
         const isTargetDevice = device.name?.includes(DEFAULT_DEVICE);
         if(isTargetDevice){
-            console.log(`  Dispositivo alvo encontrado: ${device.name}. Conectando automaticamente...`);
+            console.log(`\n[BLE] Dispositivo alvo encontrado: ${device.name}. Conectando automaticamente...\n`);
             connectToDevice(device.id, device).catch(err => {
-                console.log('  Erro na auto conexão:', err);
+                setBleMessage(`Falha ao conectar-se com o dispositivo alvo ${device.name}! ${err.message}`);
+                // showPopup('Erro no BLE', `Erro ao conectar-se com o dispositivo alvo! ${err.message}`);
             });
             stopScan();
         }
@@ -124,7 +121,7 @@ export const useBle = () => {
 
     // Scan para dispositivos
     const scanDevices = useCallback(async () => {
-        setError(null);
+        setBleMessage(null);
         setDevices([]);
         setIsScanning(true);
 
@@ -141,11 +138,10 @@ export const useBle = () => {
                     return next;
                 });
             }, { allowDuplicates: false });
-            console.log('  scanDevices: scan iniciado');
         } 
         catch(err: any){
-            console.log('  scanDevices erro:', err);
-            setError(`Erro no scan: ${err?.message ?? err}`);
+            // showPopup('Erro BLE', `Erro ao buscar dispositivos! ${err.message}`);
+            setBleMessage(`Falha no scan: ${err?.message ?? err}`);
             setIsScanning(false);
         }
     }, [checkAndAutoConnect, filterDeviceByName]);
@@ -153,30 +149,30 @@ export const useBle = () => {
     // Desconectar
     const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
         try{
-            // bleService.stopNotification();
+            bleService.stopNotification();
 
             await new Promise(r => setTimeout(r, 150));
 
             await bleService.disconnectDevice(device);
             setIsConnected(false);
             setCurrentDevice(null);
-            console.log('  disconnectDevice: desconectado');
+            setBleMessage(`Desconectado de ${device.name} com sucesso!`);
         } 
         catch(err: any){
-            console.log('  disconnectDevice erro:', err);  
-            setError(`Falha ao desconectar do dispositivo! ${err?.message ?? err}`);
+            // showPopup('Erro no BLE', `Erro ao desconectar-se! ${err.message}`);
+            setBleMessage(`Falha ao desconectar do dispositivo ${device.name}! ${err?.message}`);
         }
     }, []);
 
     // Inicia leitura (notify)
     const startReading = useCallback((serviceUUID: string, characteristicUUID: string) => {
-        console.log('   startReading chamada');
-        console.log('   Serviço:', serviceUUID);
-        console.log('   Característica:', characteristicUUID);
-        console.log('   currentDevice:', currentDevice?.id ?? 'null');
+        console.log('\n[BLE] Monitor de Notificações Inicializado!\n');
+        // console.log('   Serviço:', serviceUUID);
+        // console.log('   Característica:', characteristicUUID);
+        // console.log('   currentDevice:', currentDevice?.id ?? 'null');
 
         if(!currentDevice){
-            console.log('  startReading: Nenhum dispositivo conectado!');
+            console.log('\n[ERRO] startReading: Nenhum dispositivo conectado!\n');
             return;
         }
 
@@ -185,7 +181,7 @@ export const useBle = () => {
             serviceUUID,
             characteristicUUID,
             (data: string) => {
-                console.log('  Valor recebido do bleService:', data);
+                console.log('\n[BLE] Valor recebido do bleService:', data);
                 setReceivedData({ value: data, ts: Date.now() });
             },
         );
@@ -210,7 +206,7 @@ export const useBle = () => {
         isScanning,
         isConnected,
         currentDevice,
-        error,
+        bleMessage,
         receivedData,
         scanDevices,
         stopScan,
@@ -219,5 +215,6 @@ export const useBle = () => {
         startReading,
         clearReceivedData,
         stopAll,
+        setBleMessage,
     };
 };

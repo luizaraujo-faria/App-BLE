@@ -10,7 +10,7 @@ interface BleContextType {
     isScanning: boolean;
     isConnected: boolean;
     currentDevice: any;
-    error: string | null;
+    bleMessage: string | null;
     receivedData: { value: string, ts: number } | null;
     scanDevices: () => void;
     stopScan: () => void;
@@ -37,10 +37,14 @@ interface BleProviderProps {
 
 export const BleProvider = ({ children }: BleProviderProps) => {
 
+    const ble = useBle();
+
     const { isBluetoothOn, isLocationOn, ready } = useDeviceToggles();
     const { showPopup } = usePopup();
-    const ble = useBle();
+    
     const prevBleState = useRef<boolean | null>(null);
+
+    const bleMessage: string | null = ble.bleMessage;
     
     // Monitora estado dos serviços para parar o BLE
     useEffect(() => {
@@ -50,6 +54,7 @@ export const BleProvider = ({ children }: BleProviderProps) => {
         const bleEnabled = isBluetoothOn && isLocationOn;
 
         if(prevBleState.current === true && !bleEnabled){
+            console.log('\n[BLE] Todos Serviços BLE Parados!\n');
             showPopup('Aviso', 'Bluetooth ou Localização desativados! Serviços de bluetooth parados.');
             ble.stopAll();
         }
@@ -57,6 +62,16 @@ export const BleProvider = ({ children }: BleProviderProps) => {
         prevBleState.current = bleEnabled;
 
     }, [ble, isBluetoothOn, isLocationOn, ready, showPopup]);
+
+    useEffect(() => {
+
+        if(!bleMessage) return;
+
+        console.log('\n[BLE] Mensagem Capturada no Contexto!\n');
+        showPopup('Mensagem do BLE!', bleMessage);
+        ble.setBleMessage(null);
+
+    }, [ble, bleMessage, showPopup]);
 
     return (
         <BleContext.Provider value={ble}>

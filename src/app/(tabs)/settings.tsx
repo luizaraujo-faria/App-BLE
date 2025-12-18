@@ -33,12 +33,10 @@ const SettingsScreen = () => {
         isScanning,
         isConnected,
         currentDevice,
-        error,
         scanDevices,
         stopScan,
         connectToDevice,
         disconnectDevice,
-        receivedData,
         startReading,
     } = useBleContext();
         
@@ -54,18 +52,6 @@ const SettingsScreen = () => {
             );
         }
     }, [isConnected, startReading]);
-
-    useEffect(() => {
-        console.log('\n[SETTINGS] isConnected mudou:', isConnected);
-    }, [isConnected]);
-
-    useEffect(() => {
-        console.log('[SETTINGS] startReading é função?', typeof startReading);
-    }, [startReading]);
-
-    useEffect(() => {
-        console.log('[SETTINGS] receivedData mudou:', receivedData);
-    }, [receivedData]);
     
     // Atualiza a lista do Dropdown com os dispositivos escaneados
     useEffect(() => {
@@ -75,13 +61,6 @@ const SettingsScreen = () => {
         }));
         setItems(deviceItems);
     }, [devices]);
-    
-    // Mostra erros do BLE
-    useEffect(() => {
-        if(error){
-            showPopup('Erro no Bluetooth', `Causa: ${error}`);
-        }
-    }, [error]);
     
     // Quando o usuário seleciona um dispositivo no dropdown
     useEffect(() => {
@@ -93,15 +72,14 @@ const SettingsScreen = () => {
                 connectToDevice(value, selectedDevice)
                     .then(() => {
                         showPopup('Aviso', `Conectado a ${selectedDevice.name || 'dispositivo'}!`);
-                        // Alert.alert('\nSucesso', `Conectado a ${selectedDevice.name || 'dispositivo'}`);
                     })
                     .catch((err) => {
-                        console.error('\nFalha na conexão:', `Erro: ${error}`, err.message);
+                        console.error('\nFalha na conexão:', err.message);
                         showPopup('Erro', `Falha na conexão! Erro: ${err.message}.`);
                     });
             }
         }
-    }, [value, devices, isConnected, connectToDevice, error, showPopup]);
+    }, [value, devices, isConnected, connectToDevice, showPopup]);
 
     // Alternar Bluetooth
     const toggleBluetooth = async () => {
@@ -120,7 +98,6 @@ const SettingsScreen = () => {
     const toggleLocation = async () => {
 
         if(isLocationOn){
-            console.log('Desative o serviço de localização nas configurações!');
             showPopup('Aviso!', 'Desative o serviço de localização nas configurações!');
             return;
         }
@@ -131,15 +108,13 @@ const SettingsScreen = () => {
     };
     
     const handleDisconnect = async () => {
-        if (currentDevice) {
-            try {
+        if(currentDevice){
+            try{
                 await disconnectDevice(currentDevice);
                 setValue(null);
-                showPopup('Aviso', `Desconectado do dispositivo: ${currentDevice.name} com sucesso!`);
             } 
-            catch (err: any){
-                console.error('\nErro ao desconectar:', err);
-                showPopup('Erro', `Erro ao desconectar-se de: ${currentDevice.name}!`);
+            catch(err: any){
+                console.error('\nErro ao desconectar:', err.message);
             }
         }
     };

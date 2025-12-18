@@ -6,6 +6,7 @@ import EntryItem from '@/src/components/ui/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
+import { normalizeApiErrors } from '@/src/services/apiErrors';
 
 type EntryItemType = {
     id: string;
@@ -33,8 +34,8 @@ const ListScreen = () => {
         if(pendingSendRef.current) clearTimeout(pendingSendRef.current);
         if(retryRef.current) clearTimeout(retryRef.current);
 
-        console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
-        console.log(`Dados recebidos: ${receivedData?.value}`);
+        // console.log(`Itens na lista, ${entryItems}, qtd ${entryItems.length}`);
+        // console.log(`Dados recebidos: ${receivedData?.value}`);
 
         return () => {
             if(pendingSendRef.current) clearTimeout(pendingSendRef.current);
@@ -43,7 +44,7 @@ const ListScreen = () => {
             clearReceivedData();
         };
 
-    }, [clearReceivedData, entryItems, receivedData?.value]);
+    }, [clearReceivedData]);
 
     const clearList = useCallback(() => {
 
@@ -73,7 +74,9 @@ const ListScreen = () => {
             if(retryRef.current) clearTimeout(retryRef.current);
         }
         catch(err: any){
-            showPopup('Erro!', `Ocorreu um erro ao enviar registros! Erro: ${err.message}`);
+            const appError = normalizeApiErrors(err);
+
+            showPopup(`${appError.title} ${appError.status}`, appError.message);
 
             if(retryRef.current) clearTimeout(retryRef.current);
 
@@ -84,6 +87,7 @@ const ListScreen = () => {
         finally{
             setLoading(false);
         }
+        
     }, [clearList, entryItems, showPopup]);
 
     useEffect(() => {
