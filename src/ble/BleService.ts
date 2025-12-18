@@ -349,13 +349,13 @@ class BleService {
             return;
         }
 
-        const tx = this.notifyTransactionId;
+        // const tx = this.notifyTransactionId;
 
         this.isMonitoring = false;
         this.notifyTransactionId = null;
 
         try{
-            this.manager.cancelTransaction(tx);
+            // this.manager.cancelTransaction(tx);
         } 
         catch(err: any) {
             console.log(`[ERRO] Cancelamento de Notificações Ignorado! ${err.message}`);
