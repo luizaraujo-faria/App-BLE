@@ -10,18 +10,17 @@ const tabConfig = {
     settings: { icon: 'settings', label: 'Configurações' },
 } as const;
 
-const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
+const TabBar = ({ state, navigation }: BottomTabBarProps) => {
 
+    // descriptors,
     const { count } = useList();
 
     return (
         <View style={styles.container}>
             {state.routes.map((route: any, index: number) => {
-                const { options } = descriptors[route.key];
+                // const { options } = descriptors[route.key];
                 const isFocused = state.index === index;
                 const config = tabConfig[route.name as keyof typeof tabConfig];
-
-                console.log(`options TabBar ${options}`);
 
                 const onPress = () => {
                     const event = navigation.emit({
