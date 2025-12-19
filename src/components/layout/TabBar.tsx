@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useList } from '@/src/contexts/ListContext';
 
 const tabConfig = {
     list: { icon: 'list', label: 'Registros' },
@@ -11,12 +12,16 @@ const tabConfig = {
 
 const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
+    const { count } = useList();
+
     return (
         <View style={styles.container}>
             {state.routes.map((route: any, index: number) => {
-                const { _options } = descriptors[route.key];
+                const { options } = descriptors[route.key];
                 const isFocused = state.index === index;
                 const config = tabConfig[route.name as keyof typeof tabConfig];
+
+                console.log(`options TabBar ${options}`);
 
                 const onPress = () => {
                     const event = navigation.emit({
@@ -36,11 +41,22 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                         onPress={onPress}
                         style={styles.tabButton}
                     >
-                        <Ionicons
-                            name={config.icon} 
-                            size={24} 
-                            color={isFocused ? '#ff9500ff' : '#666666'} 
-                        />
+                        <View style={{ position: 'relative' }}>
+                            <Ionicons
+                                name={config.icon} 
+                                size={24} 
+                                color={isFocused ? '#ff9500ff' : '#666666'} 
+                            />
+
+                            {route.name === 'list' && count > 0 && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>
+                                        {count}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        
                         <Text style={[
                             styles.label,
                             isFocused && styles.labelActive,
@@ -75,6 +91,23 @@ const styles = StyleSheet.create({
     labelActive: {
         color: '#000',
         fontWeight: '600',
+    },
+    badge: {
+        position: 'absolute',
+        top: -6,
+        right: -10,
+        minWidth: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: '#ff3b30',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 4,
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: 10,
+        fontWeight: 'bold',
     },
 });
 

@@ -26,10 +26,7 @@ export const useBle = () => {
         (async () => {
 
             try{
-                const ok = await bleService.initialize();
-                if (!ok && mounted) {
-                    setBleMessage('Bluetooth indisponível!');
-                }
+                await bleService.initialize();
             } 
             catch(err: any){
                 console.log('[ERRO] Erro ao inicializar BLE:', err.message);

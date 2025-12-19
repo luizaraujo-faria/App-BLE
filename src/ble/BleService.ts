@@ -39,7 +39,7 @@ class BleService {
     private async checkPermissions(): Promise<boolean> {
         try{
             const state = await this.manager.state();
-            const locationState = await Location.PermissionStatus.GRANTED;
+            const locationState = Location.PermissionStatus.GRANTED;
             return (state === State.PoweredOn && locationState === 'granted');
         } 
         catch (err: any){
@@ -199,6 +199,9 @@ class BleService {
     async disconnectDevice(device: BluetoothDevice): Promise<void> {
 
         try{
+            if(this.isMonitoring) this.isMonitoring = false;
+            if(this.notifyTransactionId) this.notifyTransactionId = null;
+
             console.log(`\n Desconectando do dispositivo: ${device.name}...`);
             await this.manager.cancelDeviceConnection(device.id);
             console.log(`[BLE] Desconectado de: ${device.name}\n`);

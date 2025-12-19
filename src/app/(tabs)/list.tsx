@@ -7,6 +7,7 @@ import { createRecord } from '@/src/services/recordsService';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
+import { useList } from '@/src/contexts/ListContext';
 
 type EntryItemType = {
     id: string;
@@ -20,11 +21,16 @@ const ListScreen = () => {
     
     const { receivedData, clearReceivedData } = useBleContext();
     const { showPopup } = usePopup();
+    const { setCount } = useList();
 
     const [loading, setLoading] = useState(false);
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [entryItems, setEntryItems] = useState<EntryItemType[]>([]);
+
+    useEffect(() => {
+        setCount(entryItems.length);
+    }, [entryItems.length, setCount]);
 
     const clearRecivedState = useCallback(() => {
 
@@ -76,7 +82,7 @@ const ListScreen = () => {
         catch(err: any){
             const appError = normalizeApiErrors(err);
 
-            showPopup(`${appError.title} ${appError.status}`, appError.message);
+            showPopup(`${appError.title} ${appError.status ? appError.status : ''}`, appError.message);
 
             if(retryRef.current) clearTimeout(retryRef.current);
 
