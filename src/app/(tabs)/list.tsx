@@ -70,7 +70,7 @@ const ListScreen = () => {
                 .map(item => item.id)
                 .filter(Boolean) as string[];
 
-            if (ids.length === 0) return;
+            if(ids.length === 0) return;
 
             await createRecord(ids);
 

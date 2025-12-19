@@ -16,7 +16,7 @@ export const useBle = () => {
     const [receivedData, setReceivedData] = useState<{ value: string, ts: number } | null>(null);
 
     const isConnectingRef = useRef(false);
-    const DEFAULT_DEVICE = 'ESP32_FRID';
+    const DEFAULT_DEVICE = 'Nutricao_ESP32';
 
     // Inicialização
     useEffect(() => {
