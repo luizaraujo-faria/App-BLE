@@ -28,6 +28,8 @@ const ListScreen = () => {
     const retryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [entryItems, setEntryItems] = useState<EntryItemType[]>([]);
 
+
+
     useEffect(() => {
         setCount(entryItems.length);
     }, [entryItems.length, setCount]);
@@ -66,11 +68,8 @@ const ListScreen = () => {
         try{
             setLoading(true);
 
-            const ids = entryItems
-                .map(item => item.id)
-                .filter(Boolean) as string[];
-
-            if(ids.length === 0) return;
+            const ids = entryItems.map(item => [String(item.id).trim()]);
+            if(ids[0].length === 0) return;
 
             await createRecord(ids);
 
