@@ -7,6 +7,7 @@ import { useList } from '@/src/contexts/ListContext';
 const tabConfig = {
     list: { icon: 'list', label: 'Registros' },
     managment: { icon: 'bar-chart', label: 'Gestão' },
+    register: { icon: 'person', label: 'Cadastro' },
     settings: { icon: 'settings', label: 'Configurações' },
 } as const;
 
@@ -43,7 +44,7 @@ const TabBar = ({ state, navigation }: BottomTabBarProps) => {
                         <View style={{ position: 'relative' }}>
                             <Ionicons
                                 name={config.icon} 
-                                size={24} 
+                                size={isFocused ? 22 : 20} 
                                 color={isFocused ? '#ff9500ff' : '#666666'} 
                             />
 
@@ -86,10 +87,12 @@ const styles = StyleSheet.create({
         marginTop: 4,
         color: '#666666',
         fontFamily: 'AfacadFlux',
+        display: 'none',
     },
     labelActive: {
-        color: '#000',
+        color: '#000000ff',
         fontWeight: '600',
+        display: 'flex',
     },
     badge: {
         position: 'absolute',
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     },
     badgeText: {
         color: '#fff',
-        fontSize: 10,
+        fontSize: 8,
         fontWeight: 'bold',
     },
 });

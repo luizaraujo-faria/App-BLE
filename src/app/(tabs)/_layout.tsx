@@ -18,6 +18,7 @@ export default function TabLayout() {
                     }}>
                     <Tabs.Screen name='list'/>
                     <Tabs.Screen name='managment'/>
+                    <Tabs.Screen name='register'/>
                     <Tabs.Screen name='settings'/>
                 </Tabs>
             </ListProvider>
