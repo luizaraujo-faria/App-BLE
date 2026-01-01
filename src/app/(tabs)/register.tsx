@@ -1,12 +1,14 @@
-import Header from '@/src/components/layout/Header';
+// import Header from '@/src/components/layout/Header';
 import Button from '@/src/components/ui/Button';
 import { usePopup } from '@/src/contexts/PopupContext';
 import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, StyleSheet, TextInput, View, Text } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { createCollaborator } from '@/src/services/collaboratorsService';
+import ActionButton from '@/src/components/ui/ActionButton';
+import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/ui/Icons';
 
 const Register = () => {
 
@@ -15,7 +17,7 @@ const Register = () => {
     const [sector, setSector] = useState('');
 
     const { showPopup } = usePopup();
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
     const collaboratorTypes = [
         { id: '1', type: 'Colaborador' },
@@ -28,20 +30,24 @@ const Register = () => {
 
     const verifyInputsIsEmpty = useCallback((): boolean => {
 
-        if(id.trim() === '' && name.trim() === '' && sector.trim() === '' && typeDropdown.value === 'Tipo de Colaborador'){
+        if(id.trim() === '' ||
+            name.trim() === '' ||
+            sector.trim() === '' ||
+            typeDropdown.value === ''){
+
             return true;
         }
 
         return false;
     }, [id, name, sector, typeDropdown.value]);
 
-    const clearInputs = () => {
+    const clearInputs = useCallback(async() => {
 
         setId('');
         setName('');
         setSector('');
-        typeDropdown.setValue('Tipo de Colaborador');
-    };
+        typeDropdown.setValue('');
+    }, [typeDropdown]);
 
     const registerCollaborator = useCallback(async () => {
 
@@ -49,80 +55,98 @@ const Register = () => {
             setLoading(true);
             if(verifyInputsIsEmpty()) return;
 
-            const values = [];
-            values.push(id);
-            values.push(name);
-            values.push(sector);
-            values.push(typeDropdown.value);
-
+            const values = [id, name, sector, typeDropdown.value];
             console.log(values);
 
-            await createCollaborator(values);
-
-            showPopup('Sucesso!', 'Colaborador Criado com sucesso!');
+            const res = await createCollaborator(values);
+            
+            clearInputs();
+            showPopup('Sucesso!', `${res}`);
             return;
         }
         catch(err: any){
             const appError = normalizeApiErrors(err);
-            showPopup(`${appError.title} ${appError.status ? appError.status : ''}`, `${appError.message}\n${err.message}`);
+            console.log(appError.message);
+            showPopup(`${appError.title} ${appError.status ? appError.status : ''}`, `${appError.message}`);
         }
         finally{
             setLoading(false);
         }
 
-    }, [id, name, sector, showPopup, typeDropdown.value, verifyInputsIsEmpty]);
+    }, [clearInputs, id, name, sector, showPopup, typeDropdown.value, verifyInputsIsEmpty]);
 
     const buttonDisabled = verifyInputsIsEmpty();
 
     return (
         <View style={{ flex: 1, position: 'relative' }}>
-            <Header subtitle={'Cadastro'} />
+            {/* <Header subtitle={'Cadastro'} /> */}
 
             <View style={styles.container}>
 
                 <View style={styles.form}>
-                    <View style={styles.inputBox}>
-                        <TextInput 
-                            value={id}
-                            onChangeText={setId}
-                            placeholder='ID'
-                            placeholderTextColor='#000'
-                            style={styles.input} 
-                        />
-                        <TextInput 
-                            value={name}
-                            onChangeText={setName}
-                            placeholder='Nome'
-                            placeholderTextColor='#000'
-                            style={styles.input} 
-                        />
-                        <TextInput 
-                            value={sector}
-                            onChangeText={setSector}
-                            placeholder='Setor'
-                            placeholderTextColor='#000'
-                            style={styles.input} 
-                        />
 
-                        <DropDownPicker
-                            disabled={false}
-                            open={typeDropdown.open}
-                            value={typeDropdown.value}
-                            items={typeDropdown.items}
-                            setOpen={typeDropdown.setOpen}
-                            setValue={typeDropdown.setValue}
-                            setItems={typeDropdown.setItems}
-                            placeholder={'Tipo de Colaborador'}
-                            style={styles.dropdownBar}
-                            dropDownContainerStyle={styles.dropdownContainer}
-                            labelStyle={styles.dropdownLabel}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedItemContainerStyle={styles.selectedItemContainer}
-                            selectedItemLabelStyle={styles.selectedItemLabel}
-                            dropDownDirection='BOTTOM'
-                        />
+                    <View style={{ gap: '10%' }}>
+                        <View style={styles.formText}>
+                            <Image 
+                                // eslint-disable-next-line no-undef
+                                source={require('@/assets/images/LogoIMREA.png')}
+                                style={styles.logo} 
+                            />
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.text}>Cadastro de Colaboradores</Text>
+                                <Text 
+                                    style={{ fontSize: 18, fontFamily: 'AfacadFlux' }}>
+                                        Insira os dados abaixo
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.inputBox}>
+
+                            <TextInput 
+                                value={id}
+                                onChangeText={setId}
+                                placeholder='ID'
+                                placeholderTextColor='#000'
+                                style={styles.input} 
+                                editable={isLoading ? false : true}
+                            />
+                            <TextInput 
+                                value={name}
+                                onChangeText={setName}
+                                placeholder='Nome'
+                                placeholderTextColor='#000'
+                                style={styles.input} 
+                                editable={isLoading ? false : true}
+                            />
+                            <TextInput 
+                                value={sector}
+                                onChangeText={setSector}
+                                placeholder='Setor'
+                                placeholderTextColor='#000'
+                                style={styles.input} 
+                                editable={isLoading ? false : true}
+                            />
+
+                            <DropDownPicker
+                                disabled={isLoading}
+                                open={typeDropdown.open}
+                                value={typeDropdown.value}
+                                items={typeDropdown.items}
+                                setOpen={typeDropdown.setOpen}
+                                setValue={typeDropdown.setValue}
+                                setItems={typeDropdown.setItems}
+                                placeholder={'Tipo de Colaborador'}
+                                style={styles.dropdownBar}
+                                dropDownContainerStyle={styles.dropdownContainer}
+                                labelStyle={styles.dropdownLabel}
+                                placeholderStyle={styles.dropdownPlaceholder}
+                                selectedItemContainerStyle={styles.selectedItemContainer}
+                                selectedItemLabelStyle={styles.selectedItemLabel}
+                                dropDownDirection='AUTO'
+                            />
+                        </View>
                     </View>
-
 
                     <View style={styles.actions}>
                         <Button 
@@ -130,33 +154,44 @@ const Register = () => {
                             onPress={registerCollaborator}
                             style={styles.button}
                             textStyle={null}
-                            disabled={false}
+                            disabled={buttonDisabled}
+                            loading={isLoading}
+                            
                         />
 
-                        <Button 
+                        {/* <Button 
                             textButton='Limpar'
                             onPress={clearInputs}
-                            style={[styles.button, { backgroundColor: 'red' }]}
+                            style={[styles.clearButton, { backgroundColor: 'red' }]}
                             textStyle={null}
-                            disabled={buttonDisabled}
-                        />
-                    </View>
+                            disabled={false}
+                            loading={false}
+                        /> */}
 
-                    {loading && (
-                        <View style={{
-                            width: '100%',
-                            height: '15%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#83838317',
-                        }}>
-                            <ActivityIndicator size='large' color='#ffb54cff' />
-                            <Text style={{ color: '#ffb54cff' }}>Enviando dados...</Text>
+                        <View style={{ flexDirection: 'row', gap: '2.5%' }}>
+                            <ActionButton 
+                                style={[styles.clearButton, styles.miniButton]}
+                                disabled={isLoading}
+                                onPress={clearInputs}
+                                icon={<AntDesignIcon 
+                                    iconName='clear' 
+                                    iconSize={20} 
+                                    iconColor='#fff' />
+                                }
+                            />
+                            <ActionButton 
+                                style={[styles.changeButton, styles.miniButton]}
+                                disabled={isLoading}
+                                onPress={clearInputs}
+                                icon={<FontAwesomeIcon 
+                                    iconName='exchange' 
+                                    iconSize={20} 
+                                    iconColor='#fff' />
+                                }
+                            />
                         </View>
-                    )}
-
+                    </View>
                 </View>
-
             </View>
         </View>
     );
@@ -165,77 +200,114 @@ const Register = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 24,
+        // padding: 24,
         gap: 16,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         position: 'relative',
+        backgroundColor: '#ffb54cff',
     },
     form: {
-        width: '100%',
-        height: '80%',
-        // backgroundColor: '#d3d3d3ff',
-        gap: 16,
+        width: '95%',
+        height: '90%',
+        backgroundColor: '#fff',
         justifyContent: 'space-between',
+        padding: 24,
+        paddingVertical: 60,
+        gap: '10%',
+        borderBottomLeftRadius: 50,
+        borderBottomRightRadius: 50,
+    },
+    formText: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '5%',
+    },
+    logo: {
+        width: 35,
+        height: 35,
+    },
+    text: {
+        fontSize: 22,
+        fontFamily: 'AfacadFlux',
     },
     inputBox: {
-        height: '40%', 
+        width: '100%',
+        height: 'auto', 
         gap: 16, 
         alignItems: 'center',
         justifyContent: 'center',
     },
+    input: {
+        width: '100%',
+        height: 50,
+        paddingLeft: 16,
+        fontSize: 18,
+        color: '#000',
+        borderRadius: 10,
+        backgroundColor: '#fbbe244b',
+        fontFamily: 'AfacadFlux',
+        overflow: 'hidden',
+    },
     dropdownBar: {
         width: '100%',
-        height: '25%',
-        // boxShadow: '0px 0px 2px #94949475',
-        borderRadius: 4,
+        height: 50,
+        borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#fbbe244b',
         color: '#000',
         borderWidth: 0,
         position: 'relative',
+        overflow: 'hidden',
     },
     dropdownContainer: {
         width: '100%',
-        backgroundColor: '#ffffffea',
+        backgroundColor: '#ffffffff',
         borderWidth: 0,
-        // borderTopRightRadius: 2,
-        // borderTopLeftRadius: 2,
-        boxShadow: '0px 0px 2px #94949475',
+        borderBottomRightRadius: 10,
+        borderBottomLeftRadius: 10,
+        fontFamily: 'AfacadFlux',
+        boxShadow: '0px 0px 1px #5353538a',
     },
     dropdownLabel: {
-        fontSize: 16,
+        paddingLeft: 6,
+        fontSize: 18,
         color: '#000000ff',
+        fontFamily: 'AfacadFlux',
     },
     dropdownPlaceholder: {
+        paddingLeft: 6,
         fontSize: 16,
+        fontFamily: 'AfacadFlux',
         color: '#000000',
     },
     selectedItemContainer: {
-        backgroundColor: '#b6b6b69c',
+        backgroundColor: '#ffb54cff',
     },
     selectedItemLabel: {
         fontWeight: 'bold',
         color: '#000000ff',
     },
-    input: {
-        width: '100%',
-        height: '25%',
-        backgroundColor: '#fff',
-        borderRadius: 4,
-        fontSize: 16,
-        padding: 16,
-        color: '#000',
-    },
     actions: {
         width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        maxHeight: 'auto',
     },
     button: {
-        width: '45%',
-        height: '40%',
+        width: '100%',
+        borderRadius: 10,
+    },
+    miniButton: {
+        width: '15%',
+        height: 40,
+        boxShadow: 'none',
+    },
+    clearButton: {
+        backgroundColor: '#f0120aff',
+    },
+    changeButton: {
+        backgroundColor: '#ffd000ff',
     },
 });
 

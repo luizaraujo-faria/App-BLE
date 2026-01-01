@@ -40,6 +40,7 @@ const SettingsScreen = () => {
         startReading,
     } = useBleContext();
         
+    const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState<DeviceItem[]>([]);
@@ -110,11 +111,15 @@ const SettingsScreen = () => {
     const handleDisconnect = async () => {
         if(currentDevice){
             try{
+                setLoading(true);
                 await disconnectDevice(currentDevice);
                 setValue(null);
             } 
             catch(err: any){
                 console.error('\nErro ao desconectar:', err.message);
+            }
+            finally{
+                setLoading(false);
             }
         }
     };
@@ -176,7 +181,9 @@ const SettingsScreen = () => {
                             onPress={isScanning ? stopScan : scanDevices}
                             style={null}
                             textStyle={null}
-                            disabled={!isBluetoothOn || !isLocationOn}/>
+                            disabled={!isBluetoothOn || !isLocationOn}
+                            loading={false}
+                        />
 
                         <DropDownPicker
                             disabled={!isBluetoothOn || !isLocationOn}
@@ -203,7 +210,9 @@ const SettingsScreen = () => {
                                     onPress={handleDisconnect}
                                     style={styles.disconnectButton}
                                     textStyle={null}
-                                    disabled={false}/>
+                                    disabled={false}
+                                    loading={isLoading}
+                                />
                             </View>
                         )}
                     </View>

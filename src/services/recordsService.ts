@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api, { API_BASE_URL } from './api';
 
 const RECORDS_BASE_URL = `${API_BASE_URL}/records`;
@@ -9,8 +10,11 @@ export const createRecord = async (values: (string | number)[][]): Promise<void>
         return;
     }
     catch(err: any){
-        console.log(`Falha ao enviar registros! ${err.message}`);
-        console.error(err);
-        throw err;
+        if(axios.isAxiosError(err)){
+            throw err;
+        }
+        else{
+            throw err;
+        }
     }
 };

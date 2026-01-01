@@ -1,20 +1,22 @@
 import { TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 
 
 interface ActionButtonProps {
-    iconName: string;
-    iconSize: number;
+    style: Object | null;
+    icon: any | null;
     onPress: () => void;
     disabled: boolean
 }
 
-const ActionButton = ({ iconName, iconSize, onPress, disabled }: ActionButtonProps ) => {
+const ActionButton = ({ style, icon, onPress, disabled }: ActionButtonProps ) => {
 
     return (
-        <TouchableOpacity style={[styles.actionOption, disabled && styles.actionOptionDisabled]} onPress={onPress} disabled={disabled}>
-            <Ionicons name={iconName} size={iconSize}/>
+        <TouchableOpacity 
+            style={[styles.actionOption, style && style, disabled && styles.actionOptionDisabled]} 
+            onPress={onPress} disabled={disabled}
+        >
+            {icon}
         </TouchableOpacity>
     );
 };

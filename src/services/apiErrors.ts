@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 type AppError = {
     title: string;
     message: string;
@@ -6,14 +8,14 @@ type AppError = {
 
 export const normalizeApiErrors = (err: any): AppError => {
 
-    if(err?.response){
-        const status = err?.response.status;
+    if(err?.response && axios.isAxiosError(err)){
+        const status = err.status;
 
         switch(status){
         case 400:
             return {
                 title: 'Dados inválidos!',
-                message: 'Verifique as informações e tente novamente.',
+                message: err.response.data.message,
                 status,
             };
 
@@ -34,7 +36,7 @@ export const normalizeApiErrors = (err: any): AppError => {
         case 404:
             return {
                 title: 'Não encontrado!',
-                message: 'O recurso solicitado não foi encontrado.',
+                message: err.response.data.message,
                 status,
             };
 
@@ -65,7 +67,7 @@ export const normalizeApiErrors = (err: any): AppError => {
 
     // Erro desconhecido
     return {
-        title: 'Erro',
+        title: 'Erro Desconhecido!',
         message: 'Ocorreu um erro inesperado.',
     };
 };

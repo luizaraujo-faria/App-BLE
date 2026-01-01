@@ -76,7 +76,9 @@ const SigninScreen = () => {
                         onPress={handleLogin}
                         style={styles.loginButton}
                         textStyle={{ color: '#000', fontSize: 20 }}
-                        disabled={undefined}/>
+                        disabled={undefined}
+                        loading={false}
+                    />
                 </View>
                   
                 <View style={styles.signupBox}>
