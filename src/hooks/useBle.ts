@@ -213,5 +213,6 @@ export const useBle = () => {
         clearReceivedData,
         stopAll,
         setBleMessage,
+        setReceivedData,
     };
 };
