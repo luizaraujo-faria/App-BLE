@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Button from '@/src/components/ui/Button';
-import Header from '@/src/components/layout/Header';
-import { SwitchItem } from '@/src/components/ui/Switch';
-import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
-import BLEIcon from '../../../assets/images/bluetooth.png';
+import Button from '@/src/components/Button';
+import { SwitchItem } from '@/src/components/Switch';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
+import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import BLEIcon from '../../../assets/images/bluetooth.png';
 
 type DeviceItem = {
     label: string;
@@ -131,8 +130,6 @@ const SettingsScreen = () => {
     return (
 
         <View style={{ flex: 1 }}>
-            
-            <Header subtitle={'Configurações'}/>
 
             <View style={ styles.container }>
 

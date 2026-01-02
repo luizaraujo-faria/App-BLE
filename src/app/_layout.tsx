@@ -14,7 +14,7 @@ const RootLayout = () => {
         AfacadFlux: require('@/assets/fonts/AfacadFlux-Regular.ttf'),
     });
 
-    if (!loaded) {
+    if(!loaded) {
         return null; // ou uma tela de loading
     }
 

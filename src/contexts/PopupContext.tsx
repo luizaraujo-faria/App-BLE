@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import Popup from '../components/ui/Popup';
+import Popup from '../components/Popup';
 
 interface PopupContextData {
     showPopup: (title: string, message: string) => void;

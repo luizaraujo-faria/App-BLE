@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
+import buttonStyles from './styles';
 
 interface ButtonProps {
     textButton: string;
@@ -18,7 +19,6 @@ const Button = ({ textButton, onPress, style, textStyle, disabled, loading }: Bu
             onPress={onPress} 
             disabled={disabled}>
             
-
             {loading ? (
                 <ActivityIndicator size='small' color='#fff' />
             ) : (
@@ -27,26 +27,5 @@ const Button = ({ textButton, onPress, style, textStyle, disabled, loading }: Bu
         </TouchableOpacity>
     );
 };
-
-const buttonStyles = StyleSheet.create({
-    buttonContainer: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#ffb54cff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 4,
-        marginBottom: 10,
-    },
-    buttonDisabled: {
-        backgroundColor: '#cea163ff',
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: 400,
-        color: 'white',
-        fontFamily: 'AfacadFlux',
-    },
-});
 
 export default Button;

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import TabBar from '@/src/components/layout/TabBar';
+import TabBar from '@/src/components/TabBar';
 import React from 'react';
 import { BleProvider } from '@/src/contexts/BleContext';
 import { ListProvider } from '@/src/contexts/ListContext';

@@ -1,14 +1,14 @@
-// import Header from '@/src/components/layout/Header';
-import Button from '@/src/components/ui/Button';
+import ActionButton from  '@/src/components/ActionButton';
+import Button from '@/src/components/Button';
+import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/Icons';
 import { usePopup } from '@/src/contexts/PopupContext';
 import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, TextInput, View, Text, Image } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { createCollaborator } from '@/src/services/collaboratorsService';
-import ActionButton from '@/src/components/ui/ActionButton';
-import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/ui/Icons';
+import { appColors } from '@/src/styles/styles';
+import React, { useCallback, useState } from 'react';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Register = () => {
 
@@ -79,7 +79,6 @@ const Register = () => {
 
     return (
         <View style={{ flex: 1, position: 'relative' }}>
-            {/* <Header subtitle={'Cadastro'} /> */}
 
             <View style={styles.container}>
 
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         position: 'relative',
-        backgroundColor: '#ffb54cff',
+        backgroundColor: appColors.primary,
     },
     form: {
         width: '95%',
@@ -246,7 +245,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#000',
         borderRadius: 10,
-        backgroundColor: '#fbbe244b',
+        backgroundColor: appColors.tertiary,
         fontFamily: 'AfacadFlux',
         overflow: 'hidden',
     },
@@ -256,7 +255,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fbbe244b',
+        backgroundColor: appColors.tertiary,
         color: '#000',
         borderWidth: 0,
         position: 'relative',
@@ -284,7 +283,7 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     selectedItemContainer: {
-        backgroundColor: '#ffb54cff',
+        backgroundColor: appColors.tertiary,
     },
     selectedItemLabel: {
         fontWeight: 'bold',
@@ -304,10 +303,10 @@ const styles = StyleSheet.create({
         boxShadow: 'none',
     },
     clearButton: {
-        backgroundColor: '#f0120aff',
+        backgroundColor: appColors.quaternary,
     },
     changeButton: {
-        backgroundColor: '#ffd000ff',
+        backgroundColor: appColors.secondary,
     },
 });
 

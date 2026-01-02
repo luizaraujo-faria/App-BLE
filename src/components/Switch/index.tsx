@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Switch } from 'react-native-switch';
+import styles from './styles';
 
 type Props = {
   label: string;
@@ -32,18 +33,3 @@ export function SwitchItem({ label, value, onToggle }: Props) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-    },
-    label: {
-        fontSize: 20,
-        color: '#000',
-        fontFamily: 'AfacadFlux',
-    },
-});

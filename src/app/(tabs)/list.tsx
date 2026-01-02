@@ -1,17 +1,19 @@
 import React from 'react';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Text, FlatList, ActivityIndicator } from 'react-native';
-// import Header from '@/src/components/layout/Header';
-import EntryItem from '@/src/components/ui/EntryItem';
+import EntryItem from '@/src/components/EntryItem';
 import { createRecord } from '@/src/services/recordsService';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import { useList } from '@/src/contexts/ListContext';
+import { appColors } from '@/src/styles/styles';
+import { AntDesignIcon } from '@/src/components/Icons';
 
 type EntryItemType = {
     id: string;
     timestamp?: number;
+    listKey: string;
 }
 
 const ListScreen = () => {
@@ -19,6 +21,7 @@ const ListScreen = () => {
     const { receivedData, clearReceivedData } = useBleContext();
     const { showPopup } = usePopup();
     const { setCount } = useList();
+    const { count } = useList();
 
     const [loading, setLoading] = useState(false);
     const pendingSendRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,10 +38,6 @@ const ListScreen = () => {
     useEffect(() => {
         setCount(entryItems.length);
     }, [entryItems.length, setCount]);
-
-    useEffect(() => {
-        console.log('VISIBLE ITEMS:', visibleEntryItems);
-    }, [visibleEntryItems]);
 
     const clearRecivedState = useCallback(() => {
 
@@ -78,8 +77,6 @@ const ListScreen = () => {
             const ids = entryItems.map(item => [String(item.id).trim()]);
             if(ids[0].length === 0) return;
 
-            console.log(`DADOS ENVIADOS: ${ids}`);
-            console.log(`DADOS RENDERIZADOS: ${visibleEntryItems}`);
             await createRecord(ids);
 
             clearList();
@@ -89,11 +86,9 @@ const ListScreen = () => {
         }
         catch(err: any){
             const appError = normalizeApiErrors(err);
-
             showPopup(`${appError.title} ${appError.status ? appError.status : ''}`, appError.message);
 
             if(retryRef.current) clearTimeout(retryRef.current);
-
             retryRef.current = setTimeout(() => {
                 sendAllIDsToBackend();
             }, 5000);
@@ -102,7 +97,7 @@ const ListScreen = () => {
             setLoading(false);
         }
         
-    }, [clearList, entryItems, showPopup, visibleEntryItems]);
+    }, [clearList, entryItems, showPopup]);
 
     useEffect(() => {
 
@@ -124,6 +119,7 @@ const ListScreen = () => {
         const newItem: EntryItemType = {
             id: String(receivedData?.value),
             timestamp: receivedData.ts,
+            listKey: `${receivedData.value}-${receivedData.ts}`,
         };
 
         // impede duplicado simultâneo
@@ -135,7 +131,8 @@ const ListScreen = () => {
 
         // adiciona mantendo apenas os 5 últimos
         setVisibleEntryItems(prev => {
-            const exists = prev.some(item => item.id === newItem.id);
+            const exists = prev.some(item => 
+                item.id === newItem.id && item.timestamp === newItem.timestamp);
             if (exists) return prev;
             return pushWithLimit(prev, newItem, 5);
         });
@@ -144,28 +141,51 @@ const ListScreen = () => {
 
     return(
         <View style={{ flex: 1, position: 'relative' }}>
-            {/* <Header subtitle={'Registros'}/> */}
 
-            <View style={homeStyles.container}>
+            <View style={styles.container}>
 
-                <View style={homeStyles.listHeader}>
+                <View style={styles.topBar}>
                     
+                    <Text style={styles.headerText}>
+                        Total de passagens
+                        na lista
+                    </Text>
+
+                    <View 
+                        style={{ 
+                            width: '15%', 
+                            height: '85%', 
+                            backgroundColor: appColors.tertiary,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 10,
+                        }}
+                    >
+                        <AntDesignIcon iconName='login' iconColor='#000' iconSize={24} />
+                        <View style={styles.badge}>
+                            
+                            <Text style={styles.badgeText}>
+                                {count}
+                            </Text>
+                        </View>
+                    </View>
+
                 </View>
 
-                <View style={homeStyles.entryPanel}>
+                <View style={styles.entryList}>
 
-                    <View style={homeStyles.panelHeader}>
-                        <Text style={{ fontSize: 20 }}>Usuários recebidos</Text>
+                    <View style={styles.listHeader}>
+                        <Text style={styles.headerText}>Últimas 5 passagens</Text>
                     </View>
 
                     <FlatList
                         scrollEnabled={true}
                         nestedScrollEnabled={true}
                         data={visibleEntryItems}
-                        keyExtractor={(item) => String(item.id)}
+                        keyExtractor={(item) => item.listKey}
                         renderItem={({ item }) => <EntryItem selectItem={() => null} entryItem={item} />}
-                        contentContainerStyle={homeStyles.list}
-                        // style={homeStyles.list} 
+                        contentContainerStyle={styles.list}
+                        // style={styles.list} 
                     />
 
                     {loading && (
@@ -186,47 +206,68 @@ const ListScreen = () => {
     );
 };
 
-const homeStyles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffb54cff',
+        backgroundColor: appColors.primary,
         padding: 16,
         gap: 16,
         position: 'relative',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    listHeader: {
+    topBar: {
         width: '100%',
         height: '10%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        boxShadow: '0px 0px 3px #38383869',
+        boxShadow: appColors.shadow,
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-evenly',
+        flexDirection: 'row',
         padding: 10,
         gap: 16,
     },
-    entryPanel: {
+    badge: {
+        position: 'absolute',
+        top: -5,
+        right: -5,
+        minWidth: 20,
+        height: 20,
+        borderRadius: '100%',
+        backgroundColor: appColors.quaternary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 4,
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    listHeader: {
+        width: '80%',
+        height: '10%',
+        borderBottomColor: appColors.primary,
+        borderBottomWidth: 0.5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    entryList: {
         width: '100%',
         height: '85%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        boxShadow: '0px 0px 3px #38383869',
+        boxShadow: appColors.shadow,
         alignItems: 'center',
         justifyContent: 'flex-end',
         paddingTop: 10,
-        paddingHorizontal: 5,
         gap: 16,
     },
-    panelHeader: {
-        width: '80%',
-        height: '10%',
-        borderBottomColor: '#b8b8b8ff',
-        borderBottomWidth: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+    headerText: {
+        fontSize: 24,
+        fontFamily: 'AfacadFlux',
     },
     list: {
         width: '100%',
@@ -235,6 +276,7 @@ const homeStyles = StyleSheet.create({
         justifyContent: 'center', 
         alignContent: 'center',
         paddingTop: '5%',
+        paddingHorizontal: 2,
     },
 });
 

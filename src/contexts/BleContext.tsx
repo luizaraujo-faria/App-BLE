@@ -60,7 +60,7 @@ export const BleProvider = ({ children }: BleProviderProps) => {
             { value: '12412', ts: Date.now() },
             { value: '1215', ts: Date.now() },
             { value: '135', ts: Date.now() },
-            // { value: '132', ts: Date.now() },
+            // { value: '135', ts: Date.now() },
             // { value: '131', ts: Date.now() },
         ];
 
@@ -77,8 +77,6 @@ export const BleProvider = ({ children }: BleProviderProps) => {
                 ble.setReceivedData(ids[index]);
                 index++;
             }, 1000); // 300ms entre cada ID
-
-            console.log(ble.receivedData);
 
             console.log('\n[BLE] Todos Serviços BLE Parados!\n');
             showPopup('Aviso', 'Bluetooth ou Localização desativados! Serviços de bluetooth parados.');

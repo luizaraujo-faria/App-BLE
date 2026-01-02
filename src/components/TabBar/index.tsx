@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useList } from '@/src/contexts/ListContext';
+import styles from './styles';
 
 const tabConfig = {
     list: { icon: 'list', label: 'Registros' },
@@ -51,7 +52,7 @@ const TabBar = ({ state, navigation }: BottomTabBarProps) => {
                             {route.name === 'list' && count > 0 && (
                                 <View style={styles.badge}>
                                     <Text style={styles.badgeText}>
-                                        {count}
+                                        !
                                     </Text>
                                 </View>
                             )}
@@ -69,48 +70,5 @@ const TabBar = ({ state, navigation }: BottomTabBarProps) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
-        paddingVertical: 8,
-    },
-    tabButton: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 8,
-    },
-    label: {
-        fontSize: 16,
-        marginTop: 4,
-        color: '#666666',
-        fontFamily: 'AfacadFlux',
-        display: 'none',
-    },
-    labelActive: {
-        color: '#000000ff',
-        fontWeight: '600',
-        display: 'flex',
-    },
-    badge: {
-        position: 'absolute',
-        top: -6,
-        right: -10,
-        minWidth: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: '#ff3b30',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 4,
-    },
-    badgeText: {
-        color: '#fff',
-        fontSize: 8,
-        fontWeight: 'bold',
-    },
-});
 
 export default TabBar;

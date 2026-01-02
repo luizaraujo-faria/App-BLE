@@ -1,11 +1,8 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
-import Header from '@/src/components/layout/Header';
-import { Ionicons } from '@expo/vector-icons';
-import DropDownPicker from 'react-native-dropdown-picker';
 import useDropdown from '@/src/hooks/useDropdown';
-import ActionButton from '@/src/components/ui/ActionButton';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const ManagmentScreen = () => {
 
@@ -33,13 +30,12 @@ const ManagmentScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Header subtitle={'Gestão'}/>
             
             <View style={style.container}>
 
                 <View style={style.topBar}>
 
-                    <ActionButton 
+                    {/* <ActionButton 
                         iconName='search' 
                         iconSize={24} 
                         onPress={() => Alert.alert('Teste', 'teste')} 
@@ -49,7 +45,7 @@ const ManagmentScreen = () => {
                         iconName='reload' 
                         iconSize={24} 
                         onPress={() => Alert.alert('Teste', 'teste')} 
-                        disabled={false}/>
+                        disabled={false}/> */}
 
                     <TouchableOpacity style={style.actionBar}>
                         <Ionicons name='search' size={24}/>

@@ -1,6 +1,6 @@
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import React from 'react';
-
+import styles from './styles';
 
 interface ActionButtonProps {
     style: Object | null;
@@ -20,20 +20,5 @@ const ActionButton = ({ style, icon, onPress, disabled }: ActionButtonProps ) =>
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    actionOption: {
-        width: 80,
-        height: 60,
-        boxShadow: '0px 0px 2px #94949475',
-        borderRadius: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-    },
-    actionOptionDisabled: {
-        backgroundColor: '#ccccccbe',
-    },
-});
 
 export default ActionButton;
