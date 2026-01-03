@@ -1,3 +1,4 @@
+import AppText from '@/src/components/AppText';
 import EntryItem from '@/src/components/EntryItem';
 import { AntDesignIcon } from '@/src/components/Icons';
 import { useBleContext } from '@/src/contexts/BleContext';
@@ -6,6 +7,7 @@ import { usePopup } from '@/src/contexts/PopupContext';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import { createRecord } from '@/src/services/recordsService';
 import { appColors } from '@/src/themes/colors';
+import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 
@@ -140,15 +142,12 @@ const ListScreen = () => {
 
     return(
         <View style={{ flex: 1, position: 'relative' }}>
-
             <View style={styles.container}>
 
                 <View style={styles.topBar}>
-                    
-                    <Text style={styles.headerText}>
-                        Total de passagens
-                        na lista
-                    </Text>
+                    <AppText 
+                        text='Total de passagens na lista' 
+                        textStyle={styles.headerText} />
 
                     <View 
                         style={{ 
@@ -162,17 +161,14 @@ const ListScreen = () => {
                     >
                         <AntDesignIcon iconName='login' iconColor='#000' iconSize={24} />
                         <View style={styles.badge}>
-                            
-                            <Text style={styles.badgeText}>
-                                {count}
-                            </Text>
-                        </View>
-                    </View>
 
+                            <AppText text={count} textStyle={styles.badgeText} />
+                        </View>
+
+                    </View>
                 </View>
 
                 <View style={styles.entryList}>
-
                     <View style={styles.listHeader}>
                         <Text style={styles.headerText}>Últimas 5 passagens</Text>
                     </View>
@@ -196,10 +192,11 @@ const ListScreen = () => {
                             backgroundColor: '#83838317',
                         }}>
                             <ActivityIndicator size='large' color='#ffb54cff' />
-                            <Text style={{ color: '#ffb54cff' }}>Enviando dados...</Text>
+                            <AppText text={'Enviando dados...'} textStyle={{ color: '#ffb54cff' }} />
                         </View>
                     )}
                 </View>
+                
             </View>
         </View>
     );
@@ -267,7 +264,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 24,
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     list: {
         width: '100%',

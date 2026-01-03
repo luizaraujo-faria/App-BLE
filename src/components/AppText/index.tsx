@@ -3,8 +3,8 @@ import { Text } from 'react-native';
 import styles from './styles';
 
 interface AppTextProps {
-    text: string;
-    textStyle: Object | null;
+    text: string | number;
+    textStyle?: Object | null;
 }
 
 const AppText = ({ text, textStyle }: AppTextProps) => {

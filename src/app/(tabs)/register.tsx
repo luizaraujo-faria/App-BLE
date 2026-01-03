@@ -1,4 +1,5 @@
 import ActionButton from '@/src/components/ActionButton';
+import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
 import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/Icons';
 import { usePopup } from '@/src/contexts/PopupContext';
@@ -6,8 +7,9 @@ import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import { createCollaborator } from '@/src/services/collaboratorsService';
 import { appColors } from '@/src/themes/colors';
+import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StyleSheet, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 const Register = () => {
@@ -79,7 +81,6 @@ const Register = () => {
 
     return (
         <View style={{ flex: 1, position: 'relative' }}>
-
             <View style={styles.container}>
 
                 <View style={styles.form}>
@@ -92,11 +93,11 @@ const Register = () => {
                                 style={styles.logo} 
                             />
                             <View style={{ alignItems: 'center' }}>
-                                <Text style={styles.text}>Cadastro de Colaboradores</Text>
-                                <Text 
-                                    style={{ fontSize: 18, fontFamily: 'AfacadFlux' }}>
-                                        Insira os dados abaixo
-                                </Text>
+                                <AppText text={'Cadastro de Colaboradores'} textStyle={styles.text} />
+                                <AppText 
+                                    text={'Insira os dados abaixo'} 
+                                    textStyle={{ fontSize: 18, fontFamily: 'AfacadFlux' }} 
+                                />
                             </View>
                         </View>
 
@@ -191,6 +192,7 @@ const Register = () => {
                         </View>
                     </View>
                 </View>
+
             </View>
         </View>
     );
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 22,
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     inputBox: {
         width: '100%',
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
         color: '#000',
         borderRadius: 10,
         backgroundColor: appColors.tertiary,
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
         overflow: 'hidden',
     },
     dropdownBar: {
@@ -267,19 +269,19 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderBottomRightRadius: 10,
         borderBottomLeftRadius: 10,
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
         boxShadow: '0px 0px 1px #5353538a',
     },
     dropdownLabel: {
         paddingLeft: 6,
         fontSize: 18,
         color: '#000000ff',
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     dropdownPlaceholder: {
         paddingLeft: 6,
         fontSize: 16,
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
         color: '#000000',
     },
     selectedItemContainer: {
