@@ -1,10 +1,12 @@
+import { appColors } from '@/src/themes/colors';
+// import { appFonts } from '@/src/themes/fonts';
 import { StyleSheet } from 'react-native';
 
 const buttonStyles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         height: 50,
-        backgroundColor: '#ffb54cff',
+        backgroundColor: appColors.primary,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 4,
@@ -13,13 +15,7 @@ const buttonStyles = StyleSheet.create({
         gap: '5%',
     },
     buttonDisabled: {
-        backgroundColor: '#cea163ff',
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: 400,
-        color: 'white',
-        fontFamily: 'AfacadFlux',
+        backgroundColor: appColors.primaryDisabled,
     },
 });
 

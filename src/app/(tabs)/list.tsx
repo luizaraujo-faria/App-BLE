@@ -1,14 +1,13 @@
-import React from 'react';
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Text, FlatList, ActivityIndicator } from 'react-native';
 import EntryItem from '@/src/components/EntryItem';
-import { createRecord } from '@/src/services/recordsService';
+import { AntDesignIcon } from '@/src/components/Icons';
 import { useBleContext } from '@/src/contexts/BleContext';
+import { useList } from '@/src/contexts/ListContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
-import { useList } from '@/src/contexts/ListContext';
-import { appColors } from '@/src/styles/styles';
-import { AntDesignIcon } from '@/src/components/Icons';
+import { createRecord } from '@/src/services/recordsService';
+import { appColors } from '@/src/themes/colors';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 
 type EntryItemType = {
     id: string;

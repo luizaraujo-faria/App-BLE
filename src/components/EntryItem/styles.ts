@@ -1,5 +1,5 @@
+import { appColors } from '@/src/themes/colors';
 import { StyleSheet } from 'react-native';
-import { appColors } from '@/src/styles/styles';
 
 const styles = StyleSheet.create({
     entryItemCard: {

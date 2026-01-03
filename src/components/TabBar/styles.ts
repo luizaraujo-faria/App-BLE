@@ -1,4 +1,5 @@
-import { appColors } from '@/src/styles/styles';
+import { appColors } from '@/src/themes/colors';
+import { appFonts } from '@/src/themes/fonts';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -29,10 +30,10 @@ const styles = StyleSheet.create({
         borderRadius: '50%',
     },
     label: {
-        fontSize: 16,
+        fontSize: 12,
         marginTop: 4,
         color: '#666666',
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
         
     },
     labelActive: {

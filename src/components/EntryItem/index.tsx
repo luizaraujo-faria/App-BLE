@@ -1,10 +1,10 @@
-import React from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
-import dayjs from 'dayjs';
-import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import { AntDesignIcon } from '@/src/components/Icons';
+import { appColors } from '@/src/themes/colors';
+import dayjs from 'dayjs';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import styles from './styles';
-import { appColors } from '@/src/styles/styles';
 
 type EntryItemType = {
     id: string;

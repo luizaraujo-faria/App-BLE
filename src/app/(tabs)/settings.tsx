@@ -1,14 +1,17 @@
+import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
+import { MaterialCommunityIcon } from '@/src/components/Icons';
 import { SwitchItem } from '@/src/components/Switch';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
+import { appColors } from '@/src/themes/colors';
+import { appFonts } from '@/src/themes/fonts';
+// import { appFonts } from '@/src/themes/fonts';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, Linking, Platform } from 'react-native';
+import { ActivityIndicator, Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { appColors } from '@/src/styles/styles';
-import { MaterialCommunityIcon } from '@/src/components/Icons';
 
 type DeviceItem = {
     label: string;
@@ -157,6 +160,10 @@ const SettingsScreen = () => {
         ? `Conectado: ${currentDevice?.name || currentDevice?.localName || 'Dispositivo'}`
         : 'Selecione um dispositivo';
 
+    const connectedText = isConnected 
+        ? ` Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
+        : ' Desconectado';
+
     return (
 
         <View style={ styles.container }>
@@ -167,17 +174,13 @@ const SettingsScreen = () => {
                     <View style={styles.statusPanel}>
 
                         <View style={{ width: 'auto', flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.title}>Controle Bluetooth</Text>
+                            <AppText text='Controle de Bluetooth' textStyle={styles.title} />
                             <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.primary} />
                         </View>
 
-                        <Text style={{ fontSize: 20 }}>Status: 
-                            <Text style={styles.connectedText}>
-                                {isConnected 
-                                    ? ` Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
-                                    : ' Desconectado'
-                                }
-                            </Text>
+                        <Text>
+                            <AppText text='Status:' textStyle={{ fontSize: 20 }} />
+                            <AppText text={connectedText} textStyle={styles.connectedText} />
                         </Text>
                     </View>
 
@@ -186,10 +189,10 @@ const SettingsScreen = () => {
 
                         <View style={{ width: '100%', alignItems: 'center', gap: 5 }}>
                             <Ionicons name='warning' size={30} color={'#da0700ff'} />
-                            <Text style={styles.infoText}>
-                                Para o uso desta funcionalidade é necessário que o Bluetooth 
-                                e Localização do dispositivo estejam permitidos e ativados!
-                            </Text>
+                            <AppText 
+                                text='Para o uso desta funcionalidade é necessário que o Bluetooth e Localização do dispositivo estejam permitidos e ativados!'
+                                textStyle={styles.infoText} 
+                            />
                         </View>
                     
                         <View
@@ -210,7 +213,7 @@ const SettingsScreen = () => {
                                 textButton={'Verificar Permissões'} 
                                 onPress={openAppSettings}
                                 style={null}
-                                textStyle={{ color: '#000' }}
+                                textStyle={{ fontSize: 18 }}
                                 disabled={false}
                                 loading={false}
                                 icon={<MaterialCommunityIcon 
@@ -235,7 +238,7 @@ const SettingsScreen = () => {
                         paddingHorizontal: 10,
                     }}>
                         <ActivityIndicator size='small' color='#ffb54cff' />
-                        <Text style={styles.scanningText}>Buscando Dispositivos próximos...</Text>
+                        <AppText text='Buscando Dispositivos próximos...' textStyle={styles.scanningText} />
                     </View>)}
 
                 <View style={styles.actionContainer}>
@@ -256,7 +259,7 @@ const SettingsScreen = () => {
                         textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
                         onPress={handleScan}
                         style={null}
-                        textStyle={{ color: '#000' }}
+                        textStyle={{ fontSize: 18 }}
                         disabled={!isBluetoothOn || !isLocationOn}
                         loading={false}
                         icon={<MaterialCommunityIcon 
@@ -332,9 +335,9 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     infoText: {
-        fontSize: 20, 
+        fontSize: 17, 
         textAlign: 'center', 
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     infoStatus: {
         width: '100%', 
@@ -351,35 +354,33 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 32,
-        color: '#333',
-        fontFamily: 'AfacadFlux',
     },
     connectedText: {
         fontSize: 20,
-        color: '#ff9500ff',
-        fontFamily: 'AfacadFlux',
+        color: appColors.primary,
+        fontFamily: appFonts.afacadReg,
     },
     scanningText: {
         fontSize: 20,
-        color: '#ff9500ff',
-        fontFamily: 'AfacadFlux',
+        color: appColors.primary,
+        fontFamily: appFonts.afacadReg,
     },
     disconnectButton: {
         width: '100%',
         height: 50,
-        backgroundColor: '#da0700ff',
+        backgroundColor: appColors.quaternary,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 4,
     },
     dropdown: {
-        backgroundColor: '#ffb54c',
+        backgroundColor: appColors.primary,
         borderWidth: 0,
         borderRadius: 4,
         height: 50,
     },
     dropdownDisabled: {
-        backgroundColor: '#cea163ff',
+        backgroundColor: appColors.primaryDisabled,
         borderWidth: 0,
         borderRadius: 4,
         height: 50,
@@ -392,15 +393,15 @@ const styles = StyleSheet.create({
         boxShadow: '0px -1px 3px #0000007e',
     },
     dropdownLabel: {
-        fontSize: 22,
+        fontSize: 18,
         color: '#000',
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     dropdownPlaceholder: {
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 18,
         color: '#000',
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
     selectedItemContainer: {
         backgroundColor: '#a7a7a7',

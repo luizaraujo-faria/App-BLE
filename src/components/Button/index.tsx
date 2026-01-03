@@ -1,6 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
 import buttonStyles from './styles';
+import AppText from '../AppText';
 
 interface ButtonProps {
     textButton: string;
@@ -25,7 +26,7 @@ const Button = ({ textButton, onPress, style, textStyle, disabled, loading, icon
             ) : (
                 <>
                     {icon && icon}
-                    <Text style={[buttonStyles.buttonText, textStyle]}>{textButton}</Text>
+                    <AppText text={textButton} textStyle={textStyle} />
                 </>
             )}
         </TouchableOpacity>

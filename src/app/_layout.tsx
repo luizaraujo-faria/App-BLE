@@ -11,7 +11,11 @@ const RootLayout = () => {
 
     const [loaded] = useFonts({
         // eslint-disable-next-line no-undef
-        AfacadFlux: require('@/assets/fonts/AfacadFlux-Regular.ttf'),
+        AfacadReg: require('@/assets/fonts/AfacadFlux-Regular.ttf'),
+        // eslint-disable-next-line no-undef
+        AfacadLight: require('@/assets/fonts/AfacadFlux-Light.ttf'),
+        // eslint-disable-next-line no-undef
+        AfacadSemiBold: require('@/assets/fonts/AfacadFlux-SemiBold.ttf'),
     });
 
     if(!loaded) {

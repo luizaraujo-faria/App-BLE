@@ -1,3 +1,4 @@
+import { appColors } from '@/src/themes/colors';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     closeButton: {
         width: '15%',
         height: 35,
-        backgroundColor: '#ffb44ce7',
+        backgroundColor: appColors.primary,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 4,

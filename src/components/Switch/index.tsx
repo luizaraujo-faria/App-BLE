@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Switch } from 'react-native-switch';
 import styles from './styles';
+import { appColors } from '@/src/themes/colors';
 
 type Props = {
   label: string;
@@ -18,9 +19,9 @@ export function SwitchItem({ label, value, onToggle }: Props) {
                 value={value}
                 onValueChange={onToggle}
                 circleSize={22}
-                barHeight={24}
-                backgroundActive='#fbbf24'
-                backgroundInactive='#d3d3d3'
+                barHeight={25}
+                backgroundActive={appColors.primary}
+                backgroundInactive={appColors.primaryDisabled}
                 circleActiveColor='#fff'
                 circleInActiveColor='#fff'
                 renderActiveText={false}

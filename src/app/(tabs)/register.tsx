@@ -1,11 +1,11 @@
-import ActionButton from  '@/src/components/ActionButton';
+import ActionButton from '@/src/components/ActionButton';
 import Button from '@/src/components/Button';
 import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/Icons';
 import { usePopup } from '@/src/contexts/PopupContext';
 import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import { createCollaborator } from '@/src/services/collaboratorsService';
-import { appColors } from '@/src/styles/styles';
+import { appColors } from '@/src/themes/colors';
 import React, { useCallback, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';

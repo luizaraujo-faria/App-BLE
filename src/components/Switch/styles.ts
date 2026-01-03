@@ -1,3 +1,4 @@
+import { appFonts } from '@/src/themes/fonts';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 20,
         color: '#000',
-        fontFamily: 'AfacadFlux',
+        fontFamily: appFonts.afacadReg,
     },
 });
 

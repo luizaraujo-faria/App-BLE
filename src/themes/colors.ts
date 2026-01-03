@@ -4,8 +4,5 @@ export const appColors = {
     tertiary: '#ffbd162c',
     quaternary: '#e00801ff',
     shadow: '',
-};
-
-export const appFonts = {
-    
+    primaryDisabled: '#cea163ff',
 };
