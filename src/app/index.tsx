@@ -77,6 +77,7 @@ const SigninScreen = () => {
                         textStyle={{ color: '#000', fontSize: 20 }}
                         disabled={undefined}
                         loading={false}
+                        icon={null}
                     />
                 </View>
                   

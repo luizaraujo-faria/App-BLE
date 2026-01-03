@@ -9,6 +9,8 @@ const buttonStyles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 4,
         marginBottom: 10,
+        flexDirection: 'row',
+        gap: '5%',
     },
     buttonDisabled: {
         backgroundColor: '#cea163ff',

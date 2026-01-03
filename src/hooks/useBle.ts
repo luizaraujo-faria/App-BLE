@@ -97,9 +97,9 @@ export const useBle = () => {
         } 
         finally{
             isConnectingRef.current = false;
-            stopScan();
+            // stopScan();
         }
-    }, [connectWithTimeout, devices, stopScan]);
+    }, [connectWithTimeout, devices]);
 
     // Auto connect quando detectar dispositivo alvo
     const checkAndAutoConnect = useCallback((device: BluetoothDevice) => {
@@ -112,9 +112,9 @@ export const useBle = () => {
                 setBleMessage(`Falha ao conectar-se com o dispositivo alvo ${device.name}! ${err.message}`);
                 // showPopup('Erro no BLE', `Erro ao conectar-se com o dispositivo alvo! ${err.message}`);
             });
-            stopScan();
+            // stopScan();
         }
-    }, [isConnected, connectToDevice, stopScan]);
+    }, [isConnected, connectToDevice]);
 
     // Scan para dispositivos
     const scanDevices = useCallback(async () => {
@@ -123,7 +123,8 @@ export const useBle = () => {
         setIsScanning(true);
 
         try{
-            bleService.scanForDevices((device) => {
+            const result = await bleService.scanForDevices((device) => {
+
                 setIsScanning(true);
                 if (!filterDeviceByName(device.name)) return;
 
@@ -135,6 +136,12 @@ export const useBle = () => {
                     return next;
                 });
             }, { allowDuplicates: false });
+
+            if(!result.ok) {
+                setBleMessage(String(result.message));
+                setIsScanning(false);
+                return;
+            }
         } 
         catch(err: any){
             // showPopup('Erro BLE', `Erro ao buscar dispositivos! ${err.message}`);
@@ -146,20 +153,21 @@ export const useBle = () => {
     // Desconectar
     const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
         try{
-            bleService.stopNotification();
+            // bleService.stopNotification();
 
             await new Promise(r => setTimeout(r, 150));
 
             await bleService.disconnectDevice(device);
             setIsConnected(false);
             setCurrentDevice(null);
+            stopScan();
             setBleMessage(`Desconectado de ${device.name} com sucesso!`);
         } 
         catch(err: any){
             // showPopup('Erro no BLE', `Erro ao desconectar-se! ${err.message}`);
             setBleMessage(`Falha ao desconectar do dispositivo ${device.name}! ${err?.message}`);
         }
-    }, []);
+    }, [stopScan]);
 
     // Inicia leitura (notify)
     const startReading = useCallback((serviceUUID: string, characteristicUUID: string) => {

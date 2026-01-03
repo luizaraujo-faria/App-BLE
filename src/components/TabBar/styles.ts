@@ -3,22 +3,37 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
+        width: '100%',
         flexDirection: 'row',
         backgroundColor: '#FFFFFF',
         paddingVertical: 8,
+        height: '8.5%',
     },
     tabButton: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 8,
+        paddingVertical: 10,
+        gap: 0,
+    },
+    iconContainer: {
+        width: 40,
+        height: 38,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '50%',
+        position: 'relative',
+    },
+    iconContainerActive: {
+        backgroundColor: appColors.primary,
+        borderRadius: '50%',
     },
     label: {
         fontSize: 16,
         marginTop: 4,
         color: '#666666',
         fontFamily: 'AfacadFlux',
-        display: 'none',
+        
     },
     labelActive: {
         color: '#000000ff',
@@ -27,8 +42,8 @@ const styles = StyleSheet.create({
     },
     badge: {
         position: 'absolute',
-        top: -6,
-        right: -10,
+        top: -2,
+        right: -2,
         minWidth: 16,
         height: 16,
         borderRadius: 8,

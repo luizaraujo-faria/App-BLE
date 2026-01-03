@@ -5,9 +5,10 @@ import { usePopup } from '@/src/contexts/PopupContext';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, Linking, Platform } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import BLEIcon from '../../../assets/images/bluetooth.png';
+import { appColors } from '@/src/styles/styles';
+import { MaterialCommunityIcon } from '@/src/components/Icons';
 
 type DeviceItem = {
     label: string;
@@ -19,10 +20,6 @@ const SettingsScreen = () => {
     const { showPopup } = usePopup();
 
     const {
-        // uiBluetoothOn,
-        // uiLocationOn,
-        // toggleBluetooth,
-        // toggleLocation,
         isBluetoothOn,
         isLocationOn,
     } = useDeviceToggles();
@@ -122,6 +119,39 @@ const SettingsScreen = () => {
             }
         }
     };
+
+    const handleScan = async () => {
+
+        if(isScanning){
+            stopScan();
+            setLoading(false);
+            return;
+        }
+
+        scanDevices();
+        setLoading(true);
+        return;
+    };
+
+    const openAppSettings = async () => {
+        try {
+            if (Platform.OS === 'ios') {
+                await Linking.openURL('app-settings:');
+            } else {
+                await Linking.openSettings();
+            }
+        } catch (error) {
+            console.log('Erro ao abrir configurações:', error);
+        }
+    };
+
+    // useEffect(() => {
+
+    //     if(isConnected && currentDevice){
+    //         setLoading(false);
+    //     }
+
+    // }, [currentDevice, isConnected]);
     
     const _dropdownPlaceholder = isConnected 
         ? `Conectado: ${currentDevice?.name || currentDevice?.localName || 'Dispositivo'}`
@@ -129,21 +159,19 @@ const SettingsScreen = () => {
 
     return (
 
-        <View style={{ flex: 1 }}>
+        <View style={ styles.container }>
+            <View style={styles.inner}>
 
-            <View style={ styles.container }>
-
-                <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-between' }}>
- 
+                <View style={styles.groupPanels}>
                     {/* Status Bluetooth */}
                     <View style={styles.statusPanel}>
 
-                        <View style={{ width: '75%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ width: 'auto', flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={styles.title}>Controle Bluetooth</Text>
-                            <Image source={BLEIcon} style={{ width: 30, height: 30 }} />
+                            <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.primary} />
                         </View>
 
-                        <Text style={{ fontSize: 20, marginBottom: 28 }}>Status: 
+                        <Text style={{ fontSize: 20 }}>Status: 
                             <Text style={styles.connectedText}>
                                 {isConnected 
                                     ? ` Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
@@ -151,70 +179,111 @@ const SettingsScreen = () => {
                                 }
                             </Text>
                         </Text>
-                        {isScanning && <Text style={styles.scanningText}>Escaneando dispositivos...</Text>}
-
                     </View>
 
                     {/* Mensagem de aviso */}
                     <View style={styles.info}>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <View style={{ width: '100%', alignItems: 'center', gap: 5 }}>
                             <Ionicons name='warning' size={30} color={'#da0700ff'} />
-                            <Text style={{ width: '88%', fontSize: 20, textAlign: 'justify', fontFamily: 'AfacadFlux' }}>Para o uso desta funcionalidade é necessário que o Bluetooth e Localização do dispositivo estejam ativados!</Text>
+                            <Text style={styles.infoText}>
+                                Para o uso desta funcionalidade é necessário que o Bluetooth 
+                                e Localização do dispositivo estejam permitidos e ativados!
+                            </Text>
                         </View>
                     
-                        <View style={{ width: '100%', gap: 0 }}>
+                        <View
+                            style={{
+                                width: '100%',
+                                gap: 10,
+                            }}
+                        >
+                            <View style={styles.infoStatus}>
 
-                            <SwitchItem label='Status Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
+                                <SwitchItem label='Bluetooth' value={isBluetoothOn} onToggle={toggleBluetooth}/>
 
-                            <SwitchItem label='Status Localização' value={isLocationOn} onToggle={toggleLocation}/>
+                                <SwitchItem label='Localização' value={isLocationOn} onToggle={toggleLocation}/>
 
+                            </View>
+
+                            <Button 
+                                textButton={'Verificar Permissões'} 
+                                onPress={openAppSettings}
+                                style={null}
+                                textStyle={{ color: '#000' }}
+                                disabled={false}
+                                loading={false}
+                                icon={<MaterialCommunityIcon 
+                                    iconName='security' 
+                                    iconColor='#000' 
+                                    iconSize={24} 
+                                />}
+                            />
                         </View>
                     </View>
-
-                    <View style={{ width: '100%' }}>
-                        <Button 
-                            textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
-                            onPress={isScanning ? stopScan : scanDevices}
-                            style={null}
-                            textStyle={null}
-                            disabled={!isBluetoothOn || !isLocationOn}
-                            loading={false}
-                        />
-
-                        <DropDownPicker
-                            disabled={!isBluetoothOn || !isLocationOn}
-                            open={open}
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            placeholder={'Dispositivos encontrados'}
-                            style={(isBluetoothOn && isLocationOn) ? styles.dropdown : styles.dropdownDisabled}
-                            dropDownContainerStyle={styles.dropdownContainer}
-                            labelStyle={styles.dropdownLabel}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedItemContainerStyle={styles.selectedItemContainer}
-                            selectedItemLabelStyle={styles.selectedItemLabel}
-                        />
-
-                        {isConnected && currentDevice && (
-                            <View style={{ width: '100%', marginTop: 10 }}>
-
-                                <Button 
-                                    textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
-                                    onPress={handleDisconnect}
-                                    style={styles.disconnectButton}
-                                    textStyle={null}
-                                    disabled={false}
-                                    loading={isLoading}
-                                />
-                            </View>
-                        )}
-                    </View>
-
                 </View>
+
+                {isScanning && isLoading && (
+                    <View style={{
+                        width: '80%',
+                        height: '5%',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: '#83838317',
+                        borderRadius: 10,
+                        flexDirection: 'row',
+                        paddingHorizontal: 10,
+                    }}>
+                        <ActivityIndicator size='small' color='#ffb54cff' />
+                        <Text style={styles.scanningText}>Buscando Dispositivos próximos...</Text>
+                    </View>)}
+
+                <View style={styles.actionContainer}>
+
+                    {isConnected && currentDevice && (
+
+                        <Button 
+                            textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
+                            onPress={handleDisconnect}
+                            style={styles.disconnectButton}
+                            textStyle={null}
+                            disabled={false}
+                            loading={false}
+                            icon={null}
+                        />
+                    )}
+                    <Button 
+                        textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
+                        onPress={handleScan}
+                        style={null}
+                        textStyle={{ color: '#000' }}
+                        disabled={!isBluetoothOn || !isLocationOn}
+                        loading={false}
+                        icon={<MaterialCommunityIcon 
+                            iconName='devices' 
+                            iconColor='#000' 
+                            iconSize={24} 
+                        />}
+                    />
+
+                    <DropDownPicker
+                        disabled={!isBluetoothOn || !isLocationOn}
+                        open={open}
+                        value={value}
+                        items={items}
+                        setOpen={setOpen}
+                        setValue={setValue}
+                        setItems={setItems}
+                        placeholder={'Dispositivos encontrados'}
+                        style={(isBluetoothOn && isLocationOn) ? styles.dropdown : styles.dropdownDisabled}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        labelStyle={styles.dropdownLabel}
+                        placeholderStyle={styles.dropdownPlaceholder}
+                        selectedItemContainerStyle={styles.selectedItemContainer}
+                        selectedItemLabelStyle={styles.selectedItemLabel}
+                    />
+                </View>
+
             </View>
         </View>
     );
@@ -225,22 +294,60 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: '#f4f4f4ff',
-        padding: 24,
+        justifyContent: 'center',
+        backgroundColor: appColors.tertiary,
+        paddingHorizontal: 10,
+        paddingVertical: 24,
+    },
+    inner: {
+        width: '100%', 
+        height: '100%', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+    },
+    groupPanels: {
+        width: '100%', 
+        height: '65%', 
+        gap: '5%', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     statusPanel: { 
-        alignItems: 'flex-start', 
-        justifyContent: 'flex-start', 
-        height: '16%',
-        marginTop: '5%',
+        width: '100%',
+        height: '25%',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
     },
     info: {
-        marginBottom: '40%',
         width: '100%',
-        height: 100,
+        height: 'auto',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: 25,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
+    },
+    infoText: {
+        fontSize: 20, 
+        textAlign: 'center', 
+        fontFamily: 'AfacadFlux',
+    },
+    infoStatus: {
+        width: '100%', 
+        gap: 0, 
+        backgroundColor: appColors.tertiary,
+        borderRadius: 10,
+    },
+    actionContainer: {
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 5,
+        gap: 0,
     },
     title: {
         fontSize: 32,
@@ -264,7 +371,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 4,
-        marginBottom: 10,
     },
     dropdown: {
         backgroundColor: '#ffb54c',
@@ -287,13 +393,13 @@ const styles = StyleSheet.create({
     },
     dropdownLabel: {
         fontSize: 22,
-        color: '#ffffffff',
+        color: '#000',
         fontFamily: 'AfacadFlux',
     },
     dropdownPlaceholder: {
         textAlign: 'center',
         fontSize: 20,
-        color: '#fff',
+        color: '#000',
         fontFamily: 'AfacadFlux',
     },
     selectedItemContainer: {

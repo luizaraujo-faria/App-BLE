@@ -209,8 +209,9 @@ const ListScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: appColors.primary,
-        padding: 16,
+        backgroundColor: appColors.tertiary,
+        paddingHorizontal: 10,
+        paddingBottom: '10%',
         gap: 16,
         position: 'relative',
         alignItems: 'center',

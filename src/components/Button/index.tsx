@@ -9,9 +9,10 @@ interface ButtonProps {
     textStyle: Object | null;
     disabled: boolean | undefined;
     loading: boolean;
+    icon: any | null | Object;
 }
 
-const Button = ({ textButton, onPress, style, textStyle, disabled, loading }: ButtonProps) => {
+const Button = ({ textButton, onPress, style, textStyle, disabled, loading, icon }: ButtonProps) => {
 
     return (
         <TouchableOpacity 
@@ -22,7 +23,10 @@ const Button = ({ textButton, onPress, style, textStyle, disabled, loading }: Bu
             {loading ? (
                 <ActivityIndicator size='small' color='#fff' />
             ) : (
-                <Text style={[buttonStyles.buttonText, textStyle]}>{textButton}</Text>
+                <>
+                    {icon && icon}
+                    <Text style={[buttonStyles.buttonText, textStyle]}>{textButton}</Text>
+                </>
             )}
         </TouchableOpacity>
     );

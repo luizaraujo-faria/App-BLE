@@ -155,7 +155,7 @@ const Register = () => {
                             textStyle={null}
                             disabled={buttonDisabled}
                             loading={isLoading}
-                            
+                            icon={null}
                         />
 
                         {/* <Button 

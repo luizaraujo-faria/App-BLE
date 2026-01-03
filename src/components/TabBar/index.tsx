@@ -1,15 +1,28 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons';
 import { useList } from '@/src/contexts/ListContext';
 import styles from './styles';
+import { FontAwesomeIcon, Ionicon, MaterialCommunityIcon } from '../Icons';
 
 const tabConfig = {
-    list: { icon: 'list', label: 'Registros' },
-    managment: { icon: 'bar-chart', label: 'Gestão' },
-    register: { icon: 'person', label: 'Cadastro' },
-    settings: { icon: 'settings', label: 'Configurações' },
+    list: { 
+        icon: <FontAwesomeIcon iconName='list-alt' iconColor='#000' iconSize={22} />, 
+        label: 'Registros',
+    },
+    managment: { 
+        icon: <MaterialCommunityIcon iconName='chart-areaspline' iconSize={24} iconColor='#000' />, 
+        label: 'Gestão', 
+    },
+    register: { 
+        icon: <Ionicon iconName='people' iconColor='#000' iconSize={24} />, 
+        label: 'Cadastro',
+    },
+    settings: { 
+        icon: <Ionicon iconName='settings-sharp' iconColor='#000' iconSize={24} />, 
+        label: 'Configurações',
+    },
 } as const;
 
 const TabBar = ({ state, navigation }: BottomTabBarProps) => {
@@ -42,12 +55,9 @@ const TabBar = ({ state, navigation }: BottomTabBarProps) => {
                         onPress={onPress}
                         style={styles.tabButton}
                     >
-                        <View style={{ position: 'relative' }}>
-                            <Ionicons
-                                name={config.icon} 
-                                size={isFocused ? 22 : 20} 
-                                color={isFocused ? '#ff9500ff' : '#666666'} 
-                            />
+                        <View style={[styles.iconContainer, isFocused && styles.iconContainerActive]}>
+                            
+                            {config.icon} 
 
                             {route.name === 'list' && count > 0 && (
                                 <View style={styles.badge}>

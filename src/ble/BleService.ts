@@ -1,8 +1,14 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
-import { Platform } from 'react-native';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
-import * as Location from 'expo-location';
+// import * as Location from 'expo-location';
 import { Buffer } from 'buffer';
+import { checkPermissions, requestPermissions } from '../security/permissions';
+
+type BleResult<T = void> = {
+    ok: boolean;
+    message?: string;
+    data?: T;
+};
 
 class BleService {
     public manager: BleManager;
@@ -14,107 +20,94 @@ class BleService {
         this.manager = new BleManager();
     }
 
-    // Solicitar permissões em runtime
-    private async requestPermissions(): Promise<boolean> {
-        if(Platform.OS !== 'android') {
-            return true;
+    // VERIFICA ESTADO DO BLUETOOTH
+    private async isBluetoothOn(): Promise<boolean> {
+        const state = await this.manager.state();
+        return state === State.PoweredOn;
+    }
+
+    // VERIFICA OU PEDE PRMISSÕES
+    private async ensureReady(): Promise<BleResult> {
+        const permissionCheck = await checkPermissions();
+
+        if (!permissionCheck.granted) {
+            const request = await requestPermissions();
+
+            if (!request.granted) {
+                return {
+                    ok: false,
+                    message: request.message ?? 'Permissões BLE não concedidas',
+                };
+            }
         }
 
+        const bluetoothOn = await this.isBluetoothOn();
+        if (!bluetoothOn) {
+            return {
+                ok: false,
+                message: 'Bluetooth está desligado',
+            };
+        }
+
+        return { ok: true };
+    }
+
+    // INICIALIZA O BLE
+    public async initialize(): Promise<BleResult> {
         try{
-            const state = await this.manager.state();
-      
-            if(state === State.PoweredOn) {
-                return true;
-            }
-            else{
-                return false;
-            }
+            return await this.ensureReady();
         } 
         catch (err: any) {
-            console.error('[ERRO] Erro ao verificar estado Bluetooth:', err.message);
-            return false;
-        }
-    }
-
-    private async checkPermissions(): Promise<boolean> {
-        try{
-            const state = await this.manager.state();
-            const locationState = Location.PermissionStatus.GRANTED;
-            return (state === State.PoweredOn && locationState === 'granted');
-        } 
-        catch (err: any){
-            console.error('[ERRO] Erro ao verificar permissões:', err.message);
-            return false;
-        }
-    }
-
-    public async initialize(): Promise<boolean> {
-        try {
-            const state = await this.manager.state();
-            const locationState = await Location.hasServicesEnabledAsync();
-      
-            if (state !== State.PoweredOn) {
-                console.log('Bluetooth não está ligado. Estado:', state);
-                return false;
-            }
-
-            if(locationState !== true){
-                console.log(`Localização não esta ligada, Estado: ${locationState}`);
-                return false;
-            }
-
-            return true;
-        } 
-        catch(err: any) {
-            console.error('[ERRO] Falha ao Incializar BLE:', err.message);
-            return false;
+            return {
+                ok: false,
+                message: err.message ?? 'Erro inesperado ao inicializar BLE',
+            };
         }
     }
 
     // Escanear dispositivos
     async scanForDevices(
-
         onDeviceFound: (device: BluetoothDevice) => void,
         options: ScanOptions = {},
+    ): Promise<BleResult> {
 
-    ): Promise<void> {
-
-        if(this.isScanning){ console.log('[BLE] Scan efetuado.\n'); return; }
-
-        const hasPermissions = await this.checkPermissions();
-        if(!hasPermissions){
-            const granted = await this.requestPermissions();
-            if(!granted){
-                console.error('Permissões negadas para escan BLE');
-                return;
-            }
+        if (this.isScanning) {
+            return { ok: false, message: 'Scan já está em execução' };
         }
+
+        const ready = await this.ensureReady();
+        if (!ready.ok) return ready;
 
         this.isScanning = true;
 
-        try{
-            
+        try {
             this.manager.startDeviceScan(
                 null,
                 {
-                    allowDuplicates: options.allowDuplicates || false,
-                    scanMode: options.scanMode || ScanMode.LowLatency,
+                    allowDuplicates: options.allowDuplicates ?? false,
+                    scanMode: options.scanMode ?? ScanMode.LowLatency,
                 },
                 (err, device) => {
-                    
-                    if(err){ 
-                        console.error('[ERRO] Erro No Scan! ', err.message);
+                    if (err) {
                         this.stopScan();
+                        console.error(err.message);
                         return;
                     }
 
-                    if(device){ onDeviceFound(this.mapDeviceToBluetoothDevice(device)); }
+                    if (device) {
+                        onDeviceFound(this.mapDeviceToBluetoothDevice(device));
+                    }
                 },
             );
-        }
-        catch(err: any){
-            console.error('[ERRO] Falha ao Iniciar Scan! ', err.message);
+
+            return { ok: true };
+        } 
+        catch (err: any) {
             this.isScanning = false;
+            return {
+                ok: false,
+                message: err.message ?? 'Erro ao iniciar scan BLE',
+            };
         }
     }
 
@@ -173,25 +166,21 @@ class BleService {
     }
 
     // Conectar a um dispositivo
-    async connectToDevice(deviceId: string): Promise<Device> {
+    async connectToDevice(deviceId: string): Promise<BleResult<Device | void>> {
+        const ready = await this.ensureReady();
+        if (!ready.ok) return ready;
 
-        try{
-            const hasPermissions = await this.checkPermissions();
-            if (!hasPermissions) {
-                const granted = await this.requestPermissions();
-                if (!granted) {
-                    throw new Error('Permissões negadas para conexão BLE');
-                }
-            }
-
+        try {
             const device = await this.manager.connectToDevice(deviceId);
             await this.discoverDeviceServices(device);
 
-            return device; 
-        }
-        catch(err: any){
-            console.error('[ERRO] Falha ao Conectar-se A Um Dispositivo! ', err.message);
-            throw err;
+            return { ok: true, data: device };
+        } 
+        catch (err: any) {
+            return {
+                ok: false,
+                message: err.message ?? 'Falha ao conectar ao dispositivo',
+            };
         }
     }
 
@@ -216,56 +205,44 @@ class BleService {
         deviceId: string,
         serviceUUID: string,
         characteristicUUID: string,
-    ): Promise<string | null> {
+    ): Promise<BleResult<string | null | void>> {
 
-        try{
-            const hasPermissions = await this.checkPermissions();
-            if (!hasPermissions) {
-                const granted = await this.requestPermissions();
-                if (!granted) {
-                    throw new Error('Permissões negadas para leitura BLE');
-                }
-            }
+        const ready = await this.ensureReady();
+        if (!ready.ok) return ready;
 
-            const characteristic = await this.manager.readCharacteristicForDevice(
+        try {
+            const characteristic =
+            await this.manager.readCharacteristicForDevice(
                 deviceId,
                 serviceUUID,
                 characteristicUUID,
             );
 
-            return characteristic.value;
-        }
-        catch(err: any){
-            console.error('[ERRO] Falha na Leitura de Caracteristicas! ', err);
-            throw err;
+            return { ok: true, data: characteristic.value };
+        } 
+        catch (err: any) {
+            return {
+                ok: false,
+                message: err.message ?? 'Erro ao ler característica BLE',
+            };
         }
     }
-
     // Escrever caracteristicas
     async writeCharacteristic(
         deviceId: string,
         serviceUUID: string,
         characteristicUUID: string,
         value: string | Uint8Array,
-    ): Promise<void> {
+    ): Promise<BleResult> {
+
+        const ready = await this.ensureReady();
+        if (!ready.ok) return ready;
+
         try {
-            let valueToSend: string;
-
-            // Se for string com \n, converter para base64
-            if (typeof value === 'string' && value.includes('\n')) {
-                valueToSend = btoa(unescape(encodeURIComponent(value)));
-            } 
-            else{
-                valueToSend = value as string;
-            }
-
-            const hasPermissions = await this.checkPermissions();
-            if (!hasPermissions) {
-                const granted = await this.requestPermissions();
-                if (!granted) {
-                    throw new Error('Permissões negadas para escrita BLE');
-                }
-            }
+            const valueToSend =
+            typeof value === 'string' && value.includes('\n')
+                ? btoa(unescape(encodeURIComponent(value)))
+                : (value as string);
 
             await this.manager.writeCharacteristicWithResponseForDevice(
                 deviceId,
@@ -274,16 +251,16 @@ class BleService {
                 valueToSend,
             );
 
+            return { ok: true };
         } 
-        catch(err: any){
-            console.error('[ERRO] Falha Ao Escrever característica:', {
-                error: err,
-                message: err.message,
-                errorCode: err.errorCode,
-            });
-            throw err;
+        catch (err: any) {
+            return {
+                ok: false,
+                message: err.message ?? 'Erro ao escrever característica BLE',
+            };
         }
     }
+
 
     // Mapear dispositivo para nosso tipo
     private mapDeviceToBluetoothDevice(device: Device): BluetoothDevice {

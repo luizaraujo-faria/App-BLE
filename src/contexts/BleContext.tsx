@@ -52,31 +52,31 @@ export const BleProvider = ({ children }: BleProviderProps) => {
         if(!ready) return;
 
         const bleEnabled = isBluetoothOn && isLocationOn;
-        const ids = [
-            { value: '12435', ts: Date.now() },
-            { value: '1223455', ts: Date.now() },
-            { value: '1243546', ts: Date.now() },
-            { value: '12432', ts: Date.now() },
-            { value: '12412', ts: Date.now() },
-            { value: '1215', ts: Date.now() },
-            { value: '135', ts: Date.now() },
-            // { value: '135', ts: Date.now() },
-            // { value: '131', ts: Date.now() },
-        ];
+        // const ids = [
+        //     { value: '12435', ts: Date.now() },
+        //     { value: '1223455', ts: Date.now() },
+        //     { value: '1243546', ts: Date.now() },
+        //     { value: '12432', ts: Date.now() },
+        //     { value: '12412', ts: Date.now() },
+        //     { value: '1215', ts: Date.now() },
+        //     { value: '135', ts: Date.now() },
+        //     // { value: '135', ts: Date.now() },
+        //     // { value: '131', ts: Date.now() },
+        // ];
 
         if(prevBleState.current === true && !bleEnabled){
 
-            let index = 0;
+            // let index = 0;
 
-            const interval = setInterval(() => {
-                if (index >= ids.length) {
-                    clearInterval(interval);
-                    return;
-                }
+            // const interval = setInterval(() => {
+            //     if (index >= ids.length) {
+            //         clearInterval(interval);
+            //         return;
+            //     }
 
-                ble.setReceivedData(ids[index]);
-                index++;
-            }, 1000); // 300ms entre cada ID
+            //     ble.setReceivedData(ids[index]);
+            //     index++;
+            // }, 1000); // 300ms entre cada ID
 
             console.log('\n[BLE] Todos Serviços BLE Parados!\n');
             showPopup('Aviso', 'Bluetooth ou Localização desativados! Serviços de bluetooth parados.');
