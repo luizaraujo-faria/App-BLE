@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         paddingVertical: 8,
         height: '8.5%',
+        boxShadow: appColors.shadow,
     },
     tabButton: {
         flex: 1,

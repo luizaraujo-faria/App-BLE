@@ -219,8 +219,9 @@ const styles = StyleSheet.create({
         padding: 24,
         paddingVertical: 60,
         gap: '10%',
-        borderBottomLeftRadius: 50,
-        borderBottomRightRadius: 50,
+        borderBottomLeftRadius: 60,
+        borderBottomRightRadius: 60,
+        boxShadow: appColors.shadow,
     },
     formText: {
         width: '100%',

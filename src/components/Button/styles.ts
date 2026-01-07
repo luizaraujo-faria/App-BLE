@@ -9,7 +9,7 @@ const buttonStyles = StyleSheet.create({
         backgroundColor: appColors.primary,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 4,
+        borderRadius: 10,
         marginBottom: 10,
         flexDirection: 'row',
         gap: '5%',

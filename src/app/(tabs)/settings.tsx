@@ -168,7 +168,7 @@ const SettingsScreen = () => {
     return (
 
         <LinearGradient 
-            colors={[appColors.primary, appColors.tertiary]}
+            colors={[appColors.secondary, appColors.primary]}
             style={ styles.container }>
             <View style={styles.inner}>
 
@@ -231,16 +231,16 @@ const SettingsScreen = () => {
 
                 {isScanning && isLoading && (
                     <View style={{
-                        width: '80%',
+                        width: '90%',
                         height: '5%',
-                        justifyContent: 'space-between',
+                        justifyContent: 'space-around',
                         alignItems: 'center',
-                        backgroundColor: '#83838317',
+                        backgroundColor: '#63636385',
                         borderRadius: 10,
                         flexDirection: 'row',
                         paddingHorizontal: 10,
                     }}>
-                        <ActivityIndicator size='small' color='#ffb54cff' />
+                        <ActivityIndicator size='small' color='#fff' />
                         <AppText text='Buscando Dispositivos próximos...' textStyle={styles.scanningText} />
                     </View>)}
 
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: appColors.tertiary,
         paddingHorizontal: 10,
-        paddingVertical: 24,
+        padding: 24,
     },
     inner: {
         width: '100%', 
@@ -326,6 +326,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
+        boxShadow: appColors.shadow,
     },
     info: {
         width: '100%',
@@ -336,6 +337,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
+        boxShadow: appColors.shadow,
     },
     infoText: {
         fontSize: 17, 
@@ -351,9 +353,13 @@ const styles = StyleSheet.create({
     actionContainer: {
         width: '100%',
         backgroundColor: '#fff',
+        // borderTopLeftRadius: 10,
+        // borderTopRightRadius: 10,
         borderRadius: 10,
-        padding: 5,
+        padding: 10,
+        // paddingBottom: 16,
         gap: 0,
+        boxShadow: appColors.shadow,
     },
     title: {
         fontSize: 32,
@@ -364,8 +370,8 @@ const styles = StyleSheet.create({
         fontFamily: appFonts.afacadReg,
     },
     scanningText: {
-        fontSize: 20,
-        color: appColors.primary,
+        fontSize: 16,
+        color: '#fff',
         fontFamily: appFonts.afacadReg,
     },
     disconnectButton: {
@@ -374,18 +380,18 @@ const styles = StyleSheet.create({
         backgroundColor: appColors.quaternary,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 4,
+        borderRadius: 10,
     },
     dropdown: {
         backgroundColor: appColors.primary,
         borderWidth: 0,
-        borderRadius: 4,
+        borderRadius: 10,
         height: 50,
     },
     dropdownDisabled: {
         backgroundColor: appColors.primaryDisabled,
         borderWidth: 0,
-        borderRadius: 4,
+        borderRadius: 10,
         height: 50,
     },
     dropdownContainer: {

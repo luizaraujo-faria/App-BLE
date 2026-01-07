@@ -143,7 +143,7 @@ const ListScreen = () => {
 
     return(
         <LinearGradient 
-            colors={[appColors.primary, appColors.tertiary]}
+            colors={[appColors.secondary, appColors.primary]}
             style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
