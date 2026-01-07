@@ -11,6 +11,7 @@ import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useState } from 'react';
 import { Image, StyleSheet, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Register = () => {
 
@@ -80,7 +81,9 @@ const Register = () => {
     const buttonDisabled = verifyInputsIsEmpty();
 
     return (
-        <View style={{ flex: 1, position: 'relative' }}>
+        <LinearGradient 
+            colors={[appColors.secondary, appColors.primary]}
+            style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
                 <View style={styles.form}>
@@ -194,7 +197,7 @@ const Register = () => {
                 </View>
 
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 

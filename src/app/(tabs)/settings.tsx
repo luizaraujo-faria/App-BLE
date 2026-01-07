@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type DeviceItem = {
     label: string;
@@ -166,7 +167,9 @@ const SettingsScreen = () => {
 
     return (
 
-        <View style={ styles.container }>
+        <LinearGradient 
+            colors={[appColors.primary, appColors.tertiary]}
+            style={ styles.container }>
             <View style={styles.inner}>
 
                 <View style={styles.groupPanels}>
@@ -288,7 +291,7 @@ const SettingsScreen = () => {
                 </View>
 
             </View>
-        </View>
+        </LinearGradient>
     );
 
 };

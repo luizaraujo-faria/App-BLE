@@ -1,8 +1,10 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import Button from '@/src/components/Button';
 import { usePopup } from '../contexts/PopupContext';
+import { LinearGradient } from 'expo-linear-gradient';
+import { appColors } from '../themes/colors';
 
 const SigninScreen = () => {
 
@@ -23,76 +25,83 @@ const SigninScreen = () => {
             : showPopup('Erro!', 'Email e/ou senha incorretos!');
     };
 
-    return <View 
+    return <LinearGradient 
+        colors={[appColors.secondary, appColors.primary, appColors.primary, appColors.primary]}
         style={styles.container}>
 
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.mainBox}>
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+            style={styles.mainBox}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
+                    <View style={styles.intro}>
+                        <Text style={styles.title}>ENTRE</Text>
+                        <Text style={styles.subtitle}>Conecte-se à sua conta em nosso aplicativo para acessar as funcionalidades de gerência.</Text>
+                    </View>
 
-            <View style={styles.intro}>
-                <Text style={styles.title}>ENTRE</Text>
-                <Text style={styles.subtitle}>Conecte-se à sua conta em nosso aplicativo para acessar as funcionalidades de gerência.</Text>
-            </View>
+                    <View style={styles.form}>
 
-            <View style={styles.form}>
+                        <View style={styles.formHeader}>
+                            <Image 
+                                // eslint-disable-next-line no-undef
+                                source={require('@/assets/images/LogoIMREA.png')}
+                                style={styles.logo}
+                            />
 
-                <View style={styles.formHeader}>
-                    <Image 
-                        // eslint-disable-next-line no-undef
-                        source={require('@/assets/images/LogoIMREA.png')}
-                        style={styles.logo}
-                    />
+                            <Text style={{ fontSize: 24, fontFamily: 'AfacadFlux' }}>IMREA Gestão</Text>
+                        </View>
 
-                    <Text style={{ fontSize: 24, fontFamily: 'AfacadFlux' }}>IMREA Gestão</Text>
+                        <View style={{ width: '100%', gap: 18 }}>
+                            <TextInput
+                                value={email}
+                                onChangeText={setEmail}
+                                style={styles.input}
+                                placeholder='Digite seu email'
+                                placeholderTextColor='#000'
+                                importantForAutofill='yes'
+                                disableFullscreenUI={true}
+                                // autoComplete='off'
+                                underlineColorAndroid={'transparent'}
+                            />
+                            <TextInput
+                                value={password}
+                                onChangeText={setPassword}
+                                style={styles.input}
+                                placeholder='Digite sua senha'
+                                placeholderTextColor='#000'
+                                secureTextEntry
+                                importantForAutofill='yes'
+                                disableFullscreenUI={true}
+                                // autoComplete='off'
+                                underlineColorAndroid={'transparent'}
+                            />
+
+                            <Button 
+                                textButton='Entrar' 
+                                onPress={handleLogin}
+                                style={styles.loginButton}
+                                textStyle={{ color: '#000', fontSize: 20 }}
+                                disabled={undefined}
+                                loading={false}
+                                icon={null}
+                            />
+                        </View>
+                        
+                        <View style={styles.signupBox}>
+                            <Text style={styles.signupText}>Não possui conta?</Text>
+                            <Text style={styles.signupLink} >Cadastrar-se</Text>
+                        </View>
+                    </View>
                 </View>
-
-                <View style={{ width: '100%', gap: 18 }}>
-                    <TextInput
-                        value={email}
-                        onChangeText={setEmail}
-                        style={styles.input}
-                        placeholder='Digite seu email'
-                        placeholderTextColor='#000'
-                        importantForAutofill='yes'
-                        disableFullscreenUI={true}
-                        // autoComplete='off'
-                        underlineColorAndroid={'transparent'}
-                    />
-                    <TextInput
-                        value={password}
-                        onChangeText={setPassword}
-                        style={styles.input}
-                        placeholder='Digite sua senha'
-                        placeholderTextColor='#000'
-                        secureTextEntry
-                        importantForAutofill='yes'
-                        disableFullscreenUI={true}
-                        // autoComplete='off'
-                        underlineColorAndroid={'transparent'}
-                    />
-
-                    <Button 
-                        textButton='Entrar' 
-                        onPress={handleLogin}
-                        style={styles.loginButton}
-                        textStyle={{ color: '#000', fontSize: 20 }}
-                        disabled={undefined}
-                        loading={false}
-                        icon={null}
-                    />
-                </View>
-                  
-                <View style={styles.signupBox}>
-                    <Text style={styles.signupText}>Não possui conta?</Text>
-                    <Text style={styles.signupLink} >Cadastrar-se</Text>
-                </View>
-            </View>
+            </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
 
         {/* <View style={styles.footer}>
             <Text style={styles.footerText}>©2025 - Rede Lucy Montoro</Text>
         </View> */}
 
-    </View>;
+    </LinearGradient>;
 };
 
 const styles = StyleSheet.create({
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#ffb54cff',
+        backgroundColor: appColors.primary,
         // padding: 20,
     },
     mainBox: {

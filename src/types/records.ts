@@ -1,8 +1,4 @@
-export interface CreateRecordDTO {
-    colaboratorId: number | string;
-}
-
-export interface TimeRecord {
+type RecordType = {
     colaboratorId: number | string;
     name: string;
     sector: string;
@@ -10,4 +6,12 @@ export interface TimeRecord {
     entry: Date | string,
     exit: Date | string,
     recordId: number;
+}
+
+export interface CreateRecordDTO {
+    colaboratorId: number | string;
+}
+
+export interface TimeRecord {
+    timeRecord: RecordType;
 }

@@ -10,6 +10,7 @@ import { appColors } from '@/src/themes/colors';
 import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type EntryItemType = {
     id: string;
@@ -141,7 +142,9 @@ const ListScreen = () => {
     }, [receivedData]);
 
     return(
-        <View style={{ flex: 1, position: 'relative' }}>
+        <LinearGradient 
+            colors={[appColors.primary, appColors.tertiary]}
+            style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
                 <View style={styles.topBar}>
@@ -198,7 +201,7 @@ const ListScreen = () => {
                 </View>
                 
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 
