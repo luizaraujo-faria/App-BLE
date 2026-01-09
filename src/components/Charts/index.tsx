@@ -12,7 +12,7 @@ type Props = {
     loading: boolean;
 };
 
-export const Barchart = ({ data, containerWidth, screenHeight, loading }: Props) => {
+export const Barchart = React.memo(({ data, containerWidth, screenHeight, loading }: Props) => {
 
     const chartData = data?.map(item => ({
         label: item.label,
@@ -91,9 +91,9 @@ export const Barchart = ({ data, containerWidth, screenHeight, loading }: Props)
             verticalLinesColor={appColors.tertiary}
         />
     );
-};
+});
 
-export const Piechart = ({ data, loading }: Props) => {
+export const Piechart = React.memo(({ data, loading }: Props) => {
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
     if (loading) {
@@ -107,7 +107,7 @@ export const Piechart = ({ data, loading }: Props) => {
     if (!data || data.length === 0) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <AppText text='Nenhum dado disponível' />
+                <AppText text='Nenhum dado disponível' textStyle={{ textAlign: 'center' }}/>
             </View>
         );
     }
@@ -215,4 +215,4 @@ export const Piechart = ({ data, loading }: Props) => {
             )}
         </View>
     );
-};
+});

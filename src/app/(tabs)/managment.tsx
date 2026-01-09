@@ -1,161 +1,38 @@
 import { Barchart, Piechart } from '@/src/components/Charts';
 import { useChart } from '@/src/hooks/useChart';
 import { appColors } from '@/src/themes/colors';
-import useDropdown from '@/src/hooks/useDropdown';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AppText from '@/src/components/AppText';
 import { appFonts } from '@/src/themes/fonts';
-import ActionButton from '@/src/components/ActionButton';
-import { MaterialCommunityIcon } from '@/src/components/Icons';
+import Filters from '@/src/components/Filters';
+import dayjs from 'dayjs';
 // import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 
 const ManagmentScreen = () => {
 
-    const months = [
-        { id: '1', label: 'Janeiro' },
-        { id: '2', label: 'Fevereiro' },
-        { id: '3', label: 'Março' },
-        { id: '4', label: 'Abril' },
-        { id: '5', label: 'Maio' },
-        { id: '6', label: 'Junho' },
-        { id: '7', label: 'Julho' },
-        { id: '8', label: 'Agosto' },
-        { id: '9', label: 'Setembro' },
-        { id: '10', label: 'Outubro' },
-        { id: '11', label: 'Novembro' },
-        { id: '12', label: 'Dezembro' },
-    ];
+    const currentMonth = dayjs().month() + 1;
 
-    const turns = [
-        { id: '1', label: 'Café da Manhã' },
-        { id: '2', label: 'Almoço' },
-        { id: '3', label: 'Café da Tarde' },
-    ];
-
-    const sectors = [
-        { id: '1', label: 'Bioeng' },
-        { id: '2', label: 'Nutri' },
-        { id: '3', label: 'Fisio' },
-    ];
-
-    const monthDropdown = useDropdown(months.map(m => ({ value: m.id, label: m.label })));
-    const turnDropdown = useDropdown(turns.map(t => ({ value: t.id, label: t.label })));
-    const sectorDropdown = useDropdown(sectors.map(s => ({ value: s.id, label: s.label })));
-
+    const [turn, setTurn] = useState('');
+    const [month, setMonth] = useState(String(currentMonth));
     const [containerWidth, setContainerWidth] = useState(0);
     const screenHeight = Dimensions.get('window').height;
 
-    const { data, loading } = useChart();
-
+    const { data, loading, refetch } = useChart(month, turn);
+    
     return (
         <LinearGradient 
             colors={[appColors.secondary, appColors.primary]}
             style={styles.container}>
 
-            <View style={styles.topBar}>
-
-                <View
-                    style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        gap: '2%',
-                        // paddingHorizontal: '1%',
-                    }}
-                >
-                    <View style={{ width: '75%' }}>
-                        <DropDownPicker
-                            disabled={false}
-                            open={monthDropdown.open}
-                            value={monthDropdown.value}
-                            items={monthDropdown.items}
-                            setOpen={monthDropdown.setOpen}
-                            setValue={monthDropdown.setValue}
-                            setItems={monthDropdown.setItems}
-                            placeholder={'Selecione o Mês'}
-                            style={styles.monthDropdownBar}
-                            dropDownContainerStyle={styles.monthDropdownContainer}
-                            labelStyle={[styles.dropdownLabel, { fontSize: 18 }]}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedItemContainerStyle={styles.selectedItemContainer}
-                            selectedItemLabelStyle={styles.selectedItemLabel}
-                            dropDownDirection='BOTTOM'
-                            zIndex={5}
-                        />
-                    </View>
-
-                    <View>
-                        <ActionButton 
-                            icon={<MaterialCommunityIcon 
-                                iconName='reload'
-                                iconSize={24}
-                                iconColor='#000'
-                            />} 
-                            onPress={() => {}}   
-                            style={{
-                                height: 50,
-                                width: 90,
-                            }}                     
-                        />
-                    </View>
-                </View>
-
-                <View
-                    style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        gap: '2%',
-                        paddingHorizontal: '1%',
-                    }}
-                >
-                    <View style={{ width: '50%' }}>
-                        <DropDownPicker
-                            disabled={false}
-                            open={turnDropdown.open}
-                            value={turnDropdown.value}
-                            items={turnDropdown.items}
-                            setOpen={turnDropdown.setOpen}
-                            setValue={turnDropdown.setValue}
-                            setItems={turnDropdown.setItems}
-                            placeholder={'Selecione o Turno'}
-                            style={styles.dropdownBar}
-                            dropDownContainerStyle={styles.dropdownContainer}
-                            labelStyle={styles.dropdownLabel}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedItemContainerStyle={styles.selectedItemContainer}
-                            selectedItemLabelStyle={styles.selectedItemLabel}
-                            dropDownDirection='BOTTOM'
-                            zIndex={2}
-                        />
-                    </View>
-
-                    <View style={{ width: '50%' }}>
-                        <DropDownPicker
-                            disabled={false}
-                            open={sectorDropdown.open}
-                            value={sectorDropdown.value}
-                            items={sectorDropdown.items}
-                            setOpen={sectorDropdown.setOpen}
-                            setValue={sectorDropdown.setValue}
-                            setItems={sectorDropdown.setItems}
-                            placeholder={'Selecione o Setor'}
-                            style={styles.dropdownBar}
-                            dropDownContainerStyle={styles.dropdownContainer}
-                            labelStyle={styles.dropdownLabel}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedItemContainerStyle={styles.selectedItemContainer}
-                            selectedItemLabelStyle={styles.selectedItemLabel}
-                            dropDownDirection='BOTTOM'
-                            zIndex={2}
-                        />
-                    </View>
-                </View>
-
-            </View>
+            <Filters 
+                month={month} 
+                turn={turn}
+                onMonthChange={setMonth}
+                onTurnChange={setTurn}
+                onReload={() => refetch(month, turn)}    
+            />
 
             <View style={styles.chartContainer}>
                 <View style={styles.chartTitle}>
@@ -173,7 +50,10 @@ const ManagmentScreen = () => {
                     style={styles.chart}
                     onLayout={(event) => {
                         const { width } = event.nativeEvent.layout;
-                        setContainerWidth(width);
+
+                        setContainerWidth(prev => (
+                            prev !== width ? width : prev
+                        ));
                     }}
                 >
 
@@ -214,74 +94,6 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         paddingHorizontal: 10,
         gap: 10,
-    },
-    topBar: {
-        width: '100%',
-        height: '15%',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: '5%',
-    },
-    monthDropdownBar: {
-        width: '100%',
-        height: 50,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-        color: '#000',
-        borderWidth: 0,
-        position: 'relative',
-        overflow: 'hidden',
-    },
-    monthDropdownContainer: {
-        width: '100%',
-        backgroundColor: '#f7f7f7ff',
-        borderWidth: 0,
-        borderBottomRightRadius: 10,
-        borderBottomLeftRadius: 10,
-        fontFamily: appFonts.afacadReg,
-        boxShadow: appColors.shadow,
-    },
-    dropdownBar: {
-        width: '100%',
-        height: 50,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-        color: '#000',
-        borderWidth: 0,
-        position: 'relative',
-        overflow: 'hidden',
-    },
-    dropdownContainer: {
-        width: '100%',
-        backgroundColor: '#f7f7f7ff',
-        borderWidth: 0,
-        borderBottomRightRadius: 10,
-        borderBottomLeftRadius: 10,
-        fontFamily: appFonts.afacadReg,
-        boxShadow: appColors.shadow,
-    },
-    dropdownLabel: {
-        paddingLeft: 5,
-        fontSize: 16.5,
-        color: '#000000ff',
-        fontFamily: appFonts.afacadReg,
-    },
-    dropdownPlaceholder: {
-        paddingLeft: 6,
-        fontSize: 16,
-        fontFamily: appFonts.afacadReg,
-        color: '#000000',
-    },
-    selectedItemContainer: {
-        backgroundColor: appColors.tertiary,
-    },
-    selectedItemLabel: {
-        fontWeight: 'bold',
-        color: '#000000ff',
     },
     chartContainer: {
         width: '100%',
