@@ -3,10 +3,10 @@ import React from 'react';
 import styles from './styles';
 
 interface ActionButtonProps {
-    style: Object | null;
+    style?: Object | null;
     icon: any | null;
     onPress: () => void;
-    disabled: boolean
+    disabled?: boolean
 }
 
 const ActionButton = ({ style, icon, onPress, disabled }: ActionButtonProps ) => {

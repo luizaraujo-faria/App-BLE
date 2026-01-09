@@ -6,11 +6,11 @@ import AppText from '../AppText';
 interface ButtonProps {
     textButton: string;
     onPress: () => void;
-    style: Object | null;
-    textStyle: Object | null;
-    disabled: boolean | undefined;
-    loading: boolean;
-    icon: any | null | Object;
+    style?: Object | null;
+    textStyle?: Object | null;
+    disabled?: boolean | undefined;
+    loading?: boolean;
+    icon?: any | null | Object;
 }
 
 const Button = ({ textButton, onPress, style, textStyle, disabled, loading, icon }: ButtonProps) => {

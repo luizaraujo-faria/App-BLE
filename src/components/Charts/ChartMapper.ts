@@ -1,4 +1,4 @@
-export const mapToHorizontalBarData = (
+export const mapToBarData = (
     data: any[],
     labelKey: string,
     valueKey: string,

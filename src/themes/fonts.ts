@@ -1,5 +1,5 @@
 export const appFonts = {
-    afacadReg: 'AfacaReg',
+    afacadReg: 'AfacadReg',
     afacadLight: 'AfacadLight',
     afacadSemiBold: 'AfacadSemiBold',
 };

@@ -7,7 +7,7 @@ type OptionItem = {
 
 const useDropdown = (defaultItems: OptionItem[]) => {
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState<string | null>(null);
+    const [value, setValue] = useState<string>('');
     const [items, setItems] = useState<OptionItem[]>([]);
 
     useEffect(() => {

@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         height: '8.5%',
         boxShadow: appColors.shadow,
+        position: 'relative',
     },
     tabButton: {
         flex: 1,
