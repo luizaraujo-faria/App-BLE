@@ -8,19 +8,21 @@ import AppText from '@/src/components/AppText';
 import { appFonts } from '@/src/themes/fonts';
 import Filters from '@/src/components/Filters';
 import dayjs from 'dayjs';
+import InfoRecords from '@/src/components/InfoRecords';
 // import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 
 const ManagmentScreen = () => {
 
-    const currentMonth = dayjs().month() + 1;
+    const currentMonth: string = String(dayjs().month() + 1);
 
+    const [dataSearch, setDataSearch] = useState('1');
     const [turn, setTurn] = useState('');
-    const [month, setMonth] = useState(String(currentMonth));
+    const [month, setMonth] = useState(currentMonth);
     const [containerWidth, setContainerWidth] = useState(0);
     const screenHeight = Dimensions.get('window').height;
 
-    const { data, loading, refetch } = useChart(month, turn);
-    
+    const { data, loading, refetch } = useChart(dataSearch, month, turn);
+
     return (
         <LinearGradient 
             colors={[appColors.secondary, appColors.primary]}
@@ -29,9 +31,11 @@ const ManagmentScreen = () => {
             <Filters 
                 month={month} 
                 turn={turn}
+                data={dataSearch}
                 onMonthChange={setMonth}
                 onTurnChange={setTurn}
-                onReload={() => refetch(month, turn)}    
+                onDataChange={setDataSearch}
+                onReload={refetch}    
             />
 
             <View style={styles.chartContainer}>
@@ -68,8 +72,13 @@ const ManagmentScreen = () => {
 
             <View style={styles.bottomArea}>
 
-                <View>
-
+                <View
+                    style={{
+                        width: '48%',
+                        height: '100%',
+                    }}
+                >
+                    <InfoRecords data={data!} loading={loading} />
                 </View>
 
                 <View style={styles.pieChartContainer}>
@@ -103,7 +112,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
         overflow: 'hidden',
     },
     chartTitle: {
@@ -134,12 +143,10 @@ const styles = StyleSheet.create({
     bottomArea: {
         width: '100%',
         height: '32%',
-        // backgroundColor: '#fff',
         maxHeight: '32%',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         borderRadius: 10,
-        boxShadow: appColors.shadow,
         flexDirection: 'row',
     },
     pieChartContainer: {
@@ -149,8 +156,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
     },
+
 });
 
 export default ManagmentScreen;

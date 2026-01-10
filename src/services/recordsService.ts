@@ -93,7 +93,48 @@ export const getMealsBySectors = async (
         const response = await api.get(`/records/meal/sectors/${month}`, {
             params: { turn },
         });
-        console.log('API RESPONSE:', JSON.stringify(response.data));
+        return response;
+    } 
+    catch(err: any){
+        if(axios.isAxiosError(err)){
+            throw err;
+        }
+        else{
+            throw err;
+        }        
+    }
+};
+
+export const getMealsByCollaborators = async (
+    month: string, 
+    turn?: string,
+): Promise<AxiosResponse> =>{
+
+    try{
+        const response = await api.get(`/records/meal/collaborators/${month}`, {
+            params: { turn },
+        });
+        return response;
+    } 
+    catch(err: any){
+        if(axios.isAxiosError(err)){
+            throw err;
+        }
+        else{
+            throw err;
+        }        
+    }
+};
+
+export const getMealsByCollaboratorType = async (
+    month: string, 
+    turn?: string,
+): Promise<AxiosResponse> =>{
+
+    try{
+        const response = await api.get(`/records/meal/collaborators/types/${month}`, {
+            params: { turn },
+        });
         return response;
     } 
     catch(err: any){

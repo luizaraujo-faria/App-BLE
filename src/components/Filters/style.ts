@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: '5%',
     },
-    monthDropdownBar: {
+    dataDropdownBar: {
         width: '100%',
         height: 50,
         borderRadius: 10,
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         overflow: 'hidden',
     },
-    monthDropdownContainer: {
+    dataDropdownContainer: {
         width: '100%',
         backgroundColor: '#f7f7f7ff',
         borderWidth: 0,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     selectedItemContainer: {
-        backgroundColor: appColors.tertiary,
+        backgroundColor: appColors.secondary,
     },
     selectedItemLabel: {
         fontWeight: 'bold',

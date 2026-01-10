@@ -1,54 +1,80 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getMealsBySectors } from '@/src/services/recordsService';
+import { getMealsByCollaborators, getMealsByCollaboratorType, getMealsBySectors } from '@/src/services/recordsService';
 import { mapToBarData } from '@/src/components/Charts/ChartMapper';
 import { usePopup } from '../contexts/PopupContext';
 import { normalizeApiErrors } from '../services/apiErrors';
 import React from 'react';
 
-export const useChart = (month: string, turn?: string) => {
+export const useChart = (dataSearch: string, month: string, turn?: string) => {
 
     const { showPopup } = usePopup();
 
     const [apiData, setApiData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const loadMealsOfAllSectors = useCallback(async (vMonth: string, vTurn?: string) => {
-        // if(loading) return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchMap: any = {
+        '1': { fetch: getMealsBySectors, key: 'sector' },
+        '2': { fetch: getMealsByCollaborators, key: 'collaborator' },
+        '3': { fetch: getMealsByCollaboratorType, key: 'type' },
+    } as const;
+
+    const serializeTurn = (turn?: string) => {
+        switch (turn) {
+        case '1': return 'cafe_da_manha';
+        case '2': return 'almoco';
+        case '3': return 'cafe_da_tarde';
+        default: return '';
+        }
+    };
+
+    const fetchData = useCallback(async () => {
 
         try{
             setLoading(true);
 
-            const serializedTurn = vTurn === '1' ? 'cafe_da_manha' 
-                : vTurn === '2' ? 'almoco' 
-                    : vTurn === '3' ? 'cafe_da_tarde' : '';
+            const fetchFn = fetchMap[dataSearch];
+            if(!fetchFn){
+                setApiData([]);
+                return;
+            }
 
-            const res = await getMealsBySectors(vMonth, serializedTurn);
+            const serializedTurn = serializeTurn(turn);
 
-            setApiData(res.data.data);
-            return;
+            const res = await fetchFn.fetch(month, serializedTurn);
+
+            const newData = Array.isArray(res.data?.data)
+                ? res.data.data
+                : [];
+
+            setApiData(newData);
         } 
         catch(err: any){
             const appError = normalizeApiErrors(err);
-            showPopup(`${appError.title} ${appError.status ? appError.status : ''}`, appError.message);
+            showPopup(`${appError.title} ${appError.status ?? ''}`, appError.message);
+            setApiData([]);
         } 
         finally{
             setLoading(false);
         }
-    }, [showPopup]);
+    }, [dataSearch, month, turn]);
 
     useEffect(() => {
-        loadMealsOfAllSectors(month, turn);
-    }, [loadMealsOfAllSectors, month, turn]);
+        fetchData();
+    }, [fetchData]);
 
     const data = React.useMemo(() => {
-        return mapToBarData(apiData, 'sector', 'total');
-    }, [apiData]);
+        const fetchFn = fetchMap[dataSearch];
+        if(!fetchFn) return null;
 
+        return mapToBarData(apiData, fetchFn.key, 'total');
+    }, [apiData, dataSearch, fetchMap]);
+    
     return {
         data, 
         loading,
         month,
         turn,
-        refetch: loadMealsOfAllSectors,
+        refetch: fetchData,
     };
 };

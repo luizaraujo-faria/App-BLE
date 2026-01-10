@@ -14,10 +14,16 @@ type Props = {
 
 export const Barchart = React.memo(({ data, containerWidth, screenHeight, loading }: Props) => {
 
+    
     const chartData = data?.map(item => ({
         label: item.label,
         value: item.value,
     }));
+
+    const maxValue = React.useMemo(() => {
+        if (!chartData || chartData.length === 0) return 0;
+        return Math.max(...chartData.map(item => item.value));
+    }, [chartData]);
 
     if(loading){
         return(
@@ -47,14 +53,13 @@ export const Barchart = React.memo(({ data, containerWidth, screenHeight, loadin
 
     return (
         <BarChart 
-            // horizontal
             data={chartData} 
             // Dimensões
             width={containerWidth! - 50}
             height={screenHeight! / 3.15}
             barWidth={35}
             // Barra
-            frontColor={appColors.primary}
+            frontColor={appColors.quintenary}
             barBorderTopLeftRadius={4}
             barBorderTopRightRadius={4}
             // Valores no topo da barra
@@ -65,7 +70,7 @@ export const Barchart = React.memo(({ data, containerWidth, screenHeight, loadin
                 bottom: '0%',
                 paddingTop: 10,
             }}
-            maxValue={chartData![0].value}
+            maxValue={maxValue}
             showValuesAsTopLabel
             // Espaçamento
             spacing={20}
@@ -123,8 +128,8 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
     const colors = [
         appColors.primary,
         appColors.secondary,
+        appColors.quintenary,
         '#e28127ff',
-        '#b46b0aff',
         '#ad4a08ff',
     ];
 
