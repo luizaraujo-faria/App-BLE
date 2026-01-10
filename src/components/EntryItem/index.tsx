@@ -28,7 +28,7 @@ const EntryItem = ({ entryItem, selectItem }: EntryItemProps) => {
                 <View style={styles.inner}>
                     <View style={styles.textContainer}>
                         <Text style={styles.text}>
-                            <Text style={{ color: appColors.primary, fontSize: 22 }}>ID:</Text>
+                            <Text style={{ color: appColors.secondary, fontSize: 22 }}>ID: </Text>
                             {entryItem.id}
                         </Text>
                     </View>
@@ -36,7 +36,7 @@ const EntryItem = ({ entryItem, selectItem }: EntryItemProps) => {
                         <AntDesignIcon 
                             iconName='clock-circle' 
                             iconSize={18} 
-                            iconColor={appColors.primary} 
+                            iconColor={appColors.secondary} 
                         />
                         <Text style={styles.text}>{dayjs(entryItem.timestamp).format('HH:mm')}</Text>
                     </View>

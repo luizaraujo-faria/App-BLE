@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: appColors.tertiary,
-        boxShadow: appColors.shadow,
+        backgroundColor: appColors.quintenary,
+        // boxShadow: appColors.shadow,
         padding: 16,
     },
     inner: {
@@ -22,12 +22,11 @@ const styles = StyleSheet.create({
         height: '100%', 
         alignItems: 'flex-start', 
         justifyContent: 'center',
-
     },
     text: {
         fontSize: 18,
         fontFamily: 'AfacadFlux',
-        color: '#000',
+        color: '#fff',
         textAlign: 'center',
         height: '100%',
     },

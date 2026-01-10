@@ -1,5 +1,5 @@
 export const appColors = {
-    primary: '#ffa424ff',
+    primary: '#ffb54cff',
     secondary: '#ffd000ff',
     tertiary: '#ffbd162c',
     quaternary: '#e00801ff',

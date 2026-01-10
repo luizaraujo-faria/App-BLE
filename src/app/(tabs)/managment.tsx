@@ -25,7 +25,7 @@ const ManagmentScreen = () => {
 
     return (
         <LinearGradient 
-            colors={[appColors.secondary, appColors.primary]}
+            colors={[appColors.secondary, appColors.primary, appColors.primary]}
             style={styles.container}>
 
             <Filters 

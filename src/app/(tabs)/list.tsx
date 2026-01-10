@@ -143,7 +143,7 @@ const ListScreen = () => {
 
     return(
         <LinearGradient 
-            colors={[appColors.secondary, appColors.primary]}
+            colors={[appColors.secondary, appColors.primary, appColors.primary]}
             style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
@@ -156,13 +156,13 @@ const ListScreen = () => {
                         style={{ 
                             width: '15%', 
                             height: '85%', 
-                            backgroundColor: appColors.tertiary,
+                            backgroundColor: appColors.quintenary,
                             justifyContent: 'center',
                             alignItems: 'center',
                             borderRadius: 10,
                         }}
                     >
-                        <AntDesignIcon iconName='login' iconColor='#000' iconSize={24} />
+                        <AntDesignIcon iconName='login' iconColor={'#fff'} iconSize={24} />
                         <View style={styles.badge}>
 
                             <AppText text={count} textStyle={styles.badgeText} />
@@ -208,20 +208,20 @@ const ListScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: appColors.tertiary,
+        // backgroundColor: appColors.tertiary,
         paddingHorizontal: 10,
-        paddingBottom: '10%',
+        paddingVertical: 16,
         gap: 16,
         position: 'relative',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
     },
     topBar: {
         width: '100%',
         height: '10%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
@@ -235,20 +235,20 @@ const styles = StyleSheet.create({
         minWidth: 20,
         height: 20,
         borderRadius: '100%',
-        backgroundColor: appColors.quaternary,
+        backgroundColor: appColors.secondary,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 4,
     },
     badgeText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 14,
         fontWeight: 'bold',
     },
     listHeader: {
         width: '80%',
         height: '10%',
-        borderBottomColor: appColors.primary,
+        borderBottomColor: appColors.quintenary,
         borderBottomWidth: 0.5,
         flexDirection: 'row',
         alignItems: 'center',
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
         height: '85%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
         alignItems: 'center',
         justifyContent: 'flex-end',
         paddingTop: 10,

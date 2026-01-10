@@ -82,7 +82,7 @@ const Register = () => {
 
     return (
         <LinearGradient 
-            colors={[appColors.secondary, appColors.primary]}
+            colors={[appColors.secondary, appColors.primary, appColors.primary]}
             style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
@@ -156,7 +156,7 @@ const Register = () => {
                             textButton='Cadastrar'
                             onPress={registerCollaborator}
                             style={styles.button}
-                            textStyle={null}
+                            textStyle={{ color: '#fff' }}
                             disabled={buttonDisabled}
                             loading={isLoading}
                             icon={null}
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
         gap: '10%',
         borderBottomLeftRadius: 60,
         borderBottomRightRadius: 60,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
     },
     formText: {
         width: '100%',
@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
     button: {
         width: '100%',
         borderRadius: 10,
+        backgroundColor: appColors.quintenary,
     },
     miniButton: {
         width: '15%',
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
         backgroundColor: appColors.quaternary,
     },
     changeButton: {
-        backgroundColor: appColors.secondary,
+        backgroundColor: appColors.quintenary,
     },
 });
 

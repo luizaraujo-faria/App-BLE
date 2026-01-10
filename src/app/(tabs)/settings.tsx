@@ -168,7 +168,7 @@ const SettingsScreen = () => {
     return (
 
         <LinearGradient 
-            colors={[appColors.secondary, appColors.primary]}
+            colors={[appColors.secondary, appColors.primary, appColors.primary]}
             style={ styles.container }>
             <View style={styles.inner}>
 
@@ -178,7 +178,7 @@ const SettingsScreen = () => {
 
                         <View style={{ width: 'auto', flexDirection: 'row', alignItems: 'center' }}>
                             <AppText text='Controle de Bluetooth' textStyle={styles.title} />
-                            <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.primary} />
+                            <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.quintenary} />
                         </View>
 
                         <Text>
@@ -215,13 +215,13 @@ const SettingsScreen = () => {
                             <Button 
                                 textButton={'Verificar Permissões'} 
                                 onPress={openAppSettings}
-                                style={null}
-                                textStyle={{ fontSize: 18 }}
+                                style={{ backgroundColor: appColors.quintenary }}
+                                textStyle={{ fontSize: 18, color: '#fff' }}
                                 disabled={false}
                                 loading={false}
                                 icon={<MaterialCommunityIcon 
                                     iconName='security' 
-                                    iconColor='#000' 
+                                    iconColor='#fff' 
                                     iconSize={24} 
                                 />}
                             />
@@ -252,7 +252,7 @@ const SettingsScreen = () => {
                             textButton={`Desconectar-se de: ${currentDevice.name?.split(' ').slice(0, 3).join(' ') || currentDevice.localName?.split(' ').slice(0, 3).join(' ')}`} 
                             onPress={handleDisconnect}
                             style={styles.disconnectButton}
-                            textStyle={null}
+                            textStyle={{ color: '#fff' }}
                             disabled={false}
                             loading={false}
                             icon={null}
@@ -261,13 +261,13 @@ const SettingsScreen = () => {
                     <Button 
                         textButton={isScanning ? 'Parar Busca' : 'Buscar Dispositivos'} 
                         onPress={handleScan}
-                        style={null}
-                        textStyle={{ fontSize: 18 }}
+                        style={{ backgroundColor: appColors.quintenary }}
+                        textStyle={{ fontSize: 18, color: '#fff' }}
                         disabled={!isBluetoothOn || !isLocationOn}
                         loading={false}
                         icon={<MaterialCommunityIcon 
                             iconName='devices' 
-                            iconColor='#000' 
+                            iconColor='#fff' 
                             iconSize={24} 
                         />}
                     />
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: appColors.tertiary,
         paddingHorizontal: 10,
-        padding: 24,
+        paddingVertical: 16,
     },
     inner: {
         width: '100%', 
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
         height: '65%', 
         gap: '5%', 
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
     },
     statusPanel: { 
         width: '100%',
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
     },
     info: {
         width: '100%',
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
     },
     infoText: {
         fontSize: 17, 
@@ -359,14 +359,14 @@ const styles = StyleSheet.create({
         padding: 10,
         // paddingBottom: 16,
         gap: 0,
-        boxShadow: appColors.shadow,
+        // boxShadow: appColors.shadow,
     },
     title: {
         fontSize: 32,
     },
     connectedText: {
         fontSize: 20,
-        color: appColors.primary,
+        color: appColors.quintenary,
         fontFamily: appFonts.afacadReg,
     },
     scanningText: {
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     dropdown: {
-        backgroundColor: appColors.primary,
+        backgroundColor: appColors.quintenary,
         borderWidth: 0,
         borderRadius: 10,
         height: 50,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     dropdownPlaceholder: {
         textAlign: 'center',
         fontSize: 18,
-        color: '#000',
+        color: '#fff',
         fontFamily: appFonts.afacadReg,
     },
     selectedItemContainer: {

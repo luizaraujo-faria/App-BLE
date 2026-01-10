@@ -65,11 +65,11 @@ const styles = StyleSheet.create({
         color: '#000000',
     },
     selectedItemContainer: {
-        backgroundColor: appColors.secondary,
+        backgroundColor: appColors.quintenary,
     },
     selectedItemLabel: {
         fontWeight: 'bold',
-        color: '#000000ff',
+        color: '#fff',
     },
 });
 

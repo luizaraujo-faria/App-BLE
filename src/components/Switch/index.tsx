@@ -20,7 +20,7 @@ export function SwitchItem({ label, value, onToggle }: Props) {
                 onValueChange={onToggle}
                 circleSize={22}
                 barHeight={25}
-                backgroundActive={appColors.primary}
+                backgroundActive={appColors.quintenary}
                 backgroundInactive={appColors.primaryDisabled}
                 circleActiveColor='#fff'
                 circleInActiveColor='#fff'
