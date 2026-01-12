@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     footerText: {
         fontSize: 16,
         fontWeight: '300',
+        textAlign: 'center',
     },
 });
 
