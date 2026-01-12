@@ -3,39 +3,37 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     entryItemCard: {
-        width: '95%',
-        height: 60,
-        borderRadius: 10,
+        width: '100%',
+        height: 58,
+        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: appColors.quintenary,
         // boxShadow: appColors.shadow,
-        padding: 16,
+        paddingHorizontal: 16,
     },
     inner: {
+        width: '100%',
+        height: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
     },
-    textContainer: { 
-        width: '50%', 
-        height: '100%', 
-        alignItems: 'flex-start', 
+    id: { 
+        alignItems: 'center', 
         justifyContent: 'center',
+        flexDirection: 'row',
     },
     text: {
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: 'AfacadFlux',
         color: '#fff',
         textAlign: 'center',
-        height: '100%',
     },
     time: { 
-        width: '50%', 
-        height: '100%', 
         flexDirection: 'row',
         alignItems: 'center', 
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         gap: '8%',
     },
 });

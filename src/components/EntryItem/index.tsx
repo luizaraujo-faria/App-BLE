@@ -2,9 +2,10 @@ import { AntDesignIcon } from '@/src/components/Icons';
 import { appColors } from '@/src/themes/colors';
 import dayjs from 'dayjs';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import styles from './styles';
+import AppText from '../AppText';
 
 type EntryItemType = {
     id: string;
@@ -26,19 +27,29 @@ const EntryItem = ({ entryItem, selectItem }: EntryItemProps) => {
         >
             <TouchableOpacity onPress={() => selectItem(entryItem)} style={{ width: '100%', height: '100%' }}>
                 <View style={styles.inner}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.text}>
-                            <Text style={{ color: appColors.secondary, fontSize: 22 }}>ID: </Text>
-                            {entryItem.id}
-                        </Text>
+                    <View style={styles.id}>
+
+                        <AppText 
+                            text={'ID: '} 
+                            textStyle={{ color: appColors.secondary, fontSize: 20 }}
+                        />
+                        <AppText 
+                            text={`${entryItem.id}`} 
+                            textStyle={styles.text}
+                        />
+
                     </View>
                     <View style={styles.time}>
+
                         <AntDesignIcon 
                             iconName='clock-circle' 
                             iconSize={18} 
                             iconColor={appColors.secondary} 
                         />
-                        <Text style={styles.text}>{dayjs(entryItem.timestamp).format('HH:mm')}</Text>
+                        <AppText 
+                            text={`${dayjs(entryItem.timestamp).format('HH:mm')}`}
+                            textStyle={styles.text}
+                        />
                     </View>
                 </View>
             </TouchableOpacity>

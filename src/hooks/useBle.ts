@@ -202,9 +202,21 @@ export const useBle = () => {
     const stopAll = useCallback(async () => {
 
         if(isScanning) stopScan();
-        if(isConnected) await disconnectDevice(currentDevice!);
-
+        
+        if(isConnected && currentDevice){
+            await disconnectDevice(currentDevice!);
+        }
     }, [currentDevice, disconnectDevice, isConnected, isScanning, stopScan]);
+
+    const shutdownBle = useCallback(async () => {
+        try {
+            await stopAll();
+        } 
+        finally {
+            bleService.stopNotification();
+            bleService.destoy();
+        }
+    }, [stopAll]);
 
     return {
         devices,
@@ -222,5 +234,6 @@ export const useBle = () => {
         stopAll,
         setBleMessage,
         setReceivedData,
+        shutdownBle,
     };
 };

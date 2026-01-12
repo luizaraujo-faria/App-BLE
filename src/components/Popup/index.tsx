@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Modal, View, Text, Image, TouchableOpacity } from 'react-native';
+import { Modal, View, Image, TouchableOpacity } from 'react-native';
 import LogoIMREA from '../../../assets/images/LogoIMREA.png';
 import React from 'react';
 import styles from './styles';
+import AppText from '../AppText';
 
 interface PopupProps {
     title: string;
@@ -19,18 +20,18 @@ const Popup = ({ title, message, visible, onClose }: PopupProps) => {
             transparent={true}
             animationType='fade'
         >
-
             <View style={styles.overlay}>
-
                 <View style={styles.container}>
 
                     <View style={styles.header}>
-            
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             <Image source={LogoIMREA} style={styles.logo}/>
             
                             <View style={styles.texts}>
-                                <Text style={styles.title}>{title}</Text>
+                                <AppText 
+                                    text={title}
+                                    textStyle={styles.title}
+                                />
                             </View>
                         </View>
 
@@ -40,12 +41,12 @@ const Popup = ({ title, message, visible, onClose }: PopupProps) => {
                     </View>
 
                     <View style={styles.messageContainer}>
-                        <Text style={styles.message}>{message}</Text>
+                        <AppText 
+                            text={message}
+                            textStyle={styles.message}
+                        />
                     </View>
 
-                    {/* <View style={styles.actionContainer}>
-                        <Button textButton='Fechar' style={styles.closeButton} disabled={false} onPress={onClose}/>
-                    </View> */}
                 </View>
             </View>
         </Modal>

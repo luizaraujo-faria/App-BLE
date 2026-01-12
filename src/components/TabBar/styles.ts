@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
         marginTop: 4,
         color: '#666666',
         fontFamily: appFonts.afacadReg,
-        
     },
     labelActive: {
         color: '#000000ff',

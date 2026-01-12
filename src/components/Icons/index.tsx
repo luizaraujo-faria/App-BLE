@@ -1,4 +1,4 @@
-import { AntDesign, MaterialCommunityIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons, Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 import React from 'react';
 
 interface IconProps {
@@ -28,5 +28,11 @@ export const MaterialCommunityIcon = ({ iconName, iconSize, iconColor }: IconPro
 export const FontAwesomeIcon = ({ iconName, iconSize, iconColor }: IconProps) => {
     return(
         <FontAwesome name={iconName} size={iconSize} color={iconColor} />
+    );
+};
+
+export const EntypoIcon = ({ iconName, iconSize, iconColor }: IconProps) => {
+    return(
+        <Entypo name={iconName} size={iconSize} color={iconColor} />
     );
 };

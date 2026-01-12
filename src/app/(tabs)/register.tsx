@@ -1,7 +1,7 @@
 import ActionButton from '@/src/components/ActionButton';
 import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
-import { AntDesignIcon, FontAwesomeIcon } from '@/src/components/Icons';
+import { AntDesignIcon, FontAwesomeIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 import { usePopup } from '@/src/contexts/PopupContext';
 import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
@@ -147,6 +147,12 @@ const Register = () => {
                                 selectedItemContainerStyle={styles.selectedItemContainer}
                                 selectedItemLabelStyle={styles.selectedItemLabel}
                                 dropDownDirection='AUTO'
+                                ArrowDownIconComponent={() => (
+                                    <AntDesignIcon iconName='caret-down' iconColor='#000' iconSize={22} />
+                                )}
+                                ArrowUpIconComponent={() => (
+                                    <AntDesignIcon iconName='caret-up' iconColor='#000' iconSize={22} />
+                                )}
                             />
                         </View>
                     </View>
@@ -162,22 +168,13 @@ const Register = () => {
                             icon={null}
                         />
 
-                        {/* <Button 
-                            textButton='Limpar'
-                            onPress={clearInputs}
-                            style={[styles.clearButton, { backgroundColor: 'red' }]}
-                            textStyle={null}
-                            disabled={false}
-                            loading={false}
-                        /> */}
-
                         <View style={{ flexDirection: 'row', gap: '2.5%' }}>
                             <ActionButton 
                                 style={[styles.clearButton, styles.miniButton]}
                                 disabled={isLoading}
                                 onPress={clearInputs}
-                                icon={<AntDesignIcon 
-                                    iconName='clear' 
+                                icon={<MaterialCommunityIcon
+                                    iconName='broom' 
                                     iconSize={20} 
                                     iconColor='#fff' />
                                 }
@@ -305,8 +302,8 @@ const styles = StyleSheet.create({
         backgroundColor: appColors.quintenary,
     },
     miniButton: {
-        width: '15%',
-        height: 40,
+        width: '20%',
+        height: 45,
         boxShadow: 'none',
     },
     clearButton: {

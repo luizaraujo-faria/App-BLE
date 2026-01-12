@@ -1,15 +1,14 @@
 import AppText from '@/src/components/AppText';
 import EntryItem from '@/src/components/EntryItem';
-import { AntDesignIcon } from '@/src/components/Icons';
+import { MaterialCommunityIcon } from '@/src/components/Icons';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { useList } from '@/src/contexts/ListContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
 import { createRecord } from '@/src/services/recordsService';
 import { appColors } from '@/src/themes/colors';
-import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 type EntryItemType = {
@@ -147,55 +146,69 @@ const ListScreen = () => {
             style={{ flex: 1, position: 'relative' }}>
             <View style={styles.container}>
 
-                <View style={styles.topBar}>
-                    <AppText 
-                        text='Total de passagens na lista' 
-                        textStyle={styles.headerText} />
-
-                    <View 
-                        style={{ 
-                            width: '15%', 
-                            height: '85%', 
-                            backgroundColor: appColors.quintenary,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 10,
-                        }}
-                    >
-                        <AntDesignIcon iconName='login' iconColor={'#fff'} iconSize={24} />
-                        <View style={styles.badge}>
-
-                            <AppText text={count} textStyle={styles.badgeText} />
-                        </View>
-
-                    </View>
-                </View>
-
                 <View style={styles.entryList}>
-                    <View style={styles.listHeader}>
-                        <Text style={styles.headerText}>Últimas 5 passagens</Text>
+
+                    <View style={styles.topBar}>
+                        <AppText 
+                            text='Total de passagens na lista' 
+                            textStyle={{ fontSize: 20, color: '#fff' }} />
+
+                        <View 
+                            style={{ 
+                                width: '15%', 
+                                height: '75%', 
+                                backgroundColor: '#fff',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: 10,
+                            }}
+                        >
+                            <MaterialCommunityIcon iconName='human-queue' iconColor={appColors.quintenary} iconSize={24} />
+                            <View style={styles.badge}>
+                                <AppText text={count} textStyle={styles.badgeText} />
+                            </View>
+                        </View>
                     </View>
 
-                    <FlatList
-                        scrollEnabled={true}
-                        nestedScrollEnabled={true}
-                        data={visibleEntryItems}
-                        keyExtractor={(item) => item.listKey}
-                        renderItem={({ item }) => <EntryItem selectItem={() => null} entryItem={item} />}
-                        contentContainerStyle={styles.list}
-                        // style={styles.list} 
-                    />
+                    <View style={styles.listHeader}>
+                        <AppText 
+                            text={'Últimas 5 passagens'}
+                            textStyle={{ fontSize: 22 }}
+                        />
+                    </View>
+
+                    {visibleEntryItems.length === 0 ? (
+                        <View 
+                            style={{
+                                width: '100%',
+                                height: '50%',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <AppText 
+                                text={'Nenhum item na lista!'}
+                                textStyle={{ fontSize: 22, textAlign: 'center' }}
+                            />
+                        </View>
+                    ) : (
+                        <FlatList
+                            scrollEnabled={true}
+                            nestedScrollEnabled={true}
+                            data={visibleEntryItems}
+                            keyExtractor={(item) => item.listKey}
+                            renderItem={({ item }) => <EntryItem selectItem={() => null} entryItem={item} />}
+                            contentContainerStyle={styles.list}
+                        />
+                    )}
 
                     {loading && (
-                        <View style={{
-                            width: '100%',
-                            height: '15%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: '#83838317',
-                        }}>
-                            <ActivityIndicator size='large' color='#ffb54cff' />
-                            <AppText text={'Enviando dados...'} textStyle={{ color: '#ffb54cff' }} />
+                        <View style={styles.loadingBar}>
+                            <ActivityIndicator size='large' color={appColors.primary} />
+                            <AppText 
+                                text={'Enviando dados...'} 
+                                textStyle={{ color: appColors.primary, fontSize: 20 }} 
+                            />
                         </View>
                     )}
                 </View>
@@ -208,7 +221,6 @@ const ListScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: appColors.tertiary,
         paddingHorizontal: 10,
         paddingVertical: 16,
         gap: 16,
@@ -219,14 +231,13 @@ const styles = StyleSheet.create({
     topBar: {
         width: '100%',
         height: '10%',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        // boxShadow: appColors.shadow,
+        backgroundColor: appColors.quintenary,
+        // borderRadius: 10,
         alignItems: 'center',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
         flexDirection: 'row',
         padding: 10,
-        gap: 16,
+        gap: 20,
     },
     badge: {
         position: 'absolute',
@@ -247,7 +258,7 @@ const styles = StyleSheet.create({
     },
     listHeader: {
         width: '80%',
-        height: '10%',
+        height: '8%',
         borderBottomColor: appColors.quintenary,
         borderBottomWidth: 0.5,
         flexDirection: 'row',
@@ -256,27 +267,32 @@ const styles = StyleSheet.create({
     },
     entryList: {
         width: '100%',
-        height: '85%',
+        height: '100%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        // boxShadow: appColors.shadow,
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingTop: 10,
-        gap: 16,
-    },
-    headerText: {
-        fontSize: 24,
-        fontFamily: appFonts.afacadReg,
+        justifyContent: 'flex-start',
+        gap: 20,
+        overflow: 'hidden',
+        position: 'relative',
     },
     list: {
         width: '100%',
-        gap: 12, 
+        gap: 10, 
         alignItems: 'center', 
         justifyContent: 'center', 
         alignContent: 'center',
         paddingTop: '5%',
-        paddingHorizontal: 2,
+        paddingHorizontal: 10,
+    },
+    loadingBar: {
+        width: '100%',
+        height: '12%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#69696917',
+        position: 'absolute',
+        bottom: '0%',
     },
 });
 

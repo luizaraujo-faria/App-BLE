@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
-        // boxShadow: appColors.shadow,
         overflow: 'hidden',
     },
     chartTitle: {
@@ -129,8 +128,7 @@ const styles = StyleSheet.create({
     chart: {
         width: '100%',
         minHeight: 320,
-        maxHeight: 330,
-        // boxShadow: appColors.shadow,
+        maxHeight: 340,
         borderRadius: 10,
         backgroundColor: '#fff',
         alignItems: 'center',

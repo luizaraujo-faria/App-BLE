@@ -4,11 +4,11 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 // import { Ionicons } from '@expo/vector-icons';
 import { useList } from '@/src/contexts/ListContext';
 import styles from './styles';
-import { FontAwesomeIcon, Ionicon, MaterialCommunityIcon } from '../Icons';
+import { EntypoIcon, Ionicon, MaterialCommunityIcon } from '../Icons';
 
 const tabConfig = {
     list: { 
-        icon: <FontAwesomeIcon iconName='list-alt' iconColor='#000' iconSize={22} />, 
+        icon: <EntypoIcon iconName='list' iconColor='#000' iconSize={22} />, 
         label: 'Registros',
     },
     managment: { 

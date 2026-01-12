@@ -97,6 +97,12 @@ export const BleProvider = ({ children }: BleProviderProps) => {
 
     }, [ble, bleMessage, showPopup]);
 
+    // useEffect(() => {
+    //     return () => {
+    //         ble.shutdownBle();
+    //     };
+    // }, [ble]);
+
     return (
         <BleContext.Provider value={ble}>
             {children}

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Switch } from 'react-native-switch';
 import styles from './styles';
 import { appColors } from '@/src/themes/colors';
+import AppText from '../AppText';
 
 type Props = {
   label: string;
@@ -14,7 +15,10 @@ export function SwitchItem({ label, value, onToggle }: Props) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>{label}</Text>
+            <AppText 
+                text={label}
+                textStyle={styles.label}
+            />
             <Switch
                 value={value}
                 onValueChange={onToggle}

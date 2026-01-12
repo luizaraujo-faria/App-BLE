@@ -10,10 +10,11 @@ const styles = StyleSheet.create({
     },
     container: {
         width: '90%',
-        height: '20%',
+        height: '25%',
         backgroundColor: '#fff',
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'flex-end',
+        overflow: 'hidden',
     },
     header: {
         width: '100%',
@@ -39,8 +40,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
     },
     title: {
-        fontSize: 20,
-        fontFamily: 'AfacadFlux',
+        fontSize: 22,
     },
     messageContainer: {
         width: '100%',
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         textAlign: 'left',
         letterSpacing: -1.25,
-        fontFamily: 'AfacadFlux',
     },
     closeButton: {
         width: '15%',

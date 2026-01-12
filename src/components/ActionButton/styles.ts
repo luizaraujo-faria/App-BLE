@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     actionOption: {
-        width: 80,
+        width: '40%',
         height: 60,
         // boxShadow: appColors.shadow,
         borderRadius: 10,

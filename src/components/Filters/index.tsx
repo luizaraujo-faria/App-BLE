@@ -105,16 +105,21 @@ const Filters = React.memo(({
                             turnDropdown.setOpen(false);
                             monthDropdown.setOpen(false);
                         }}
+                        ArrowDownIconComponent={() => (
+                            <AntDesignIcon iconName='caret-down' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
+                        ArrowUpIconComponent={() => (
+                            <AntDesignIcon iconName='caret-up' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
                     />
                 </View>
 
                 <View 
                     style={{ 
                         width: '38%',
+                        height: 50,
                         flexDirection: 'row',
-                        // gap: '3%',
                         justifyContent: 'space-between',
-                        // backgroundColor: '#979595ff',
                     }}
                 >
                     <ActionButton 
@@ -125,22 +130,22 @@ const Filters = React.memo(({
                         />} 
                         onPress={onReload}   
                         style={{
-                            height: 50,
-                            width: 70,
+                            height: '100%',
+                            width: '48%',
                             backgroundColor: appColors.quintenary,
                         }}                   
                     />
 
                     <ActionButton 
-                        icon={<AntDesignIcon 
-                            iconName='clear'
+                        icon={<MaterialCommunityIcon 
+                            iconName='broom'
                             iconSize={24}
                             iconColor='#fff'
                         />} 
                         onPress={clearFilters}   
                         style={{
-                            height: 50,
-                            width: 70,
+                            height: '100%',
+                            width: '48%',
                             backgroundColor: appColors.quaternary,
                         }}                     
                     />
@@ -182,6 +187,13 @@ const Filters = React.memo(({
                             dataDropdown.setOpen(false);
                             turnDropdown.setOpen(false);
                         }}
+                        ArrowDownIconComponent={() => (
+                            <AntDesignIcon iconName='caret-down' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
+                        ArrowUpIconComponent={() => (
+                            <AntDesignIcon iconName='caret-up' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
+                        
                     />
                 </View>
 
@@ -211,6 +223,13 @@ const Filters = React.memo(({
                             monthDropdown.setOpen(false);
                             dataDropdown.setOpen(false);
                         }}
+                        ArrowDownIconComponent={() => (
+                            <AntDesignIcon iconName='caret-down' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
+                        ArrowUpIconComponent={() => (
+                            <AntDesignIcon iconName='caret-up' iconColor={appColors.quintenary} iconSize={20} />
+                        )}
+                        
                     />
                 </View>
             </View>

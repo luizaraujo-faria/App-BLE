@@ -1,6 +1,6 @@
 import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
-import { MaterialCommunityIcon } from '@/src/components/Icons';
+import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 import { SwitchItem } from '@/src/components/Switch';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
@@ -148,14 +148,6 @@ const SettingsScreen = () => {
             console.log('Erro ao abrir configurações:', error);
         }
     };
-
-    // useEffect(() => {
-
-    //     if(isConnected && currentDevice){
-    //         setLoading(false);
-    //     }
-
-    // }, [currentDevice, isConnected]);
     
     const _dropdownPlaceholder = isConnected 
         ? `Conectado: ${currentDevice?.name || currentDevice?.localName || 'Dispositivo'}`
@@ -176,16 +168,27 @@ const SettingsScreen = () => {
                     {/* Status Bluetooth */}
                     <View style={styles.statusPanel}>
 
-                        <View style={{ width: 'auto', flexDirection: 'row', alignItems: 'center' }}>
-                            <AppText text='Controle de Bluetooth' textStyle={styles.title} />
-                            <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.quintenary} />
+                        <View style={{ alignItems: 'center' }}>
+                            <View style={{ width: 'auto', flexDirection: 'row', alignItems: 'center' }}>
+                                <AppText text='Controle de Bluetooth' textStyle={styles.title} />
+                                <MaterialCommunityIcon iconName='bluetooth-settings' iconSize={28} iconColor={appColors.quintenary} />
+                            </View>
+
+                            <Text>
+                                <AppText text='Status:' textStyle={{ fontSize: 20 }} />
+                                <AppText text={connectedText} textStyle={styles.connectedText} />
+                            </Text>
                         </View>
 
-                        <Text>
-                            <AppText text='Status:' textStyle={{ fontSize: 20 }} />
-                            <AppText text={connectedText} textStyle={styles.connectedText} />
-                        </Text>
+                        {isScanning && isLoading && (
+                            <View style={styles.scanningBar}>
+                                <ActivityIndicator size='small' color={appColors.quintenary} />
+                                <AppText text='Buscando Dispositivos próximos...' textStyle={styles.scanningText} />
+                            </View>
+                        )}
                     </View>
+
+                    <View style={styles.panelLine}></View>
 
                     {/* Mensagem de aviso */}
                     <View style={styles.info}>
@@ -228,21 +231,6 @@ const SettingsScreen = () => {
                         </View>
                     </View>
                 </View>
-
-                {isScanning && isLoading && (
-                    <View style={{
-                        width: '90%',
-                        height: '5%',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        backgroundColor: '#63636385',
-                        borderRadius: 10,
-                        flexDirection: 'row',
-                        paddingHorizontal: 10,
-                    }}>
-                        <ActivityIndicator size='small' color='#fff' />
-                        <AppText text='Buscando Dispositivos próximos...' textStyle={styles.scanningText} />
-                    </View>)}
 
                 <View style={styles.actionContainer}>
 
@@ -287,13 +275,18 @@ const SettingsScreen = () => {
                         placeholderStyle={styles.dropdownPlaceholder}
                         selectedItemContainerStyle={styles.selectedItemContainer}
                         selectedItemLabelStyle={styles.selectedItemLabel}
+                        ArrowDownIconComponent={() => (
+                            <AntDesignIcon iconName='caret-down' iconColor='#fff' iconSize={22} />
+                        )}
+                        ArrowUpIconComponent={() => (
+                            <AntDesignIcon iconName='caret-up' iconColor='#fff' iconSize={22} />
+                        )}
                     />
                 </View>
 
             </View>
         </LinearGradient>
     );
-
 };
 
 const styles = StyleSheet.create({
@@ -314,19 +307,46 @@ const styles = StyleSheet.create({
     groupPanels: {
         width: '100%', 
         height: '65%', 
-        gap: '5%', 
+        gap: '0%', 
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        borderRadius: 10,
     },
     statusPanel: { 
         width: '100%',
-        height: '25%',
+        height: '30%',
         alignItems: 'center', 
-        justifyContent: 'center', 
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 10,
-        // boxShadow: appColors.shadow,
+        justifyContent: 'flex-start', 
+        paddingTop: '8%',
+        gap: '5%',
+        // backgroundColor: appColors.primary,
+    },
+    title: {
+        fontSize: 32,
+    },
+    connectedText: {
+        fontSize: 20,
+        color: appColors.quintenary,
+        fontFamily: appFonts.afacadReg,
+    },
+    scanningText: {
+        fontSize: 16,
+        color: appColors.quintenary,
+        fontFamily: appFonts.afacadReg,
+    },
+    scanningBar: {
+        width: '70%',
+        height: '25%',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+    },
+    panelLine: {
+        width: '40%',
+        height: 1.15,
+        backgroundColor: appColors.quintenary,
     },
     info: {
         width: '100%',
@@ -334,13 +354,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 25,
-        backgroundColor: '#fff',
-        borderRadius: 10,
         padding: 10,
-        // boxShadow: appColors.shadow,
+        // backgroundColor: appColors.primary,
     },
     infoText: {
-        fontSize: 17, 
+        fontSize: 18, 
         textAlign: 'center', 
         fontFamily: appFonts.afacadReg,
     },
@@ -353,26 +371,9 @@ const styles = StyleSheet.create({
     actionContainer: {
         width: '100%',
         backgroundColor: '#fff',
-        // borderTopLeftRadius: 10,
-        // borderTopRightRadius: 10,
         borderRadius: 10,
         padding: 10,
-        // paddingBottom: 16,
         gap: 0,
-        // boxShadow: appColors.shadow,
-    },
-    title: {
-        fontSize: 32,
-    },
-    connectedText: {
-        fontSize: 20,
-        color: appColors.quintenary,
-        fontFamily: appFonts.afacadReg,
-    },
-    scanningText: {
-        fontSize: 16,
-        color: '#fff',
-        fontFamily: appFonts.afacadReg,
     },
     disconnectButton: {
         width: '100%',
@@ -403,7 +404,7 @@ const styles = StyleSheet.create({
     },
     dropdownLabel: {
         fontSize: 18,
-        color: '#000',
+        color: '#fff',
         fontFamily: appFonts.afacadReg,
     },
     dropdownPlaceholder: {
