@@ -14,8 +14,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "imrea-nutricao"
-      // "supportsTablet": true
+      "bundleIdentifier": "imrea-nutricao",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

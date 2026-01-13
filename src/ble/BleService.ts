@@ -14,6 +14,7 @@ class BleService {
     public manager: BleManager;
     private isScanning: boolean = false;
     private isMonitoring: boolean = false;
+    private isDisconnecting: boolean = false;
     private notifyTransactionId: any;
 
     constructor(){
@@ -187,8 +188,17 @@ class BleService {
     // Desconectar-se de um dispositivo
     async disconnectDevice(device: BluetoothDevice): Promise<void> {
 
+        if(this.isDisconnecting) {
+            console.log('[BLE] Desconexão já em andamento - ignorando');
+            return;
+        }
+
+        this.isDisconnecting = true;
+
         try{
             this.stopNotification();
+
+            await new Promise(resolve => setTimeout(resolve, 300));
 
             const isConnected = await this.manager.isDeviceConnected(device.id);
             if(isConnected){
@@ -199,6 +209,9 @@ class BleService {
         }
         catch(err: any){
             console.error('[ERRO] Falha Ao Desconectar-se! ', err.message);
+        }
+        finally{
+            this.isDisconnecting = false;
         }
     }
 
@@ -299,19 +312,12 @@ class BleService {
             serviceUUID,
             characteristicUUID,
             (err, characteristic) => {
+                if(!this.isMonitoring) return;
+
                 if(err){
                     console.log('[ERRO] Falha no Monitor de Notificações:', err.message);
-
-                    // this.stopNotification();
-                    this.isMonitoring = false;
-                    this.notifyTransactionId = null;
-
                     return;
                 }
-
-                // console.log(`characteristicUUID: ${characteristicUUID}`);
-                // console.log(`deviceId: ${deviceId}`);
-                // console.log(`serviceUUID: ${serviceUUID}`);
 
                 if(!characteristic?.value) return;
 
@@ -328,23 +334,21 @@ class BleService {
     // stopNotification
     stopNotification(){
 
-        console.log('[BLE] Parando Monitoramento De Notificações BLE');
-
         if(!this.notifyTransactionId){
             console.log('[BLE] Monitor já parado');
             return;
         }
 
-        setTimeout(() => {
-            try{
-                this.manager.cancelTransaction(this.notifyTransactionId);
-            } 
-            catch(err: any) {
-                console.log(`[ERRO] Cancelamento de Notificações Ignorado! ${err.message}`);
-            }
-            this.notifyTransactionId = null;
-        }, 500);
+        console.log('[BLE] Parando Monitoramento De Notificações BLE');
 
+        try{
+            this.manager.cancelTransaction(this.notifyTransactionId);
+        } 
+        catch (err: any) {
+            console.log('[BLE] cancelTransaction ignorado: ', err.message);
+        }
+
+        this.notifyTransactionId = null;
         this.isMonitoring = false;
     }
 

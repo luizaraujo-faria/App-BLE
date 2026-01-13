@@ -155,7 +155,7 @@ export const useBle = () => {
         try{
             // bleService.stopNotification();
 
-            await new Promise(r => setTimeout(r, 150));
+            await new Promise(r => setTimeout(r, 200));
 
             await bleService.disconnectDevice(device);
             setIsConnected(false);
@@ -164,7 +164,6 @@ export const useBle = () => {
             setBleMessage(`Desconectado de ${device.name} com sucesso!`);
         } 
         catch(err: any){
-            // showPopup('Erro no BLE', `Erro ao desconectar-se! ${err.message}`);
             setBleMessage(`Falha ao desconectar do dispositivo ${device.name}! ${err?.message}`);
         }
     }, [stopScan]);
