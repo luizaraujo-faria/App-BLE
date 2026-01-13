@@ -108,7 +108,7 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
     if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size='large' color={appColors.secondary} />
+                <ActivityIndicator size='large' color={appColors.primary} />
             </View>
         );
     }
