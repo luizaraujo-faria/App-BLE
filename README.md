@@ -124,3 +124,5 @@ APP-BLE/
 
 -   Um novo build deverá ser gerado toda vez que adicionar uma nova biblioteca que utiliza código nativo
     ou quando alterar diretamente o código nativo do app.
+
+# ©2025 - IMREA Rede Lucy Montoro.
