@@ -1,4 +1,5 @@
 import { BleManager, Device, ScanMode, State } from 'react-native-ble-plx';
+import type { Subscription } from 'react-native-ble-plx';
 import { BluetoothDevice, ScanOptions } from './bleTypes';
 // import * as Location from 'expo-location';
 import { Buffer } from 'buffer';
@@ -15,7 +16,7 @@ class BleService {
     private isScanning: boolean = false;
     private isMonitoring: boolean = false;
     private isDisconnecting: boolean = false;
-    private notifyTransactionId: any;
+    private monitorSubscription: Subscription | null = null;
 
     constructor(){
         this.manager = new BleManager();
@@ -298,20 +299,19 @@ class BleService {
         characteristicUUID: string,
         onData: (data: string) => void,
     ) {
-        if(this.isMonitoring){
+        if(this.monitorSubscription){
             console.log('[BLE] Monitor de Notificações Ativo - Ignorando...\n');
             return;
         }
 
-        const transactionId = `BLE_MONITOR_${Date.now()}`;
-        this.notifyTransactionId = transactionId;
         this.isMonitoring = true;
 
-        this.manager.monitorCharacteristicForDevice(
+        this.monitorSubscription = this.manager.monitorCharacteristicForDevice(
             deviceId,
             serviceUUID,
             characteristicUUID,
             (err, characteristic) => {
+
                 if(!this.isMonitoring) return;
 
                 if(err){
@@ -327,14 +327,14 @@ class BleService {
 
                 onData(decoded);
             },
-            transactionId,
         );
+        console.log('[BLE] Monitor iniciado');
     }
 
     // stopNotification
     stopNotification(){
 
-        if(!this.notifyTransactionId){
+        if(!this.monitorSubscription){
             console.log('[BLE] Monitor já parado');
             return;
         }
@@ -342,18 +342,26 @@ class BleService {
         console.log('[BLE] Parando Monitoramento De Notificações BLE');
 
         try{
-            this.manager.cancelTransaction(this.notifyTransactionId);
+            this.isMonitoring = false;
+            this.monitorSubscription.remove();
         } 
         catch (err: any) {
-            console.log('[BLE] cancelTransaction ignorado: ', err.message);
+            console.log('[BLE] Cancel ignorado:', err.message);
         }
-
-        this.notifyTransactionId = null;
-        this.isMonitoring = false;
+        finally{
+            this.monitorSubscription = null;
+        }
     }
 
     // Limpar rescursos 
-    destoy(): void {
+    destroy(): void {
+        console.log('[BLE] Destroy BLE Manager');
+
+        try {
+            this.stopNotification();
+            this.stopScan();
+        } 
+        catch { /* empty */ }
 
         this.manager.destroy();
     }

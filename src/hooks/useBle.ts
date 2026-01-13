@@ -61,19 +61,28 @@ export const useBle = () => {
     }, []);
 
     // conectar com timeout
-    const connectWithTimeout = useCallback((id: string, timeout = 7000) => {
+    const connectWithTimeout = useCallback(async (id: string, timeout = 7000) => {
+        let finished = false;
 
-        const connectPromise = bleService.connectToDevice(id);
         const timeoutPromise = new Promise<never>((_, reject) => {
-
-            const t = setTimeout(() => {
-                clearTimeout(t);
-                reject(new Error('Tempo limite de conexão excedido!'));
+            setTimeout(() => {
+                if (!finished) {
+                    finished = true;
+                    reject(new Error('Tempo limite de conexão excedido!'));
+                }
             }, timeout);
         });
 
+        const connectPromise = (async () => {
+            const result = await bleService.connectToDevice(id);
+            if (finished) return;
+            finished = true;
+            return result;
+        })();
+
         return Promise.race([connectPromise, timeoutPromise]);
     }, []);
+
 
     // Conectar a um dispositivo
     const connectToDevice = useCallback(async (deviceId: string, device: BluetoothDevice) => {
@@ -153,9 +162,8 @@ export const useBle = () => {
     // Desconectar
     const disconnectDevice = useCallback(async (device: BluetoothDevice) => {
         try{
-            // bleService.stopNotification();
 
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 300));
 
             await bleService.disconnectDevice(device);
             setIsConnected(false);
@@ -171,9 +179,6 @@ export const useBle = () => {
     // Inicia leitura (notify)
     const startReading = useCallback((serviceUUID: string, characteristicUUID: string) => {
         console.log('\n[BLE] Monitor de Notificações Inicializado!\n');
-        // console.log('   Serviço:', serviceUUID);
-        // console.log('   Característica:', characteristicUUID);
-        // console.log('   currentDevice:', currentDevice?.id ?? 'null');
 
         if(!currentDevice){
             console.log('\n[ERRO] startReading: Nenhum dispositivo conectado!\n');
@@ -207,15 +212,15 @@ export const useBle = () => {
         }
     }, [currentDevice, disconnectDevice, isConnected, isScanning, stopScan]);
 
-    const shutdownBle = useCallback(async () => {
-        try {
-            await stopAll();
-        } 
-        finally {
-            bleService.stopNotification();
-            bleService.destoy();
-        }
-    }, [stopAll]);
+    // const shutdownBle = useCallback(async () => {
+    //     try {
+    //         await stopAll();
+    //     } 
+    //     finally {
+    //         bleService.stopNotification();
+    //         bleService.destroy();
+    //     }
+    // }, [stopAll]);
 
     return {
         devices,
@@ -233,6 +238,6 @@ export const useBle = () => {
         stopAll,
         setBleMessage,
         setReceivedData,
-        shutdownBle,
+        // shutdownBle,
     };
 };
