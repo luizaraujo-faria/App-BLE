@@ -23,6 +23,11 @@ const ManagmentScreen = () => {
 
     const { data, loading, refetch } = useChart(dataSearch, month, turn);
 
+    const canRenderChart =
+        containerWidth > 0 &&
+        containerHeight > 0 &&
+        data!.length > 0;
+
     return (
         <LinearGradient 
             colors={[appColors.secondary, appColors.primary, appColors.primary]}
@@ -64,12 +69,14 @@ const ManagmentScreen = () => {
                     }}
                 >
 
-                    <Barchart 
-                        data={data} 
-                        containerWidth={containerWidth}
-                        containerHeight={containerHeight}
-                        loading={loading}
-                    />
+                    {canRenderChart && (
+                        <Barchart 
+                            data={data} 
+                            containerWidth={containerWidth}
+                            containerHeight={containerHeight}
+                            loading={loading}
+                        />
+                    )}
                 </View>
             </View>
 

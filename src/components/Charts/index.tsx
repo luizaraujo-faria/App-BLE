@@ -51,6 +51,8 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
         );
     }
 
+    const shouldAnimate = chartData!.length < 10;
+
     return (
         <BarChart 
             data={chartData} 
@@ -88,8 +90,8 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
             yAxisThickness={0.8}
             showYAxisIndices
             // Animação
-            isAnimated
-            animationDuration={1200}
+            isAnimated={shouldAnimate}
+            animationDuration={600}
             // Linhas
             rulesThickness={1}
             rulesColor={'#e0e0e0b0'}
@@ -185,7 +187,7 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
                 showText
                 textSize={12}
                 labelsPosition='onBorder'
-                isAnimated={false}
+                isAnimated
                 onPress={(_: any, index: React.SetStateAction<number | null>) => setFocusedIndex(index)}
                 centerLabelComponent={() => (
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
