@@ -2,7 +2,7 @@ import { Barchart, Piechart } from '@/src/components/Charts';
 import { useChart } from '@/src/hooks/useChart';
 import { appColors } from '@/src/themes/colors';
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AppText from '@/src/components/AppText';
 import { appFonts } from '@/src/themes/fonts';
@@ -19,7 +19,7 @@ const ManagmentScreen = () => {
     const [turn, setTurn] = useState('');
     const [month, setMonth] = useState(currentMonth);
     const [containerWidth, setContainerWidth] = useState(0);
-    const screenHeight = Dimensions.get('window').height;
+    const [containerHeight, setContainerHeight] = useState(0);
 
     const { data, loading, refetch } = useChart(dataSearch, month, turn);
 
@@ -53,10 +53,13 @@ const ManagmentScreen = () => {
                 <View 
                     style={styles.chart}
                     onLayout={(event) => {
-                        const { width } = event.nativeEvent.layout;
+                        const { width, height } = event.nativeEvent.layout;
 
                         setContainerWidth(prev => (
                             prev !== width ? width : prev
+                        ));
+                        setContainerHeight(prev => (
+                            prev !== height ? height : prev
                         ));
                     }}
                 >
@@ -64,7 +67,7 @@ const ManagmentScreen = () => {
                     <Barchart 
                         data={data} 
                         containerWidth={containerWidth}
-                        screenHeight={screenHeight}
+                        containerHeight={containerHeight}
                         loading={loading}
                     />
                 </View>
@@ -86,7 +89,7 @@ const ManagmentScreen = () => {
                         data={data} 
                         loading={loading}
                         containerWidth={0}
-                        screenHeight={0} 
+                        containerHeight={0} 
                     />
                 </View>
             </View>
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         paddingVertical: 16,
         paddingHorizontal: 10,
         gap: 10,
@@ -109,28 +112,27 @@ const styles = StyleSheet.create({
         height: '50%',
         maxHeight: '50%',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         backgroundColor: '#fff',
         borderRadius: 10,
         overflow: 'hidden',
+        position: 'relative',
     },
     chartTitle: {
         width: '55%',
-        height: 'auto',
+        height: '10%',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        paddingTop: 10,
+        // backgroundColor: '#c25555',
         borderBottomWidth: 0.6,
         borderBottomColor: appColors.primary,
+        position: 'relative',
     },
     chart: {
         width: '100%',
-        minHeight: 320,
-        maxHeight: 340,
-        borderRadius: 10,
-        backgroundColor: '#fff',
+        minHeight: '80%',
+        maxHeight: '90%',
+        // backgroundColor: '#9b3b3b',
         alignItems: 'center',
         justifyContent: 'flex-start',
         position: 'relative',

@@ -5,13 +5,12 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     infoRecords: {
         width: '100%',
-        height: '48%',
+        height: '48.5%',
         backgroundColor: appColors.quintenary,
         alignItems: 'center',
         justifyContent: 'space-between',
         borderRadius: 10,
-        // boxShadow: appColors.shadow,
-        padding: 10,
+        padding: '5%',
     },
     pointTexts: {
         flexDirection: 'row', 

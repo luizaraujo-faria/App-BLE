@@ -9,7 +9,7 @@ import { createCollaborator } from '@/src/services/collaboratorsService';
 import { appColors } from '@/src/themes/colors';
 import { appFonts } from '@/src/themes/fonts';
 import React, { useCallback, useState } from 'react';
-import { Image, StyleSheet, TextInput, View } from 'react-native';
+import { Image, StyleSheet, TextInput, View, KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -83,117 +83,125 @@ const Register = () => {
     return (
         <LinearGradient 
             colors={[appColors.secondary, appColors.primary, appColors.primary]}
-            style={{ flex: 1, position: 'relative' }}>
-            <View style={styles.container}>
+            style={styles.container}>
 
-                <View style={styles.form}>
+            <KeyboardAvoidingView 
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+                style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}
+            >
+                <TouchableWithoutFeedback 
+                    onPress={Keyboard.dismiss}
+                    // style={{ width: '100%' }}
+                >
+                                        
+                    <View style={styles.form}>
 
-                    <View style={{ gap: '10%' }}>
-                        <View style={styles.formText}>
-                            <Image 
-                                // eslint-disable-next-line no-undef
-                                source={require('@/assets/images/LogoIMREA.png')}
-                                style={styles.logo} 
-                            />
-                            <View style={{ alignItems: 'center' }}>
-                                <AppText text={'Cadastro de Colaboradores'} textStyle={styles.text} />
-                                <AppText 
-                                    text={'Insira os dados abaixo'} 
-                                    textStyle={{ fontSize: 18, fontFamily: 'AfacadFlux' }} 
+                        <View style={{ gap: '10%' }}>
+                            <View style={styles.formText}>
+                                <Image 
+                                    // eslint-disable-next-line no-undef
+                                    source={require('@/assets/images/LogoIMREA.png')}
+                                    style={styles.logo} 
+                                />
+                                <View style={{ alignItems: 'center' }}>
+                                    <AppText text={'Cadastro de Colaboradores'} textStyle={styles.text} />
+                                    <AppText 
+                                        text={'Insira os dados abaixo'} 
+                                        textStyle={{ fontSize: 18, fontFamily: 'AfacadFlux' }} 
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.inputBox}>
+
+                                <TextInput 
+                                    value={id}
+                                    onChangeText={setId}
+                                    placeholder='ID'
+                                    placeholderTextColor='#000'
+                                    style={styles.input} 
+                                    editable={isLoading ? false : true}
+                                />
+                                <TextInput 
+                                    value={name}
+                                    onChangeText={setName}
+                                    placeholder='Nome'
+                                    placeholderTextColor='#000'
+                                    style={styles.input} 
+                                    editable={isLoading ? false : true}
+                                />
+                                <TextInput 
+                                    value={sector}
+                                    onChangeText={setSector}
+                                    placeholder='Setor'
+                                    placeholderTextColor='#000'
+                                    style={styles.input} 
+                                    editable={isLoading ? false : true}
+                                />
+
+                                <DropDownPicker
+                                    disabled={isLoading}
+                                    open={typeDropdown.open}
+                                    value={typeDropdown.value}
+                                    items={typeDropdown.items}
+                                    setOpen={typeDropdown.setOpen}
+                                    setValue={typeDropdown.setValue}
+                                    setItems={typeDropdown.setItems}
+                                    placeholder={'Tipo de Colaborador'}
+                                    style={styles.dropdownBar}
+                                    dropDownContainerStyle={styles.dropdownContainer}
+                                    labelStyle={styles.dropdownLabel}
+                                    placeholderStyle={styles.dropdownPlaceholder}
+                                    selectedItemContainerStyle={styles.selectedItemContainer}
+                                    selectedItemLabelStyle={styles.selectedItemLabel}
+                                    dropDownDirection='AUTO'
+                                    ArrowDownIconComponent={() => (
+                                        <AntDesignIcon iconName='caret-down' iconColor='#000' iconSize={22} />
+                                    )}
+                                    ArrowUpIconComponent={() => (
+                                        <AntDesignIcon iconName='caret-up' iconColor='#000' iconSize={22} />
+                                    )}
                                 />
                             </View>
                         </View>
 
-                        <View style={styles.inputBox}>
-
-                            <TextInput 
-                                value={id}
-                                onChangeText={setId}
-                                placeholder='ID'
-                                placeholderTextColor='#000'
-                                style={styles.input} 
-                                editable={isLoading ? false : true}
-                            />
-                            <TextInput 
-                                value={name}
-                                onChangeText={setName}
-                                placeholder='Nome'
-                                placeholderTextColor='#000'
-                                style={styles.input} 
-                                editable={isLoading ? false : true}
-                            />
-                            <TextInput 
-                                value={sector}
-                                onChangeText={setSector}
-                                placeholder='Setor'
-                                placeholderTextColor='#000'
-                                style={styles.input} 
-                                editable={isLoading ? false : true}
+                        <View style={styles.actions}>
+                            <Button 
+                                textButton='Cadastrar'
+                                onPress={registerCollaborator}
+                                style={styles.button}
+                                textStyle={{ color: '#fff' }}
+                                disabled={buttonDisabled}
+                                loading={isLoading}
+                                icon={null}
                             />
 
-                            <DropDownPicker
-                                disabled={isLoading}
-                                open={typeDropdown.open}
-                                value={typeDropdown.value}
-                                items={typeDropdown.items}
-                                setOpen={typeDropdown.setOpen}
-                                setValue={typeDropdown.setValue}
-                                setItems={typeDropdown.setItems}
-                                placeholder={'Tipo de Colaborador'}
-                                style={styles.dropdownBar}
-                                dropDownContainerStyle={styles.dropdownContainer}
-                                labelStyle={styles.dropdownLabel}
-                                placeholderStyle={styles.dropdownPlaceholder}
-                                selectedItemContainerStyle={styles.selectedItemContainer}
-                                selectedItemLabelStyle={styles.selectedItemLabel}
-                                dropDownDirection='AUTO'
-                                ArrowDownIconComponent={() => (
-                                    <AntDesignIcon iconName='caret-down' iconColor='#000' iconSize={22} />
-                                )}
-                                ArrowUpIconComponent={() => (
-                                    <AntDesignIcon iconName='caret-up' iconColor='#000' iconSize={22} />
-                                )}
-                            />
+                            <View style={{ flexDirection: 'row', gap: '2.5%' }}>
+                                <ActionButton 
+                                    style={[styles.clearButton, styles.miniButton]}
+                                    disabled={isLoading}
+                                    onPress={clearInputs}
+                                    icon={<MaterialCommunityIcon
+                                        iconName='broom' 
+                                        iconSize={20} 
+                                        iconColor='#fff' />
+                                    }
+                                />
+                                <ActionButton 
+                                    style={[styles.changeButton, styles.miniButton]}
+                                    disabled={isLoading}
+                                    onPress={clearInputs}
+                                    icon={<FontAwesomeIcon 
+                                        iconName='exchange' 
+                                        iconSize={20} 
+                                        iconColor='#fff' />
+                                    }
+                                />
+                            </View>
                         </View>
                     </View>
-
-                    <View style={styles.actions}>
-                        <Button 
-                            textButton='Cadastrar'
-                            onPress={registerCollaborator}
-                            style={styles.button}
-                            textStyle={{ color: '#fff' }}
-                            disabled={buttonDisabled}
-                            loading={isLoading}
-                            icon={null}
-                        />
-
-                        <View style={{ flexDirection: 'row', gap: '2.5%' }}>
-                            <ActionButton 
-                                style={[styles.clearButton, styles.miniButton]}
-                                disabled={isLoading}
-                                onPress={clearInputs}
-                                icon={<MaterialCommunityIcon
-                                    iconName='broom' 
-                                    iconSize={20} 
-                                    iconColor='#fff' />
-                                }
-                            />
-                            <ActionButton 
-                                style={[styles.changeButton, styles.miniButton]}
-                                disabled={isLoading}
-                                onPress={clearInputs}
-                                icon={<FontAwesomeIcon 
-                                    iconName='exchange' 
-                                    iconSize={20} 
-                                    iconColor='#fff' />
-                                }
-                            />
-                        </View>
-                    </View>
-                </View>
-
-            </View>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </LinearGradient>
     );
 };
@@ -201,7 +209,6 @@ const Register = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: 24,
         gap: 16,
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -210,15 +217,16 @@ const styles = StyleSheet.create({
     },
     form: {
         width: '95%',
-        height: '90%',
+        minHeight: '90%',
         backgroundColor: '#fff',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         padding: 24,
-        paddingVertical: 60,
-        gap: '10%',
+        paddingTop: '10%',
+        gap: '15%',
         borderBottomLeftRadius: 60,
         borderBottomRightRadius: 60,
         // boxShadow: appColors.shadow,
+        position: 'relative',
     },
     formText: {
         width: '100%',

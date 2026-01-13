@@ -8,11 +8,11 @@ import { AntDesignIcon } from '../Icons';
 type Props = {
     data: any[] | null;
     containerWidth?: number;
-    screenHeight?: number;
+    containerHeight?: number;
     loading: boolean;
 };
 
-export const Barchart = React.memo(({ data, containerWidth, screenHeight, loading }: Props) => {
+export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading }: Props) => {
 
     
     const chartData = data?.map(item => ({
@@ -56,7 +56,7 @@ export const Barchart = React.memo(({ data, containerWidth, screenHeight, loadin
             data={chartData} 
             // Dimensões
             width={containerWidth! - 50}
-            height={screenHeight! / 3.15}
+            height={containerHeight! - 65}
             barWidth={35}
             // Barra
             frontColor={appColors.quintenary}
@@ -76,7 +76,7 @@ export const Barchart = React.memo(({ data, containerWidth, screenHeight, loadin
             spacing={20}
             initialSpacing={20}
             endSpacing={0}
-            noOfSections={5}
+            noOfSections={4}
             // barMarginBottom={2}
             // Eixo X
             xAxisLabelTextStyle={{ fontSize: 10 }}
@@ -92,6 +92,8 @@ export const Barchart = React.memo(({ data, containerWidth, screenHeight, loadin
             animationDuration={1200}
             // Linhas
             rulesThickness={1}
+            rulesColor={'#e0e0e0b0'}
+            rulesType='solid'
             showVerticalLines
             verticalLinesColor={appColors.tertiary}
         />

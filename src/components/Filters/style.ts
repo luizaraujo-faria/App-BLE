@@ -5,8 +5,9 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     topBar: {
         width: '100%',
-        height: '15%',
-        justifyContent: 'flex-start',
+        minHeight: '15%',
+        maxHeight: '15%',
+        justifyContent: 'space-between',
         alignItems: 'center',
         gap: '5%',
     },
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     },
     dropdownLabel: {
         paddingLeft: 5,
-        fontSize: 16.5,
+        fontSize: 16,
         color: '#000000ff',
         fontFamily: appFonts.afacadReg,
     },
