@@ -1,2 +1,5 @@
 ignoredBuiltDependencies:
   - '@shopify/react-native-skia'
+
+patchedDependencies:
+  react-native-ble-plx: patches/react-native-ble-plx.patch
