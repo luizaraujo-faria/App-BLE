@@ -48,16 +48,16 @@
       "expo-router",
       "expo-build-properties",
       "expo-font",
-      "expo-web-browser",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34
-          }
-        }
-      ]
+      "expo-web-browser"
+      // [
+      //   "expo-build-properties",
+      //   {
+      //     "android": {
+      //       "compileSdkVersion": 34,
+      //       "targetSdkVersion": 34
+      //     }
+      //   }
+      // ]
     ],
     "experiments": {
       "typedRoutes": true
