@@ -10,9 +10,10 @@ type Props = {
     containerWidth?: number;
     containerHeight?: number;
     loading: boolean;
+    canRender?: boolean;
 };
 
-export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading }: Props) => {
+export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading, canRender }: Props) => {
 
     
     const chartData = data?.map(item => ({
@@ -54,55 +55,59 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
     const shouldAnimate = chartData!.length < 10;
 
     return (
-        <BarChart 
-            data={chartData} 
-            // Dimensões
-            width={containerWidth! - 50}
-            height={containerHeight! - 65}
-            barWidth={35}
-            // Barra
-            frontColor={appColors.quintenary}
-            barBorderTopLeftRadius={4}
-            barBorderTopRightRadius={4}
-            // Valores no topo da barra
-            topLabelTextStyle={{ 
-                fontSize: 12, 
-                color: '#000', 
-                position: 'absolute',
-                bottom: '0%',
-                paddingTop: 10,
-            }}
-            maxValue={maxValue}
-            showValuesAsTopLabel
-            // Espaçamento
-            spacing={20}
-            initialSpacing={20}
-            endSpacing={0}
-            noOfSections={4}
-            // barMarginBottom={2}
-            // Eixo X
-            xAxisLabelTextStyle={{ fontSize: 10 }}
-            xAxisThickness={1}
-            xAxisColor={'#b3b3b365'}
-            // Eixo Y
-            yAxisTextStyle={{ color: '#000000ff' }}
-            yAxisColor={'#b3b3b365'}
-            yAxisThickness={0.8}
-            showYAxisIndices
-            // Animação
-            isAnimated={shouldAnimate}
-            animationDuration={600}
-            // Linhas
-            rulesThickness={1}
-            rulesColor={'#e0e0e0b0'}
-            rulesType='solid'
-            showVerticalLines
-            verticalLinesColor={appColors.tertiary}
-        />
+        <>
+            {canRender && ( 
+                <BarChart 
+                    data={chartData} 
+                    // Dimensões
+                    width={containerWidth! - 50}
+                    height={containerHeight! - 65}
+                    barWidth={35}
+                    // Barra
+                    frontColor={appColors.quintenary}
+                    barBorderTopLeftRadius={4}
+                    barBorderTopRightRadius={4}
+                    // Valores no topo da barra
+                    topLabelTextStyle={{ 
+                        fontSize: 12, 
+                        color: '#000', 
+                        position: 'absolute',
+                        bottom: '0%',
+                        paddingTop: 10,
+                    }}
+                    maxValue={maxValue}
+                    showValuesAsTopLabel
+                    // Espaçamento
+                    spacing={20}
+                    initialSpacing={20}
+                    endSpacing={0}
+                    noOfSections={4}
+                    // barMarginBottom={2}
+                    // Eixo X
+                    xAxisLabelTextStyle={{ fontSize: 10 }}
+                    xAxisThickness={1}
+                    xAxisColor={'#b3b3b365'}
+                    // Eixo Y
+                    yAxisTextStyle={{ color: '#000000ff' }}
+                    yAxisColor={'#b3b3b365'}
+                    yAxisThickness={0.8}
+                    showYAxisIndices
+                    // Animação
+                    isAnimated={shouldAnimate}
+                    animationDuration={600}
+                    // Linhas
+                    rulesThickness={1}
+                    rulesColor={'#e0e0e0b0'}
+                    rulesType='solid'
+                    showVerticalLines
+                    verticalLinesColor={appColors.tertiary}
+                />
+            )}
+        </>
     );
 });
 
-export const Piechart = React.memo(({ data, loading }: Props) => {
+export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
     if (loading) {
@@ -127,7 +132,7 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
 
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
     const restTotal = rest.reduce((acc, cur) => acc + cur.value, 0);
-    const restPercent = Math.round((restTotal / total) * 100);
+    const restPercent = ((restTotal / total) * 100).toPrecision(3);
 
     const colors = [
         appColors.primary,
@@ -139,7 +144,7 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
 
     // TOP 5
     const baseData = top5.map((item, index) => ({
-        value: Math.round((item.value / total) * 100),
+        value: (item.value / total) * 100,
         color: colors[index],
         label: `${index + 1}º`,
     }));
@@ -156,7 +161,7 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
         const midAngle = startAngle + sliceAngle / 2;
         cumulative += item.value;
 
-        if (focusedIndex !== index) {
+        if(focusedIndex !== index){
             return {
                 ...item,
                 radius: baseRadius,
@@ -178,41 +183,48 @@ export const Piechart = React.memo(({ data, loading }: Props) => {
     return (
         <View style={{ alignItems: 'center' }}>
             {/* --------- GRÁFICO --------- */}
-            <PieChart
-                data={pieData}
-                donut
-                radius={baseRadius}
-                innerRadius={50}
-                innerCircleColor='#fff'
-                showText
-                textSize={12}
-                labelsPosition='onBorder'
-                isAnimated
-                onPress={(_: any, index: React.SetStateAction<number | null>) => setFocusedIndex(index)}
-                centerLabelComponent={() => (
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        {selected ? (
-                            <>
-                                <AppText
-                                    text={`${selected.value}%`}
-                                    textStyle={{ fontSize: 22, fontWeight: '700' }}
-                                />
-                                <AppText
-                                    text={selected.label}
-                                    textStyle={{ fontSize: 15, color: '#353535ff' }}
-                                />
-                            </>
-                        ) : (
-                            <AppText
-                                text='Top 5'
-                                textStyle={{ fontSize: 22, color: '#000' }}
-                            />
-                        )}
-                    </View>
-                )}
-            />
+            {canRender && (
+                <PieChart
+                    data={pieData}
+                    donut
+                    radius={baseRadius}
+                    innerRadius={55}
+                    innerCircleColor='#fff'
+                    showText
+                    textSize={12}
+                    labelsPosition='onBorder'
+                    isAnimated
+                    onPress={(_: any, index: React.SetStateAction<number | null>) => setFocusedIndex(index)}
+                    centerLabelComponent={() => (
+                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            {selected ? (
+                                <>
+                                    <AppText
+                                        text={`${selected.value.toPrecision(3)}%`}
+                                        textStyle={{ fontSize: 22, fontWeight: '700' }}
+                                    />
+                                    <AppText
+                                        text={selected.label}
+                                        textStyle={{ fontSize: 15, color: '#353535ff' }}
+                                    />
+                                </>
+                            ) : (
+                                <View>
+                                    <AppText
+                                        text='Top 5'
+                                        textStyle={{ fontSize: 22, color: '#000', textAlign: 'center' }}
+                                    />
+                                    <AppText
+                                        text='Toque para ver'
+                                        textStyle={{ fontSize: 12, color: '#6b6b6b', textAlign: 'center' }}
+                                    />
+                                </View>
+                            )}
+                        </View>
+                    )}
+                />
+            )}
 
-            {/* --------- RESTANTE (FORA DO GRÁFICO) --------- */}
             {restTotal > 0 && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: '5%' }}>
                     <AntDesignIcon iconName='pinterest' iconColor='#474747ff' iconSize={10} />

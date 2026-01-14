@@ -74,12 +74,13 @@ const Filters = React.memo(({
             <View
                 style={{
                     width: '100%',
+                    height: '47.5%',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    gap: '0%',
+                    // backgroundColor: '#000',
                 }}
             >
-                <View style={{ width: '60%' }}>
+                <View style={{ width: '59.5%', height: '100%' }}>
                     <DropDownPicker
                         disabled={false}
                         open={dataDropdown.open}
@@ -116,8 +117,8 @@ const Filters = React.memo(({
 
                 <View 
                     style={{ 
-                        width: '38%',
-                        height: 50,
+                        width: '39%',
+                        height: '100%',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                     }}
@@ -125,13 +126,13 @@ const Filters = React.memo(({
                     <ActionButton 
                         icon={<MaterialCommunityIcon 
                             iconName='reload'
-                            iconSize={26}
+                            iconSize={24}
                             iconColor='#fff'
                         />} 
                         onPress={onReload}   
                         style={{
                             height: '100%',
-                            width: '48%',
+                            width: '48.5%',
                             backgroundColor: appColors.quintenary,
                         }}                   
                     />
@@ -145,7 +146,7 @@ const Filters = React.memo(({
                         onPress={clearFilters}   
                         style={{
                             height: '100%',
-                            width: '48%',
+                            width: '48.5%',
                             backgroundColor: appColors.quaternary,
                         }}                     
                     />
@@ -155,13 +156,13 @@ const Filters = React.memo(({
             <View
                 style={{
                     width: '100%',
+                    height: '47.5%',
                     flexDirection: 'row',
-                    justifyContent: 'center',
-                    gap: '2%',
-                    paddingHorizontal: '1%',
+                    justifyContent: 'space-between',
+                    // backgroundColor: '#000',
                 }}
             >
-                <View style={{ width: '50%' }}>
+                <View style={{ width: '49.25%', height: '100%' }}>
                     <DropDownPicker
                         disabled={false}
                         open={monthDropdown.open}
@@ -197,7 +198,7 @@ const Filters = React.memo(({
                     />
                 </View>
 
-                <View style={{ width: '50%' }}>
+                <View style={{ width: '49.25%', height: '100%' }}>
                     <DropDownPicker
                         disabled={false}
                         open={turnDropdown.open}

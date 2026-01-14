@@ -1,7 +1,7 @@
 import ActionButton from '@/src/components/ActionButton';
 import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
-import { AntDesignIcon, FontAwesomeIcon, MaterialCommunityIcon } from '@/src/components/Icons';
+import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 import { usePopup } from '@/src/contexts/PopupContext';
 import useDropdown from '@/src/hooks/useDropdown';
 import { normalizeApiErrors } from '@/src/services/apiErrors';
@@ -187,7 +187,7 @@ const Register = () => {
                                         iconColor='#fff' />
                                     }
                                 />
-                                <ActionButton 
+                                {/* <ActionButton 
                                     style={[styles.changeButton, styles.miniButton]}
                                     disabled={isLoading}
                                     onPress={clearInputs}
@@ -196,7 +196,7 @@ const Register = () => {
                                         iconSize={20} 
                                         iconColor='#fff' />
                                     }
-                                />
+                                /> */}
                             </View>
                         </View>
                     </View>
@@ -317,9 +317,9 @@ const styles = StyleSheet.create({
     clearButton: {
         backgroundColor: appColors.quaternary,
     },
-    changeButton: {
-        backgroundColor: appColors.quintenary,
-    },
+    // changeButton: {
+    //     backgroundColor: appColors.quintenary,
+    // },
 });
 
 export default Register;

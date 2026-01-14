@@ -5,15 +5,14 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     topBar: {
         width: '100%',
-        minHeight: '15%',
-        maxHeight: '15%',
+        height: '15%',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '5%',
+        // backgroundColor: '#9b3b3b',
     },
     dataDropdownBar: {
         width: '100%',
-        height: 50,
+        height: '100%',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
@@ -34,7 +33,7 @@ const styles = StyleSheet.create({
     },
     dropdownBar: {
         width: '100%',
-        height: 50,
+        height: '100%',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',

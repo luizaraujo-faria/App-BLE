@@ -69,14 +69,13 @@ const ManagmentScreen = () => {
                     }}
                 >
 
-                    {canRenderChart && (
-                        <Barchart 
-                            data={data} 
-                            containerWidth={containerWidth}
-                            containerHeight={containerHeight}
-                            loading={loading}
-                        />
-                    )}
+                    <Barchart 
+                        data={data} 
+                        containerWidth={containerWidth}
+                        containerHeight={containerHeight}
+                        loading={loading}
+                        canRender={canRenderChart}
+                    />
                 </View>
             </View>
 
@@ -95,8 +94,8 @@ const ManagmentScreen = () => {
                     <Piechart 
                         data={data} 
                         loading={loading}
-                        containerWidth={0}
-                        containerHeight={0} 
+                        containerHeight={0}
+                        canRender={canRenderChart} 
                     />
                 </View>
             </View>
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: 16,
         paddingHorizontal: 10,
-        gap: 10,
+        gap: '1%',
     },
     chartContainer: {
         width: '100%',
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     },
     bottomArea: {
         width: '100%',
-        height: '32%',
+        height: '40%',
         maxHeight: '32%',
         alignItems: 'flex-start',
         justifyContent: 'space-between',

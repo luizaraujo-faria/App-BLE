@@ -281,6 +281,8 @@ const SettingsScreen = () => {
                         ArrowUpIconComponent={() => (
                             <AntDesignIcon iconName='caret-up' iconColor='#fff' iconSize={22} />
                         )}
+                        language='PT'
+                        
                     />
                 </View>
 
