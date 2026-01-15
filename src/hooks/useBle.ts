@@ -61,27 +61,40 @@ export const useBle = () => {
     }, []);
 
     // conectar com timeout
-    const connectWithTimeout = useCallback(async (id: string, timeout = 7000) => {
-        let finished = false;
-
+    const connectWithTimeout = useCallback((id: string, timeout = 7000) => {
+        const connectPromise = bleService.connectToDevice(id);
         const timeoutPromise = new Promise<never>((_, reject) => {
-            setTimeout(() => {
-                if (!finished) {
-                    finished = true;
-                    reject(new Error('Tempo limite de conexão excedido!'));
-                }
+
+            const t = setTimeout(() => {
+                clearTimeout(t);
+                reject(new Error('Tempo limite de conexão excedido!'));
             }, timeout);
         });
-
-        const connectPromise = (async () => {
-            const result = await bleService.connectToDevice(id);
-            if (finished) return;
-            finished = true;
-            return result;
-        })();
-
+        
         return Promise.race([connectPromise, timeoutPromise]);
     }, []);
+    // const connectWithTimeout = useCallback(async (id: string, timeout = 7000) => {
+    //     let finished = false;
+
+    //     const timeoutPromise = new Promise<never>((_, reject) => {
+    //         setTimeout(() => {
+    //             if (!finished) {
+    //                 finished = true;
+    //                 reject(new Error('Tempo limite de conexão excedido!'));
+    //             }
+    //         }, timeout);
+    //         return;
+    //     });
+
+    //     const connectPromise = (async () => {
+    //         const result = await bleService.connectToDevice(id);
+    //         if (finished) return;
+    //         finished = true;
+    //         return result;
+    //     })();
+
+    //     return Promise.race([connectPromise, timeoutPromise]);
+    // }, []);
 
 
     // Conectar a um dispositivo

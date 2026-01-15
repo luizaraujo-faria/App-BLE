@@ -33,7 +33,7 @@ export function useDeviceToggles() {
 
         checkLocation();
 
-        interval = setInterval(checkLocation, 3000);
+        interval = setInterval(checkLocation, 1500);
 
         return () => clearInterval(interval);
     }, []);

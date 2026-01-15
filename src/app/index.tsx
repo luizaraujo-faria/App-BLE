@@ -44,7 +44,7 @@ const SigninScreen = () => {
                             style={styles.logo}
                         />
                         <View style={{ width: '100%', alignItems: 'center' }}>
-                            <AppText text={'IMREA Nutrição'} textStyle={styles.title} />
+                            <AppText text={'IMREA Refeitório'} textStyle={styles.title} />
                             <View
                                 style={{ width: '50%', height: 1, backgroundColor: appColors.quintenary }}
                             ></View>

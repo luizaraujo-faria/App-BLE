@@ -1,16 +1,15 @@
 import AppText from '@/src/components/AppText';
 import Button from '@/src/components/Button';
-import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
+import { AntDesignIcon, MaterialCommunityIcon, MaterialIcon } from '@/src/components/Icons';
 import { SwitchItem } from '@/src/components/Switch';
 import { useBleContext } from '@/src/contexts/BleContext';
 import { usePopup } from '@/src/contexts/PopupContext';
 import { useDeviceToggles } from '@/src/hooks/useDeviceToogle';
 import { appColors } from '@/src/themes/colors';
 import { appFonts } from '@/src/themes/fonts';
-// import { appFonts } from '@/src/themes/fonts';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Linking, Platform, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -44,6 +43,17 @@ const SettingsScreen = () => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState<DeviceItem[]>([]);
+    const [userSelectedDevice, setUserSelectedDevice] = useState<string | null>(null);
+
+    const servicesOn: boolean = isBluetoothOn && isLocationOn;
+
+    useEffect(() => {
+        if(!isConnected){
+            setValue(null);
+            setUserSelectedDevice(null);
+            return;
+        }
+    }, [isConnected]);
 
     useEffect(() => {
         if(isConnected) {
@@ -66,21 +76,25 @@ const SettingsScreen = () => {
     // Quando o usuário seleciona um dispositivo no dropdown
     useEffect(() => {
 
-        if(value){
+        if(!servicesOn) return;
+        if(!userSelectedDevice) return;
+        if(!value) return;
+        if(isConnected) return;
 
-            const selectedDevice = devices.find(device => device.id === value);
-            if (selectedDevice && !isConnected) {
-                connectToDevice(value, selectedDevice)
-                    .then(() => {
-                        showPopup('Aviso', `Conectado a ${selectedDevice.name || 'dispositivo'}!`);
-                    })
-                    .catch((err) => {
-                        console.error('\nFalha na conexão:', err.message);
-                        showPopup('Erro', `Falha na conexão! Erro: ${err.message}.`);
-                    });
-            }
-        }
-    }, [value, devices, isConnected, connectToDevice, showPopup]);
+        const selectedDevice = devices.find(device => device.id === value);
+        if (!selectedDevice) return;
+
+        connectToDevice(value, selectedDevice)
+            .then(() => {
+                showPopup('Aviso', `Conectado a ${selectedDevice.name || 'dispositivo'}!`);
+                setValue(null);
+            })
+            .catch((err) => {
+                console.error('Falha na conexão:', err.message);
+                showPopup('Erro', `Falha na conexão! Erro: ${err.message}.`);
+                setValue(null);
+            });
+    }, [value, devices, isConnected, connectToDevice, showPopup, userSelectedDevice, servicesOn]);
 
     // Alternar Bluetooth
     const toggleBluetooth = async () => {
@@ -110,12 +124,17 @@ const SettingsScreen = () => {
     
     const handleDisconnect = async () => {
         if(currentDevice){
+
+            setLoading(true);
+
             try{
-                setLoading(true);
-                await disconnectDevice(currentDevice);
+                console.log('   CAIU NO DISCONNECT');
                 setValue(null);
+                await disconnectDevice(currentDevice);
+                return;
             } 
             catch(err: any){
+                setLoading(false);
                 console.error('\nErro ao desconectar:', err.message);
             }
             finally{
@@ -128,30 +147,30 @@ const SettingsScreen = () => {
 
         if(isScanning){
             stopScan();
-            setLoading(false);
             return;
         }
 
         scanDevices();
-        setLoading(true);
         return;
     };
 
     const openAppSettings = async () => {
-        try {
-            if (Platform.OS === 'ios') {
+        try{
+            if(Platform.OS === 'ios') {
                 await Linking.openURL('app-settings:');
-            } else {
+            } 
+            else {
                 await Linking.openSettings();
             }
-        } catch (error) {
-            console.log('Erro ao abrir configurações:', error);
+        } 
+        catch(err: any) {
+            console.log('Erro ao abrir configurações:', err.message);
         }
     };
     
-    const _dropdownPlaceholder = isConnected 
+    const dropdownPlaceholder = isConnected 
         ? `Conectado: ${currentDevice?.name || currentDevice?.localName || 'Dispositivo'}`
-        : 'Selecione um dispositivo';
+        : 'Dispositivos encontrados';
 
     const connectedText = isConnected 
         ? ` Conectado a ${currentDevice?.name || currentDevice?.localName || 'dispositivo'}`
@@ -180,9 +199,13 @@ const SettingsScreen = () => {
                             </Text>
                         </View>
 
-                        {isScanning && isLoading && (
+                        {isScanning && (
                             <View style={styles.scanningBar}>
-                                <ActivityIndicator size='small' color={appColors.quintenary} />
+                                <MaterialIcon 
+                                    iconName='bluetooth-searching' 
+                                    iconSize={20}
+                                    iconColor={appColors.quintenary}
+                                />
                                 <AppText text='Buscando Dispositivos próximos...' textStyle={styles.scanningText} />
                             </View>
                         )}
@@ -242,7 +265,7 @@ const SettingsScreen = () => {
                             style={styles.disconnectButton}
                             textStyle={{ color: '#fff' }}
                             disabled={false}
-                            loading={false}
+                            loading={isLoading}
                             icon={null}
                         />
                     )}
@@ -251,7 +274,7 @@ const SettingsScreen = () => {
                         onPress={handleScan}
                         style={{ backgroundColor: appColors.quintenary }}
                         textStyle={{ fontSize: 18, color: '#fff' }}
-                        disabled={!isBluetoothOn || !isLocationOn}
+                        disabled={!servicesOn}
                         loading={false}
                         icon={<MaterialCommunityIcon 
                             iconName='devices' 
@@ -261,14 +284,24 @@ const SettingsScreen = () => {
                     />
 
                     <DropDownPicker
-                        disabled={!isBluetoothOn || !isLocationOn}
+                        key={servicesOn ? 'ble-on' : 'ble-off'}
+                        disabled={!servicesOn}
                         open={open}
                         value={value}
                         items={items}
                         setOpen={setOpen}
-                        setValue={setValue}
+                        setValue={(callback) => {
+                            setValue((prev) => {
+                                const nextValue = typeof callback === 'function'
+                                    ? callback(prev)
+                                    : callback;
+
+                                setUserSelectedDevice(nextValue);
+                                return nextValue;
+                            });
+                        }}
                         setItems={setItems}
-                        placeholder={'Dispositivos encontrados'}
+                        placeholder={dropdownPlaceholder}
                         style={(isBluetoothOn && isLocationOn) ? styles.dropdown : styles.dropdownDisabled}
                         dropDownContainerStyle={styles.dropdownContainer}
                         labelStyle={styles.dropdownLabel}
