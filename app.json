@@ -11,8 +11,7 @@
     "splash": {
       "image": "./assets/images/LogoIMREA.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff",
-      "padding": 4
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "bundleIdentifier": "imrea-nutricao",
