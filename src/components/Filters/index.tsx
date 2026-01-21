@@ -75,6 +75,7 @@ const Filters = React.memo(({
                 style={{
                     width: '100%',
                     height: '47.5%',
+                    maxHeight: '47.5%',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     // backgroundColor: '#000',

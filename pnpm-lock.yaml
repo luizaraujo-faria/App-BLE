@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   react-native-ble-plx:
-    hash: 6da14ff668edc04cdf1e248b931f07897e3b3842baf747ad3b75897ea9ba8c0f
+    hash: f7264e03237cb6baec24a017456f2a4a4bd4e0b5d5330ba06567f0a8725d59b5
     path: patches/react-native-ble-plx.patch
 
 importers:
@@ -87,7 +87,7 @@ importers:
         version: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)
       react-native-ble-plx:
         specifier: ^3.5.0
-        version: 3.5.0(patch_hash=6da14ff668edc04cdf1e248b931f07897e3b3842baf747ad3b75897ea9ba8c0f)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
+        version: 3.5.0(patch_hash=f7264e03237cb6baec24a017456f2a4a4bd4e0b5d5330ba06567f0a8725d59b5)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       react-native-dropdown-picker:
         specifier: ^5.4.6
         version: 5.4.6(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -8926,7 +8926,7 @@ snapshots:
 
   react-is@19.2.0: {}
 
-  react-native-ble-plx@3.5.0(patch_hash=6da14ff668edc04cdf1e248b931f07897e3b3842baf747ad3b75897ea9ba8c0f)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0):
+  react-native-ble-plx@3.5.0(patch_hash=f7264e03237cb6baec24a017456f2a4a4bd4e0b5d5330ba06567f0a8725d59b5)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)

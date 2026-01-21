@@ -137,10 +137,10 @@ const styles = StyleSheet.create({
     chart: {
         width: '100%',
         minHeight: '80%',
-        maxHeight: '90%',
+        maxHeight: '95%',
         // backgroundColor: '#9b3b3b',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end',
         position: 'relative',
         overflow: 'hidden',
         paddingTop: '5%',

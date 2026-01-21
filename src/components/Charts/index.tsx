@@ -15,10 +15,20 @@ type Props = {
 
 export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading, canRender }: Props) => {
 
-    
-    const chartData = data?.map(item => ({
+    const colors = [
+        appColors.primary,
+        appColors.secondary,
+        '#ad4a08ff',
+        '#e28127ff',
+        appColors.quaternary,
+    ];
+
+    const chartData = data?.map((item, index) => ({
         label: item.label,
         value: item.value,
+        frontColor: index < colors.length
+            ? colors[index]
+            : appColors.quintenary,
     }));
 
     const maxValue = React.useMemo(() => {
@@ -61,7 +71,7 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
                     data={chartData} 
                     // Dimensões
                     width={containerWidth! - 50}
-                    height={containerHeight! - 65}
+                    height={containerHeight! - 70}
                     barWidth={35}
                     // Barra
                     frontColor={appColors.quintenary}
@@ -137,9 +147,9 @@ export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
     const colors = [
         appColors.primary,
         appColors.secondary,
-        appColors.quintenary,
-        '#e28127ff',
         '#ad4a08ff',
+        '#e28127ff',
+        appColors.quaternary,
     ];
 
     // TOP 5
@@ -187,8 +197,8 @@ export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
                 <PieChart
                     data={pieData}
                     donut
-                    radius={baseRadius}
-                    innerRadius={55}
+                    radius={baseRadius / 1.05}
+                    innerRadius={52.5}
                     innerCircleColor='#fff'
                     showText
                     textSize={12}

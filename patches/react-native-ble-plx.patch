@@ -1,5 +1,5 @@
 diff --git a/android/src/main/java/com/bleplx/BlePlxModule.java b/android/src/main/java/com/bleplx/BlePlxModule.java
-index c73164058dd5eded7ecfc37aed6d7ef068695e74..56ecbb616d38d88ece8a37fb574462563b830ef9 100644
+index c73164058dd5eded7ecfc37aed6d7ef068695e74..c30eb3a3667c653a95ee1e57094daaa354c2b19c 100644
 --- a/android/src/main/java/com/bleplx/BlePlxModule.java
 +++ b/android/src/main/java/com/bleplx/BlePlxModule.java
 @@ -114,8 +114,9 @@ public class BlePlxModule extends ReactContextBaseJavaModule {

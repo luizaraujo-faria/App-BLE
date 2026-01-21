@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     },
     groupPanels: {
         width: '100%', 
-        height: '65%', 
+        height: '70%', 
         gap: '0%', 
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -387,10 +387,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 'auto',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         gap: 25,
         padding: 10,
-        // backgroundColor: appColors.primary,
+        // backgroundColor: appColors.quaternary
     },
     infoText: {
         fontSize: 18, 
@@ -407,8 +407,9 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         borderRadius: 10,
-        padding: 10,
-        gap: 0,
+        padding: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     disconnectButton: {
         width: '100%',

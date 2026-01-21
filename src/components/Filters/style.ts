@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
     },
     dataDropdownBar: {
         width: '100%',
-        height: '100%',
+        minHeight: '100%',
+        maxHeight: '100%',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
