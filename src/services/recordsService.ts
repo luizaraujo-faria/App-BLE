@@ -19,57 +19,13 @@ export const createRecord = async (values: (string | number)[][]): Promise<void>
     }
 };
 
-export const getMealsByColaborator = async (
-    colaboratorId: string, 
-    month: string, 
-    turn?: string,
-) => {
-
-    try{
-        const response = await api.get(
-            `${RECORDS_BASE_URL}/meal/colaborator/${colaboratorId}/${month}`, 
-            { params: { turn } });
-        return response;
-    }
-    catch(err: any){
-        if(axios.isAxiosError(err)){
-            throw err;
-        }
-        else{
-            throw err;
-        }
-    }
-};  
-
-export const getMealsBySector = async (
-    sector: string, 
+export const getMealsByAvarageTime = async (
     month: string, 
     turn?: string,
 ): Promise<AxiosResponse> => {
 
     try{
-        const response = await api.get(
-            `/records/meal/sector/${sector}/${month}`, 
-            { params: { turn } });
-        return response;
-    } 
-    catch(err: any){
-        if(axios.isAxiosError(err)){
-            throw err;
-        }
-        else{
-            throw err;
-        }
-    }
-};
-
-export const getMealsBySectorMonth = async (
-    month: string, 
-    turn?: string,
-): Promise<AxiosResponse> => {
-
-    try{
-        const response = await api.get(`/records/meal/sector/${month}`, {
+        const response = await api.get(`/records/mealtime/sectors/${month}`, {
             params: { turn },
         });
         return response;

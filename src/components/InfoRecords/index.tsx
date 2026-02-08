@@ -29,7 +29,7 @@ const InfoRecords = ({ data, loading }: InfoProps) => {
         }}>
             <View style={styles.infoRecords}>
 
-                <AppText text={'Números'} textStyle={{ color: '#fff' }} />
+                <AppText text={'Visão Geral'} textStyle={{ color: '#fff' }} />
 
                 {loading ? (
                     <View style={{ 

@@ -55,6 +55,7 @@ const Filters = React.memo(({
         { id: '1', label: 'Por setor' },
         { id: '2', label: 'Por colaborador' },
         { id: '3', label: 'Por tipo de colaborador' },
+        { id: '4', label: 'Média por minuto' },
     ];
 
     const monthDropdown = useDropdown(months.map(m => ({ value: m.id, label: m.label })));
