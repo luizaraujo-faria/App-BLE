@@ -24,6 +24,15 @@ const styles = StyleSheet.create({
         fontWeight: 600, 
         fontFamily: appFonts.afacadSemiBold,
     },
+    loadCard: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: appColors.quintenary,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+    },
 });
 
 export default styles;

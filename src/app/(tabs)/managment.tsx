@@ -1,4 +1,4 @@
-import { Barchart, Piechart } from '@/src/components/Charts';
+import { Barchart, Piechart, AreaChart } from '@/src/components/Charts';
 import { useChart } from '@/src/hooks/useChart';
 import { appColors } from '@/src/themes/colors';
 import React, { useState } from 'react';
@@ -68,14 +68,23 @@ const ManagmentScreen = () => {
                         ));
                     }}
                 >
-
-                    <Barchart 
-                        data={data} 
-                        containerWidth={containerWidth}
-                        containerHeight={containerHeight}
-                        loading={loading}
-                        canRender={canRenderChart}
-                    />
+                    {dataSearch === '4' ? (
+                        <AreaChart
+                            data={data!}
+                            containerWidth={containerWidth}
+                            containerHeight={containerHeight}
+                            loading={loading}
+                            canRender={canRenderChart}
+                        />
+                    ) : (
+                        <Barchart 
+                            data={data!} 
+                            containerWidth={containerWidth}
+                            containerHeight={containerHeight}
+                            loading={loading}
+                            canRender={canRenderChart}
+                        />
+                    )}
                 </View>
             </View>
 
@@ -92,14 +101,13 @@ const ManagmentScreen = () => {
 
                 <View style={styles.pieChartContainer}>
                     <Piechart 
-                        data={data} 
+                        data={data!} 
                         loading={loading}
                         containerHeight={0}
                         canRender={canRenderChart} 
                     />
                 </View>
             </View>
-
         </LinearGradient>
     );
 };
@@ -164,7 +172,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         // boxShadow: appColors.shadow,
     },
-
 });
 
 export default ManagmentScreen;

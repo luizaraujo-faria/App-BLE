@@ -6,4 +6,5 @@ export const appColors = {
     quintenary: '#b46b0aff',
     shadow: '0px 0px 3px #53535370',
     primaryDisabled: '#cea163ff',
+    primarydark: 'rgb(204, 144, 60)',
 };

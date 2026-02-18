@@ -1,19 +1,24 @@
 import { appColors } from '@/src/themes/colors';
 import React, { useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { BarChart, PieChart } from 'react-native-gifted-charts';
+import { BarChart, PieChart, LineChart, CurveType } from 'react-native-gifted-charts';
 import AppText from '../AppText';
 import { AntDesignIcon } from '../Icons';
 
-type Props = {
-    data: any[] | null;
+type DataType = {
+    value: number,
+    label: string,
+}
+
+interface ChartProps {
+    data: DataType[];
     containerWidth?: number;
     containerHeight?: number;
     loading: boolean;
     canRender?: boolean;
 };
 
-export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading, canRender }: Props) => {
+export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading, canRender }: ChartProps) => {
 
     const colors = [
         appColors.primary,
@@ -88,7 +93,7 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
                     maxValue={maxValue}
                     showValuesAsTopLabel
                     // Espaçamento
-                    spacing={20}
+                    spacing={24}
                     initialSpacing={20}
                     endSpacing={0}
                     noOfSections={4}
@@ -117,7 +122,7 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
     );
 });
 
-export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
+export const Piechart = React.memo(({ data, loading, canRender }: ChartProps) => {
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
     if (loading) {
@@ -137,7 +142,7 @@ export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
     }
 
     // PREPARAÇÃO DOS DADOS
-    const top5 = data.slice(0, 5);
+    const top5 = [...data].sort((a, b) => b.value - a.value).slice(0, 5);
     const rest = data.slice(5);
 
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
@@ -247,3 +252,137 @@ export const Piechart = React.memo(({ data, loading, canRender }: Props) => {
         </View>
     );
 });
+
+export const AreaChart = ({
+    data,
+    containerWidth,
+    containerHeight,
+    loading,
+    canRender,
+}: ChartProps) => {
+
+    if (loading) {
+        return (
+            <View style={{
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+                <ActivityIndicator size='large' color={appColors.primary} />
+            </View>
+        );
+    }
+
+    if (!loading && (!data || data.length === 0)) {
+        return (
+            <View style={{
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+                <AppText text='Nenhum dado carregado!' />
+            </View>
+        );
+    }
+
+    const shouldAnimate = data.length < 10;
+    const shouldRotate = data.length > 6;
+    const maxValue = Math.max(...data.map(item => item.value));
+    const spacing = (containerWidth! + 50) / data.length;
+
+    return (
+        <>
+            {canRender && (
+                <LineChart
+                    areaChart
+                    curved={true}
+                    curveType={CurveType.QUADRATIC}
+                    data={data}
+                    width={containerWidth! - 50}
+                    height={containerHeight! - 70}
+                    spacing={spacing}
+                    initialSpacing={15}
+                    endSpacing={10}
+                    hideDataPoints
+                    color={appColors.quintenary}
+                    thickness={0}
+                    startFillColor={appColors.primarydark}
+                    endFillColor={appColors.primary}
+                    startOpacity={1}
+                    endOpacity={0.6}
+                    maxValue={maxValue}
+                    noOfSections={3}
+
+                    xAxisLabelTextStyle={{
+                        fontSize: 12,
+                        marginTop: 18,
+                        marginLeft: 18,
+                        height: '100%',
+                    }}
+                    labelsExtraHeight={5}
+                    xAxisLabelsHeight={30}
+                    xAxisColor={'#b3b3b365'}
+                    xAxisThickness={1}
+                    rotateLabel={shouldRotate}
+
+                    yAxisColor={'#b3b3b365'}
+                    yAxisThickness={0.8}
+                    yAxisTextStyle={{ color: '#000' }}
+
+                    rulesThickness={1}
+                    rulesColor={'#e0e0e0b0'}
+                    showVerticalLines
+                    verticalLinesColor={appColors.tertiary}
+                    isAnimated={shouldAnimate}
+                    animateOnDataChange
+                    animationDuration={1000}
+                    onDataChangeAnimationDuration={300}
+                    pointerConfig={{
+                        activatePointersOnLongPress: true,
+                        pointerVanishDelay: 500,
+                        initialPointerAppearDelay: 50,
+                        activatePointersDelay: 50,
+                        pointerStripColor: '#41414165',
+                        pointerStripHeight: containerHeight! - 150,
+                        stripBehindBars: true,
+                        pointerColor: appColors.quintenary,
+                        radius: 6,
+                        pointerLabelComponent: (items: any) => {
+                            const item = items[0];
+                            return (
+                                <View style={{
+                                    height: 25,
+                                    width: 100,
+                                    justifyContent: 'center',
+                                    marginTop: -30,
+                                    marginLeft: containerWidth! - 430,
+                                    alignItems: 'center',
+                                }}>
+                                    <AppText text={item.label} textStyle={{ fontSize: 16, textAlign: 'center' }}/>
+                                    <View style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: 16,
+                                        backgroundColor: appColors.quintenary,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <AppText 
+                                            text={item.value} 
+                                            textStyle={{
+                                                color: '#fff',
+                                                textAlign: 'center',
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            );
+                        },
+                    }}
+                />
+            )}
+        </>
+    );
+};

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getMealsByAvarageTime, getMealsByCollaborators, getMealsByCollaboratorType, getMealsBySectors } from '@/src/services/recordsService';
+import { getPeakTime, getMealsByCollaborators, getMealsByCollaboratorType, getMealsBySectors } from '@/src/services/recordsService';
 import { mapToBarData } from '@/src/components/Charts/ChartMapper';
 import { usePopup } from '../contexts/PopupContext';
 import { normalizeApiErrors } from '../services/apiErrors';
@@ -17,7 +17,7 @@ export const useChart = (dataSearch: string, month: string, turn?: string) => {
         '1': { fetch: getMealsBySectors, key: 'sector' },
         '2': { fetch: getMealsByCollaborators, key: 'collaborator' },
         '3': { fetch: getMealsByCollaboratorType, key: 'type' },
-        '4': { fetch: getMealsByAvarageTime, key: 'sector' },
+        '4': { fetch: getPeakTime, key: 'hour' },
     } as const;
 
     const serializeTurn = (turn?: string) => {
@@ -41,7 +41,6 @@ export const useChart = (dataSearch: string, month: string, turn?: string) => {
             }
 
             const serializedTurn = serializeTurn(turn);
-
             const res = await fetchFn.fetch(month, serializedTurn);
 
             const newData = Array.isArray(res.data?.data)

@@ -55,8 +55,10 @@ const Filters = React.memo(({
         { id: '1', label: 'Por setor' },
         { id: '2', label: 'Por colaborador' },
         { id: '3', label: 'Por tipo de colaborador' },
-        { id: '4', label: 'Média por minuto' },
+        { id: '4', label: 'Horário de pico' },
     ];
+
+    const isPeakTime = data === '4';
 
     const monthDropdown = useDropdown(months.map(m => ({ value: m.id, label: m.label })));
     const turnDropdown = useDropdown(turns.map(t => ({ value: t.id, label: t.label })));
@@ -202,7 +204,7 @@ const Filters = React.memo(({
 
                 <View style={{ width: '49.25%', height: '100%' }}>
                     <DropDownPicker
-                        disabled={false}
+                        disabled={isPeakTime}
                         open={turnDropdown.open}
                         value={turn}
                         items={turnDropdown.items}
@@ -214,7 +216,7 @@ const Filters = React.memo(({
                         }}
                         setItems={turnDropdown.setItems}
                         placeholder={'Selecione o Turno'}
-                        style={[styles.dropdownBar]}
+                        style={[styles.dropdownBar, isPeakTime && styles.dropdownDisabled]}
                         dropDownContainerStyle={styles.dropdownContainer}
                         labelStyle={styles.dropdownLabel}
                         placeholderStyle={styles.dropdownPlaceholder}

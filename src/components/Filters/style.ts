@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // backgroundColor: '#9b3b3b',
     },
+    dropdownDisabled: {
+        backgroundColor: appColors.primaryDisabled,
+    },
     dataDropdownBar: {
         width: '100%',
         minHeight: '100%',

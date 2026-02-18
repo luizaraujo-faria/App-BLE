@@ -19,15 +19,12 @@ export const createRecord = async (values: (string | number)[][]): Promise<void>
     }
 };
 
-export const getMealsByAvarageTime = async (
+export const getPeakTime = async (
     month: string, 
-    turn?: string,
 ): Promise<AxiosResponse> => {
 
     try{
-        const response = await api.get(`/records/mealtime/sectors/${month}`, {
-            params: { turn },
-        });
+        const response = await api.get(`/records/meal/peaktime/${month}`);
         return response;
     } 
     catch(err: any){
