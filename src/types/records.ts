@@ -9,7 +9,7 @@ type RecordType = {
 }
 
 export interface CreateRecordDTO {
-    colaboratorId: number | string;
+    values: [(string | number), string]
 }
 
 export interface TimeRecord {

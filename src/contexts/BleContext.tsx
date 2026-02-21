@@ -64,6 +64,30 @@ export const BleProvider = ({ children }: BleProviderProps) => {
 
     }, [ble, isBluetoothOn, isLocationOn, ready, showPopup]);
 
+    // useEffect(() => {
+    //     if (!ready) return;
+
+    //     const bleEnabled = isBluetoothOn && isLocationOn;
+
+    //     if (bleEnabled) {
+
+    //         console.log('\n[BLE] 🔥 Simulando recebimento de dados...\n');
+
+    //         const fakeData = [
+    //             { value: '12345', ts: Date.now() - 500000 },
+    //             { value: '193235', ts: Date.now() - 850000 },
+    //             { value: '78577', ts: Date.now() - 1500000 },
+    //         ];
+
+    //         fakeData.forEach((item, index) => {
+    //             setTimeout(() => {
+    //                 ble.setReceivedData(item); // precisa existir no seu hook
+    //             }, index * 1000);
+    //         });
+    //     }
+
+    // }, [isBluetoothOn, isLocationOn, ready]);
+
     useEffect(() => {
 
         if(!bleMessage) return;

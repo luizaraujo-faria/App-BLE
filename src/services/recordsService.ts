@@ -1,9 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import api, { API_BASE_URL } from './api';
+// import { CreateRecordDTO } from '../types/records';
+// import { CreateRecordDTO } from '../types/records';
 
 const RECORDS_BASE_URL = `${API_BASE_URL}/records`;
 
 export const createRecord = async (values: (string | number)[][]): Promise<void> => {
+
+    console.log(`   PAYLOAD RECEBIDO: ${values}`);
 
     try{
         await api.post(`${RECORDS_BASE_URL}/`, { values });

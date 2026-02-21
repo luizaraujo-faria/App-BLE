@@ -10,10 +10,11 @@ import { appColors } from '@/src/themes/colors';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import dayjs from 'dayjs';
 
 type EntryItemType = {
     id: string;
-    timestamp?: number;
+    timestamp: number;
     listKey: string;
 }
 
@@ -75,10 +76,10 @@ const ListScreen = () => {
         try{
             setLoading(true);
 
-            const ids = entryItems.map(item => [String(item.id).trim()]);
-            if(ids[0].length === 0) return;
+            const entries = entryItems.map(item => [Number(item.id.trim()), String(dayjs(item.timestamp).format('HH:mm'))]);
+            if(entries[0].length === 0) return;
 
-            await createRecord(ids);
+            await createRecord(entries);
 
             clearList();
             showPopup('Notificação!', 'Usuários enviados com sucesso!');
