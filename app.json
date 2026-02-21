@@ -48,16 +48,8 @@
       "expo-router",
       "expo-build-properties",
       "expo-font",
-      "expo-web-browser"
-      // [
-      //   "expo-build-properties",
-      //   {
-      //     "android": {
-      //       "compileSdkVersion": 35,
-      //       "targetSdkVersion": 35
-      //     }
-      //   }
-      // ]
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

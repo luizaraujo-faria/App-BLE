@@ -5,45 +5,45 @@ import ActionButton from '@/src/components/ActionButton';
 import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 import styles from './style';
 import useDropdown from '@/src/hooks/useDropdown';
-import dayjs from 'dayjs';
 import { appColors } from '@/src/themes/colors';
+import MonthYearPicker from '../MonthYearPicker';
 
 interface FiltersProps {
-    month: string;
+    currentDate: string;
+    date: string;
     turn: string;
     data: string;
-    onMonthChange: (value: string) => void;
+    onDateChange: (value: string) => void;
     onTurnChange: (value: string) => void;
     onDataChange: (value: string) => void;
     onReload: () => Promise<void>;
 }
 
 const Filters = React.memo(({
-    month,
+    currentDate,
+    date,
     turn,
     data,
-    onMonthChange,
+    onDateChange,
     onTurnChange,
     onDataChange,
     onReload,
 }: FiltersProps ) => {
 
-    const currentMonth: string = String(dayjs().month() + 1);
-
-    const months = [
-        { id: '1', label: 'Janeiro' },
-        { id: '2', label: 'Fevereiro' },
-        { id: '3', label: 'Março' },
-        { id: '4', label: 'Abril' },
-        { id: '5', label: 'Maio' },
-        { id: '6', label: 'Junho' },
-        { id: '7', label: 'Julho' },
-        { id: '8', label: 'Agosto' },
-        { id: '9', label: 'Setembro' },
-        { id: '10', label: 'Outubro' },
-        { id: '11', label: 'Novembro' },
-        { id: '12', label: 'Dezembro' },
-    ];
+    // const months = [
+    //     { id: '1', label: 'Janeiro' },
+    //     { id: '2', label: 'Fevereiro' },
+    //     { id: '3', label: 'Março' },
+    //     { id: '4', label: 'Abril' },
+    //     { id: '5', label: 'Maio' },
+    //     { id: '6', label: 'Junho' },
+    //     { id: '7', label: 'Julho' },
+    //     { id: '8', label: 'Agosto' },
+    //     { id: '9', label: 'Setembro' },
+    //     { id: '10', label: 'Outubro' },
+    //     { id: '11', label: 'Novembro' },
+    //     { id: '12', label: 'Dezembro' },
+    // ];
 
     const turns = [
         { id: '1', label: 'Café da Manhã' },
@@ -60,13 +60,13 @@ const Filters = React.memo(({
 
     const isPeakTime = data === '4';
 
-    const monthDropdown = useDropdown(months.map(m => ({ value: m.id, label: m.label })));
+    // const monthDropdown = useDropdown(months.map(m => ({ value: m.id, label: m.label })));
     const turnDropdown = useDropdown(turns.map(t => ({ value: t.id, label: t.label })));
     const dataDropdown = useDropdown(datas.map(d => ({ value: d.id, label: d.label })));
 
     const clearFilters = () => {
 
-        if(month) onMonthChange(currentMonth);
+        if(date) onDateChange(currentDate);
         if(turn) onTurnChange('');
         return;
     };
@@ -108,7 +108,7 @@ const Filters = React.memo(({
                         zIndex={5}
                         onOpen={() => {
                             turnDropdown.setOpen(false);
-                            monthDropdown.setOpen(false);
+                            // monthDropdown.setOpen(false);
                         }}
                         ArrowDownIconComponent={() => (
                             <AntDesignIcon iconName='caret-down' iconColor={appColors.quintenary} iconSize={20} />
@@ -167,38 +167,10 @@ const Filters = React.memo(({
                 }}
             >
                 <View style={{ width: '49.25%', height: '100%' }}>
-                    <DropDownPicker
-                        disabled={false}
-                        open={monthDropdown.open}
-                        value={month}
-                        items={monthDropdown.items}
-                        setOpen={monthDropdown.setOpen}
-                        setValue={(cb) => {
-                            const value = cb(month);
-                            onMonthChange(value);
-                            return value;
-                        }}
-                        setItems={monthDropdown.setItems}
-                        placeholder={'Selecione o Mês'}
-                        style={[styles.dropdownBar]}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                        labelStyle={styles.dropdownLabel}
-                        placeholderStyle={styles.dropdownPlaceholder}
-                        selectedItemContainerStyle={styles.selectedItemContainer}
-                        selectedItemLabelStyle={styles.selectedItemLabel}
-                        dropDownDirection='BOTTOM'
-                        zIndex={2}
-                        onOpen={() => {
-                            dataDropdown.setOpen(false);
-                            turnDropdown.setOpen(false);
-                        }}
-                        ArrowDownIconComponent={() => (
-                            <AntDesignIcon iconName='caret-down' iconColor={appColors.quintenary} iconSize={20} />
-                        )}
-                        ArrowUpIconComponent={() => (
-                            <AntDesignIcon iconName='caret-up' iconColor={appColors.quintenary} iconSize={20} />
-                        )}
-                        
+                    <MonthYearPicker
+                        currentDate={currentDate}
+                        value={date}
+                        onChange={onDateChange}
                     />
                 </View>
 
@@ -225,7 +197,7 @@ const Filters = React.memo(({
                         dropDownDirection='BOTTOM'
                         zIndex={2}
                         onOpen={() => {
-                            monthDropdown.setOpen(false);
+                            // monthDropdown.setOpen(false);
                             dataDropdown.setOpen(false);
                         }}
                         ArrowDownIconComponent={() => (

@@ -4,6 +4,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { BarChart, PieChart, LineChart, CurveType } from 'react-native-gifted-charts';
 import AppText from '../AppText';
 import { AntDesignIcon } from '../Icons';
+import { appFonts } from '@/src/themes/fonts';
 
 type DataType = {
     value: number,
@@ -16,6 +17,7 @@ interface ChartProps {
     containerHeight?: number;
     loading: boolean;
     canRender?: boolean;
+    disabled?: boolean;
 };
 
 export const Barchart = React.memo(({ data, containerWidth, containerHeight, loading, canRender }: ChartProps) => {
@@ -122,8 +124,17 @@ export const Barchart = React.memo(({ data, containerWidth, containerHeight, loa
     );
 });
 
-export const Piechart = React.memo(({ data, loading, canRender }: ChartProps) => {
+export const Piechart = React.memo(({ data, loading, canRender, disabled }: ChartProps) => {
     const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+    if(disabled){
+        return (
+            <AppText
+                text={'Sem Informação'}
+                textStyle={{ color: '#fff' }}
+            />
+        );
+    }
 
     if (loading) {
         return (
@@ -209,6 +220,7 @@ export const Piechart = React.memo(({ data, loading, canRender }: ChartProps) =>
                     textSize={12}
                     labelsPosition='onBorder'
                     isAnimated
+                    animationDuration={1000}
                     onPress={(_: any, index: React.SetStateAction<number | null>) => setFocusedIndex(index)}
                     centerLabelComponent={() => (
                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -287,7 +299,7 @@ export const AreaChart = ({
         );
     }
 
-    const shouldAnimate = data.length < 10;
+    const shouldAnimate = data.length < 15;
     const shouldRotate = data.length > 6;
     const maxValue = Math.max(...data.map(item => item.value));
     const spacing = (containerWidth! + 50) / data.length;
@@ -316,10 +328,13 @@ export const AreaChart = ({
                     noOfSections={3}
 
                     xAxisLabelTextStyle={{
-                        fontSize: 12,
-                        marginTop: 18,
-                        marginLeft: 18,
+                        fontSize: 11,
+                        textAlign: 'center',
+                        marginTop: 0,
+                        marginLeft: -10,
                         height: '100%',
+                        width: '100%',
+                        fontFamily: appFonts.afacadSemiBold,
                     }}
                     labelsExtraHeight={5}
                     xAxisLabelsHeight={30}

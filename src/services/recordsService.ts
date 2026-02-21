@@ -24,11 +24,13 @@ export const createRecord = async (values: (string | number)[][]): Promise<void>
 };
 
 export const getPeakTime = async (
-    month: string, 
+    date: string, 
 ): Promise<AxiosResponse> => {
 
     try{
-        const response = await api.get(`/records/meal/peaktime/${month}`);
+        const response = await api.get('/records/meal/peaktime', {
+            params: { date },
+        });
         return response;
     } 
     catch(err: any){
@@ -42,13 +44,13 @@ export const getPeakTime = async (
 };   
 
 export const getMealsBySectors = async (
-    month: string, 
+    date: string, 
     turn?: string,
 ): Promise<AxiosResponse> =>{
 
     try{
-        const response = await api.get(`/records/meal/sectors/${month}`, {
-            params: { turn },
+        const response = await api.get('records/meal/sectors', {
+            params: { date, turn },
         });
         return response;
     } 
@@ -63,13 +65,13 @@ export const getMealsBySectors = async (
 };
 
 export const getMealsByCollaborators = async (
-    month: string, 
+    date: string, 
     turn?: string,
 ): Promise<AxiosResponse> =>{
 
     try{
-        const response = await api.get(`/records/meal/collaborators/${month}`, {
-            params: { turn },
+        const response = await api.get('/records/meal/collaborators', {
+            params: { date, turn },
         });
         return response;
     } 
@@ -84,13 +86,13 @@ export const getMealsByCollaborators = async (
 };
 
 export const getMealsByCollaboratorType = async (
-    month: string, 
+    date: string, 
     turn?: string,
 ): Promise<AxiosResponse> =>{
 
     try{
-        const response = await api.get(`/records/meal/collaborators/types/${month}`, {
-            params: { turn },
+        const response = await api.get('/records/meal/collaborators/types', {
+            params: { date, turn },
         });
         return response;
     } 

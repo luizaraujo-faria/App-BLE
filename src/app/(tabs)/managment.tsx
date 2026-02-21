@@ -9,20 +9,21 @@ import { appFonts } from '@/src/themes/fonts';
 import Filters from '@/src/components/Filters';
 import dayjs from 'dayjs';
 import InfoRecords from '@/src/components/InfoRecords';
-// import { AntDesignIcon, MaterialCommunityIcon } from '@/src/components/Icons';
 
 const ManagmentScreen = () => {
 
-    const currentMonth: string = String(dayjs().month() + 1);
+    const currentDate: string = String(dayjs().format('MM/YYYY'));
 
-    const [dataSearch, setDataSearch] = useState('1');
-    const [turn, setTurn] = useState('');
-    const [month, setMonth] = useState(currentMonth);
-    const [containerWidth, setContainerWidth] = useState(0);
-    const [containerHeight, setContainerHeight] = useState(0);
+    const [dataSearch, setDataSearch] = useState<string>('1');
+    const [turn, setTurn] = useState<string>('');
+    const [date, setDate] = useState<string>(currentDate);
+    const [containerWidth, setContainerWidth] = useState<number>(0);
+    const [containerHeight, setContainerHeight] = useState<number>(0);
 
-    const { data, loading, refetch } = useChart(dataSearch, month, turn);
 
+    const { data, loading, refetch } = useChart(dataSearch, date, turn);
+
+    const pieDisabled = dataSearch === '4' ? true : false;
     const canRenderChart =
         containerWidth > 0 &&
         containerHeight > 0 &&
@@ -34,10 +35,11 @@ const ManagmentScreen = () => {
             style={styles.container}>
 
             <Filters 
-                month={month} 
+                currentDate={currentDate}
+                date={date} 
                 turn={turn}
                 data={dataSearch}
-                onMonthChange={setMonth}
+                onDateChange={setDate}
                 onTurnChange={setTurn}
                 onDataChange={setDataSearch}
                 onReload={refetch}    
@@ -99,12 +101,15 @@ const ManagmentScreen = () => {
                     <InfoRecords data={data!} loading={loading} />
                 </View>
 
-                <View style={styles.pieChartContainer}>
+                <View 
+                    style={[styles.pieChartContainer, pieDisabled && styles.pieDisabled]}
+                >
                     <Piechart 
                         data={data!} 
                         loading={loading}
                         containerHeight={0}
                         canRender={canRenderChart} 
+                        disabled={pieDisabled}
                     />
                 </View>
             </View>
@@ -171,6 +176,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 10,
         // boxShadow: appColors.shadow,
+    },
+    pieDisabled: {
+        backgroundColor: appColors.primaryDisabled,
     },
 });
 
