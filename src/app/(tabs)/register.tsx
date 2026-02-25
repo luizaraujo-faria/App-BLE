@@ -29,7 +29,66 @@ const Register = () => {
         { id: '4', type: 'Terceirizado' },
     ];
 
+    const sectors = [
+        { id: 1, sector: 'ADMINISTRATIVO' },
+        { id: 2, sector: 'ALMOXARIFADO' },
+        { id: 3, sector: 'APOIO ASSISTENCIAL' },
+        { id: 4, sector: 'BIBLIOTECA' },
+        { id: 5, sector: 'BIOENGENHARIA' },
+        { id: 6, sector: 'COMPRAS' },
+        { id: 7, sector: 'COMUNICAÇÃO' },
+        { id: 8, sector: 'CONDICIONAMENTO FÍSICO' },
+        { id: 9, sector: 'CONDIR' },
+        { id: 10, sector: 'COPA' },
+        { id: 11, sector: 'COORDENAÇÃO DE HORÁRIOS' },
+        { id: 12, sector: 'DIRETORIA' },
+        { id: 13, sector: 'DIRETORIA ADMINISTRATIVA' },
+        { id: 14, sector: 'DIRETORIA CLÍNICA' },
+        { id: 15, sector: 'DIRETORIA EXECUTIVA' },
+        { id: 16, sector: 'ENFERMAGEM' },
+        { id: 17, sector: 'ENFERMAGEM INTERNAÇÃO' },
+        { id: 18, sector: 'EXPEDIENTE' },
+        { id: 19, sector: 'FARMÁCIA' },
+        { id: 20, sector: 'FATURAMENTO' },
+        { id: 21, sector: 'FINANCEIRO' },
+        { id: 22, sector: 'FINANÇAS' },
+        { id: 23, sector: 'FISIOTERAPIA' },
+        { id: 24, sector: 'FMUSP' },
+        { id: 25, sector: 'FONOAUDIOLOGIA' },
+        { id: 26, sector: 'GETI' },
+        { id: 27, sector: 'GOVERNANÇA' },
+        { id: 28, sector: 'HOSPITALIDADE' },
+        { id: 29, sector: 'HOTELARIA' },
+        { id: 30, sector: 'INFRAESTRUTURA - ENGENHARIA' },
+        { id: 31, sector: 'LABORATÓRIO DE MARCHA' },
+        { id: 32, sector: 'MANUTENÇÃO' },
+        { id: 33, sector: 'NUTRIÇÃO' },
+        { id: 34, sector: 'OFICINA TERAPEUTICA' },
+        { id: 35, sector: 'OPERAÇÕES' },
+        { id: 36, sector: 'OPM' },
+        { id: 37, sector: 'OUVIDORIA' },
+        { id: 38, sector: 'PATRIMÔNIO' },
+        { id: 39, sector: 'PESQUISA CLÍNICA' },
+        { id: 40, sector: 'PROJETOS' },
+        { id: 41, sector: 'PSICOLOGIA' },
+        { id: 42, sector: 'QUALIDADE' },
+        { id: 43, sector: 'RECEPÇÃO' },
+        { id: 44, sector: 'RECEPÇÃO CENTRAL' },
+        { id: 45, sector: 'RECURSOS HUMANOS' },
+        { id: 46, sector: 'SAME' },
+        { id: 47, sector: 'SCIH' },
+        { id: 48, sector: 'SERVIÇO DE ODONTOLOGIA' },
+        { id: 49, sector: 'SERVIÇO MÉDICO' },
+        { id: 50, sector: 'SERVIÇO SOCIAL' },
+        { id: 51, sector: 'SISTEMAS' },
+        { id: 52, sector: 'SSO' },
+        { id: 53, sector: 'SUPORTE' },
+        { id: 54, sector: 'TERAPIA OCUPACIONAL' },
+        { id: 55, sector: 'ZELADORIA' },
+    ];
+
     const typeDropdown = useDropdown(collaboratorTypes.map(t => ({ label: t.type, value: t.type })));
+    const sectorDropdown = useDropdown(sectors.map(s => ({ label: s.sector, value: s.sector })));
 
     const verifyInputsIsEmpty = useCallback((): boolean => {
 
@@ -130,13 +189,29 @@ const Register = () => {
                                     style={styles.input} 
                                     editable={isLoading ? false : true}
                                 />
-                                <TextInput 
-                                    value={sector}
-                                    onChangeText={setSector}
-                                    placeholder='Setor'
-                                    placeholderTextColor='#000'
-                                    style={styles.input} 
-                                    editable={isLoading ? false : true}
+
+                                <DropDownPicker
+                                    disabled={isLoading}
+                                    open={sectorDropdown.open}
+                                    value={sectorDropdown.value}
+                                    items={sectorDropdown.items}
+                                    setOpen={sectorDropdown.setOpen}
+                                    setValue={sectorDropdown.setValue}
+                                    setItems={sectorDropdown.setItems}
+                                    placeholder={'Tipo de Colaborador'}
+                                    style={styles.dropdownBar}
+                                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 4 }]}
+                                    labelStyle={styles.dropdownLabel}
+                                    placeholderStyle={styles.dropdownPlaceholder}
+                                    selectedItemContainerStyle={[styles.selectedItemContainer, { zIndex: 10 }]}
+                                    selectedItemLabelStyle={styles.selectedItemLabel}
+                                    dropDownDirection='TOP'
+                                    ArrowDownIconComponent={() => (
+                                        <AntDesignIcon iconName='caret-down' iconColor='#000' iconSize={22} />
+                                    )}
+                                    ArrowUpIconComponent={() => (
+                                        <AntDesignIcon iconName='caret-up' iconColor='#000' iconSize={22} />
+                                    )}
                                 />
 
                                 <DropDownPicker
@@ -280,6 +355,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 10,
         fontFamily: appFonts.afacadReg,
         boxShadow: '0px 0px 1px #5353538a',
+        position: 'absolute',
     },
     dropdownLabel: {
         paddingLeft: 6,

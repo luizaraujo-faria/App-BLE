@@ -1,51 +1,68 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from './style';
 import AppText from '../AppText';
 import { Ionicon } from '../Icons';
 import { appColors } from '@/src/themes/colors';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 interface MonthYearPickerProps {
     currentDate: string;
-    value?: string;
+    value: string;
     onChange: (value: string) => void;
 }
 
-const MonthYearPicker = ({ onChange }: MonthYearPickerProps) => {
+const MonthYearPicker = ({ value, currentDate, onChange }: MonthYearPickerProps) => {
+
     const [date, setDate] = useState<Date>(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
 
-    const onDateChange = (event: any, selectedDate?: Date) => {
-        if(event.type === 'dismissed') {
+    useEffect(() => {
+        const base = value || currentDate;
+
+        if (base) {
+            const parsed = dayjs(base, 'MM/YYYY').toDate();
+            setDate(parsed);
+        } else {
+            setDate(new Date());
+        }
+    }, [value, currentDate]);
+
+    const displayText = value
+        ? `Mês: ${value.split('/')[0]} Ano: ${value.split('/')[1]}`
+        : `Mês: ${currentDate.split('/')[0]} Ano: ${currentDate.split('/')[1]}`;
+
+    const handleDateChange = (event: any, selectedDate?: Date) => {
+        if (event.type === 'dismissed') {
             setShowCalendar(false);
             return;
         }
 
-        if(selectedDate) {
+        if (selectedDate) {
             const normalized = new Date(
                 selectedDate.getFullYear(),
                 selectedDate.getMonth(),
                 1,
             );
 
-            setDate(normalized);
-            const formatted = `${String(normalized.getMonth() + 1).padStart(2, '0')}/${normalized.getFullYear()}`;
-            onChange(formatted);
+            const formattedDate =
+                `${String(normalized.getMonth() + 1).padStart(2, '0')}/${normalized.getFullYear()}`;
+
+            onChange(formattedDate);
         }
 
         setShowCalendar(false);
     };
-
-    const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-    const displayText = date ? `Mês: ${formattedDate.slice(0, 2)} Ano: ${formattedDate.slice(3)}` : 'Selecione Mês e Ano';
 
     return (
         <TouchableOpacity 
             style={styles.container}
             onPress={() => setShowCalendar(true)}
         >
-
             <Ionicon 
                 iconName='calendar'
                 iconColor={appColors.quintenary}
@@ -62,8 +79,7 @@ const MonthYearPicker = ({ onChange }: MonthYearPickerProps) => {
                     value={date}
                     mode='date'
                     display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={onDateChange}
-                    // placeholderText={formattedDate}
+                    onChange={handleDateChange}
                 />
             )}
         </TouchableOpacity>
