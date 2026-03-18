@@ -17,7 +17,7 @@ const Register = () => {
 
     const [id, setId] = useState('');
     const [name, setName] = useState('');
-    const [sector, setSector] = useState('');
+    // const [sector, setSector] = useState('');
 
     const { showPopup } = usePopup();
     const [isLoading, setLoading] = useState(false);
@@ -94,22 +94,22 @@ const Register = () => {
 
         if(id.trim() === '' ||
             name.trim() === '' ||
-            sector.trim() === '' ||
+            sectorDropdown.value === '' ||
             typeDropdown.value === ''){
 
             return true;
         }
 
         return false;
-    }, [id, name, sector, typeDropdown.value]);
+    }, [id, name, sectorDropdown.value, typeDropdown.value]);
 
     const clearInputs = useCallback(async() => {
 
         setId('');
         setName('');
-        setSector('');
+        sectorDropdown.setValue('');
         typeDropdown.setValue('');
-    }, [typeDropdown]);
+    }, [sectorDropdown, typeDropdown]);
 
     const registerCollaborator = useCallback(async () => {
 
@@ -117,7 +117,7 @@ const Register = () => {
             setLoading(true);
             if(verifyInputsIsEmpty()) return;
 
-            const values = [id, name, sector, typeDropdown.value];
+            const values = [id, name, sectorDropdown.value, typeDropdown.value];
             console.log(values);
 
             const res = await createCollaborator(values);
@@ -135,7 +135,7 @@ const Register = () => {
             setLoading(false);
         }
 
-    }, [clearInputs, id, name, sector, showPopup, typeDropdown.value, verifyInputsIsEmpty]);
+    }, [clearInputs, id, name, sectorDropdown.value, showPopup, typeDropdown.value, verifyInputsIsEmpty]);
 
     const buttonDisabled = verifyInputsIsEmpty();
 
@@ -198,7 +198,7 @@ const Register = () => {
                                     setOpen={sectorDropdown.setOpen}
                                     setValue={sectorDropdown.setValue}
                                     setItems={sectorDropdown.setItems}
-                                    placeholder={'Tipo de Colaborador'}
+                                    placeholder={'Setor'}
                                     style={styles.dropdownBar}
                                     dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 4 }]}
                                     labelStyle={styles.dropdownLabel}
